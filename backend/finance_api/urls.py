@@ -13,6 +13,7 @@ class BaseRouter(routers.DefaultRouter):
     APIRootView = BaseRouterRootView
 
 router = BaseRouter()
+router.register(r'income-sources', IncomeSourceViewSet)
 
 
 urlpatterns = [
