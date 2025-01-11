@@ -18,3 +18,11 @@ class IncomeSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Income
         fields = '__all__'
+
+
+class ExpenseCategorySerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = ExpenseCategory
+        fields = '__all__'

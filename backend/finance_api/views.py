@@ -15,3 +15,9 @@ class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer
     permission_classes = [AllowAny]
+
+
+class ExpenseCategoryViewSet(viewsets.ModelViewSet):
+    queryset = ExpenseCategory.objects.all()
+    serializer_class = ExpenseCategorySerializer
+    permission_classes = [AllowAny]

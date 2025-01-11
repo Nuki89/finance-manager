@@ -15,7 +15,7 @@ class BaseRouter(routers.DefaultRouter):
 router = BaseRouter()
 router.register(r'income-sources', IncomeSourceViewSet)
 router.register(r'incomes', IncomeViewSet)
-# router.register(r'expenses', ExpenseViewSet)
+router.register(r'expense-categories', ExpenseCategoryViewSet)
 
 
 urlpatterns = [
