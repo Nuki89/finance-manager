@@ -26,3 +26,14 @@ class ExpenseCategorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = ExpenseCategory
         fields = '__all__'
+
+
+class ExpenseSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    category = serializers.PrimaryKeyRelatedField(queryset=ExpenseCategory.objects.all())
+    category_data = ExpenseCategorySerializer(source='category', read_only=True)
+
+    class Meta:
+        model = Expense
+        fields = '__all__'
