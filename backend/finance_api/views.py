@@ -7,6 +7,7 @@ from .models import *
 from .serializers import *
 
 from django.db.models.functions import TruncMonth
+from django.db.models import Sum
 
 
 class IncomeSourceViewSet(viewsets.ModelViewSet):
@@ -40,6 +41,14 @@ class IncomeViewSet(viewsets.ModelViewSet):
     def monthly_summary(self, request):
         monthly_data = Income.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
         return Response(monthly_data)
+    
+    @action(detail=False, methods=['get'])
+    def monthly_category_summary(self, request):
+        monthly_category_data = Income.objects.annotate(
+            month=TruncMonth('date')).values('month', 'source__name').annotate(
+            total_amount=Sum('amount')).order_by('month', 'source__name')
+        return Response(monthly_category_data)
+
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     queryset = ExpenseCategory.objects.all()
@@ -70,6 +79,5 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def monthly_summary(self, request):
-        from django.db.models.functions import TruncMonth
         monthly_data = Expense.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
         return Response(monthly_data)
