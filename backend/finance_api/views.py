@@ -43,11 +43,11 @@ class IncomeViewSet(viewsets.ModelViewSet):
         return Response(monthly_data)
     
     @action(detail=False, methods=['get'])
-    def monthly_category_summary(self, request):
-        monthly_category_data = Income.objects.annotate(
+    def monthly_source_summary(self, request):
+        monthly_source_data = Income.objects.annotate(
             month=TruncMonth('date')).values('month', 'source__name').annotate(
             total_amount=Sum('amount')).order_by('month', 'source__name')
-        return Response(monthly_category_data)
+        return Response(monthly_source_data)
 
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
