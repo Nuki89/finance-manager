@@ -6,6 +6,8 @@ from rest_framework.response import Response
 from .models import *
 from .serializers import *
 
+from django.db.models.functions import TruncMonth
+
 
 class IncomeSourceViewSet(viewsets.ModelViewSet):
     queryset = IncomeSource.objects.all()
@@ -33,6 +35,11 @@ class IncomeViewSet(viewsets.ModelViewSet):
     def summary_by_source(self, request):
         income_list = Income.objects.values('source__name').annotate(total_amount=models.Sum('amount')).order_by('source')
         return Response(income_list)
+    
+    @action(detail=False, methods=['get'])
+    def monthly_summary(self, request):
+        monthly_data = Income.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
+        return Response(monthly_data)
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     queryset = ExpenseCategory.objects.all()
@@ -46,10 +53,6 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        """
-        Optionally restricts the returned expenses to a given category,
-        by filtering against a `category_name` query parameter in the URL.
-        """
         queryset = Expense.objects.all()
         category_name = self.request.query_params.get('category_name', None)
         if category_name is not None:
