@@ -28,6 +28,11 @@ class IncomeViewSet(viewsets.ModelViewSet):
             except IncomeSource.DoesNotExist:
                 queryset = Income.objects.none() 
         return queryset
+    
+    @action(detail=False, methods=['get'])
+    def summary_by_source(self, request):
+        income_list = Income.objects.values('source__name').annotate(total_amount=models.Sum('amount')).order_by('source')
+        return Response(income_list)
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     queryset = ExpenseCategory.objects.all()
