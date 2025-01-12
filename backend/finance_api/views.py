@@ -18,6 +18,16 @@ class IncomeViewSet(viewsets.ModelViewSet):
     serializer_class = IncomeSerializer
     permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        queryset = Income.objects.all()
+        income_name = self.request.query_params.get('income_name', None)
+        if income_name is not None:
+            try:
+                source = IncomeSource.objects.get(name=income_name)
+                queryset = queryset.filter(source=source)
+            except IncomeSource.DoesNotExist:
+                queryset = Income.objects.none() 
+        return queryset
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     queryset = ExpenseCategory.objects.all()
