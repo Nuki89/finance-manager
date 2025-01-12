@@ -5,9 +5,13 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
+from .pdf_utils import generate_incomes_pdf
 
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
+from django.http import HttpResponse
+
+from reportlab.pdfgen import canvas
 
 
 class IncomeSourceViewSet(viewsets.ModelViewSet):
@@ -48,6 +52,11 @@ class IncomeViewSet(viewsets.ModelViewSet):
             month=TruncMonth('date')).values('month', 'source__name').annotate(
             total_amount=Sum('amount')).order_by('month', 'source__name')
         return Response(monthly_source_data)
+
+    @action(detail=False, methods=['get'])
+    def export_incomes_pdf(self, request):
+        incomes = Income.objects.all()
+        return generate_incomes_pdf(incomes)
 
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
