@@ -53,10 +53,10 @@ class IncomeViewSet(viewsets.ModelViewSet):
             total_amount=Sum('amount')).order_by('month', 'source__name')
         return Response(monthly_source_data)
 
-    @action(detail=False, methods=['get'])
-    def export_incomes_pdf(self, request):
-        incomes = Income.objects.all()
-        return generate_incomes_pdf(incomes)
+    # @action(detail=False, methods=['get'])
+    # def export_incomes_pdf(self, request):
+    #     incomes = Income.objects.all()
+    #     return generate_incomes_pdf(incomes)
 
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
@@ -97,3 +97,51 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             month=TruncMonth('date')).values('month', 'category__name').annotate(
             total_amount=Sum('amount')).order_by('month', 'category__name')
         return Response(monthly_category_data)
+
+
+class ExportingViewSet(viewsets.ViewSet):
+    permission_classes = [AllowAny]
+
+    @action(detail=False, methods=['get'])
+    def export_incomes_pdf(self, request):
+        incomes = Income.objects.all()
+        return generate_incomes_pdf(incomes)
+
+    def list(self, request):
+        url = request.build_absolute_uri('/exporting/export_incomes_pdf/')
+        return Response({
+            'message': 'Welcome to the Finance API exporting dashboard!',
+            'endpoints': {
+                'export-incomes-pdf': url,
+            }
+        })
+
+    # def list(self, request):
+    #     return Response({
+    #         'message': 'Welcome to the Finance API exporting dashboard!',
+    #         'endpoints': {
+    #             'export-incomes-pdf': '/exporting/export_incomes_pdf/',
+    #         }
+    #     })
+    
+
+class DashboardView(viewsets.ViewSet):
+    permission_classes = [AllowAny]
+
+    def list(self, request):
+        return Response({
+            'message': 'Welcome to the Finance API dashboard!',
+            # 'endpoints': {
+            #     'income-sources': '/income-sources/',
+            #     'incomes': '/incomes/',
+            #     'expense-categories': '/expense-categories/',
+            #     'expenses': '/expenses/',
+            #     'incomes-summary-by-source': '/incomes/summary_by_source/',
+            #     'incomes-monthly-summary': '/incomes/monthly_summary/',
+            #     'incomes-monthly-source-summary': '/incomes/monthly_source_summary/',
+            #     'expenses-summary-by-category': '/expenses/summary_by_category/',
+            #     'expenses-monthly-summary': '/expenses/monthly_summary/',
+            #     'expenses-monthly-category-summary': '/expenses/monthly_category_summary/',
+            #     'export-incomes-pdf': '/dashboard/export_incomes_pdf/',
+            # }
+        })

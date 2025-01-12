@@ -17,6 +17,8 @@ router.register(r'income-sources', IncomeSourceViewSet)
 router.register(r'incomes', IncomeViewSet)
 router.register(r'expense-categories', ExpenseCategoryViewSet)
 router.register(r'expenses', ExpenseViewSet)
+router.register(r'exporting-pdf', views.ExportingViewSet, basename='exporting')
+# router.register(r'dashboard', DashboardView, basename='dashboard')
 
 
 urlpatterns = [
