@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.decorators import action
+from rest_framework.response import Response
 from .models import *
 from .serializers import *
 
@@ -43,3 +45,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
                 queryset = Expense.objects.none() 
         return queryset
     
+    @action(detail=False, methods=['get'])
+    def summary_by_category(self, request):
+        expense_list = Expense.objects.values('category__name').annotate(total_amount=models.Sum('amount')).order_by('category')
+        return Response(expense_list)
