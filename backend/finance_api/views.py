@@ -5,7 +5,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
-from .pdf_utils import generate_incomes_pdf
+from .pdf_utils import generate_incomes_pdf, generate_expenses_pdf
 
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
@@ -106,14 +106,15 @@ class ExportingViewSet(viewsets.ViewSet):
     def download_income_summary_pdf(self, request):
         incomes = Income.objects.all()
         return generate_incomes_pdf(incomes)
+    
+    @action(detail=False, methods=['get'])
+    def download_expense_summary_pdf(self, request):
+        expenses = Expense.objects.all()
+        return generate_expenses_pdf(expenses)
 
     def list(self, request):
-        url = request.build_absolute_uri('/exporting/export_incomes_pdf/')
         return Response({
             'message': 'Welcome to the Finance API exporting dashboard!',
-            'endpoints': {
-                'export-incomes-pdf': url,
-            }
         })
 
     # def list(self, request):
