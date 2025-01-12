@@ -5,13 +5,10 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
-from .pdf_utils import generate_incomes_pdf, generate_expenses_pdf
+from .pdf_utils import *
 
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
-from django.http import HttpResponse
-
-from reportlab.pdfgen import canvas
 
 
 class IncomeSourceViewSet(viewsets.ModelViewSet):
@@ -24,6 +21,14 @@ class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer
     permission_classes = [AllowAny]
+
+    def get_view_name(self):
+        if hasattr(self, 'action'):
+            if self.action == 'list':
+                return "List of Incomes"
+            elif self.action == 'retrieve':
+                return "Detail of Income"
+        return super(IncomeViewSet, self).get_view_name()
 
     def get_queryset(self):
         queryset = Income.objects.all()
@@ -69,6 +74,14 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
     permission_classes = [AllowAny]
+
+    def get_view_name(self):
+        if hasattr(self, 'action'):
+            if self.action == 'list':
+                return "List of Expenses"
+            elif self.action == 'retrieve':
+                return "Detail of Expense"
+        return super(ExpenseViewSet, self).get_view_name()
 
     def get_queryset(self):
         queryset = Expense.objects.all()
@@ -116,14 +129,6 @@ class ExportingViewSet(viewsets.ViewSet):
         return Response({
             'message': 'Welcome to the Finance API exporting dashboard!',
         })
-
-    # def list(self, request):
-    #     return Response({
-    #         'message': 'Welcome to the Finance API exporting dashboard!',
-    #         'endpoints': {
-    #             'export-incomes-pdf': '/exporting/export_incomes_pdf/',
-    #         }
-    #     })
     
 
 class DashboardView(viewsets.ViewSet):
