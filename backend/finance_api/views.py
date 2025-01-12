@@ -81,3 +81,10 @@ class ExpenseViewSet(viewsets.ModelViewSet):
     def monthly_summary(self, request):
         monthly_data = Expense.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
         return Response(monthly_data)
+    
+    @action(detail=False, methods=['get'])
+    def monthly_category_summary(self, request):
+        monthly_category_data = Expense.objects.annotate(
+            month=TruncMonth('date')).values('month', 'category__name').annotate(
+            total_amount=Sum('amount')).order_by('month', 'category__name')
+        return Response(monthly_category_data)
