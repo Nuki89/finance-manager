@@ -103,7 +103,7 @@ class ExportingViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
 
     @action(detail=False, methods=['get'])
-    def export_incomes_pdf(self, request):
+    def download_income_summary_pdf(self, request):
         incomes = Income.objects.all()
         return generate_incomes_pdf(incomes)
 
