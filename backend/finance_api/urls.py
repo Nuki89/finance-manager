@@ -18,6 +18,7 @@ router.register(r'incomes', IncomeViewSet)
 router.register(r'expense-categories', ExpenseCategoryViewSet)
 router.register(r'expenses', ExpenseViewSet)
 router.register(r'exporting-pdf', views.ExportingViewSet, basename='exporting')
+router.register(r'balance', BalanceViewSet, basename='balance')
 # router.register(r'dashboard', DashboardView, basename='dashboard')
 
 
