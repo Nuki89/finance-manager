@@ -151,3 +151,17 @@ class DashboardView(viewsets.ViewSet):
             #     'export-incomes-pdf': '/dashboard/export_incomes_pdf/',
             # }
         })
+    
+
+class BalanceViewSet(viewsets.ViewSet):
+    permission_classes = [AllowAny]
+    queryset = Balance.objects.all()
+    serializer_class = BalanceSerializer
+
+    def list(self, request):
+        balance_record = Balance.objects.first()
+        if balance_record:
+            return Response({'current_balance': balance_record.balance})
+        else:
+            balance_record = Balance.objects.create(balance=0.00)
+            return Response({'current_balance': balance_record.balance})
