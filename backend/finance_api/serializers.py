@@ -15,7 +15,7 @@ class IncomeSerializer(serializers.HyperlinkedModelSerializer):
     source = serializers.PrimaryKeyRelatedField(queryset=IncomeSource.objects.all())
     source_data = IncomeSourceSerializer(source='source', read_only=True)
 
-    date = serializers.DateField(format='%d-%m-%Y')
+    # date = serializers.DateField(format='%d-%m-%Y')
 
     class Meta:
         model = Income
@@ -36,8 +36,16 @@ class ExpenseSerializer(serializers.HyperlinkedModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=ExpenseCategory.objects.all())
     category_data = ExpenseCategorySerializer(source='category', read_only=True)
 
-    date = serializers.DateField(format='%d-%m-%Y')
+    # date = serializers.DateField(format='%d-%m-%Y')
 
     class Meta:
         model = Expense
+        fields = '__all__'
+
+
+class BalanceSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Balance
         fields = '__all__'
