@@ -17,6 +17,7 @@ class Income(models.Model):
     source = models.ForeignKey(IncomeSource, on_delete=models.DO_NOTHING)
     date = models.DateField(default=get_current_date)
     description = models.TextField(null=True, blank=True)
+    balance_after = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, null=True, blank=True)  
     
     class Meta:
         db_table = 'incomes'
@@ -40,6 +41,7 @@ class Expense(models.Model):
     category = models.ForeignKey(ExpenseCategory, on_delete=models.DO_NOTHING)
     date = models.DateField(default=get_current_date)
     description = models.TextField(null=True, blank=True)
+    balance_after = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, null=True, blank=True)
     
     class Meta:
         db_table = 'expenses'
