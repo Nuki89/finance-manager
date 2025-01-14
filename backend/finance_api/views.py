@@ -125,6 +125,20 @@ class ExportingViewSet(viewsets.ViewSet):
         expenses = Expense.objects.all()
         return generate_expenses_pdf(expenses)
 
+    @action(detail=False, methods=['get'])
+    def download_summary_pdf(self, request):
+        incomes = Income.objects.all()
+        expenses = Expense.objects.all()
+        entries = [
+            {'date': income.date, 'type': 'income', 'source': income.source.name, 'amount': income.amount, 'description': income.description}
+            for income in incomes
+        ] + [
+            {'date': expense.date, 'type': 'expense', 'category': expense.category.name, 'amount': expense.amount, 'description': expense.description}
+            for expense in expenses
+        ]
+        return generate_summary_pdf(entries)
+
+
     def list(self, request):
         return Response({
             'message': 'Welcome to the Finance API exporting dashboard!',
