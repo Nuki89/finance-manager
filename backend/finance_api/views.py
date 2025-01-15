@@ -130,10 +130,10 @@ class ExportingViewSet(viewsets.ViewSet):
         incomes = Income.objects.all()
         expenses = Expense.objects.all()
         entries = [
-            {'date': income.date, 'type': 'income', 'source': income.source.name, 'amount': income.amount, 'description': income.description}
+            {'date': income.date, 'type': 'income', 'source': income.source.name, 'balance_after': income.balance_after, 'amount': income.amount, 'description': income.description}
             for income in incomes
         ] + [
-            {'date': expense.date, 'type': 'expense', 'category': expense.category.name, 'amount': expense.amount, 'description': expense.description}
+            {'date': expense.date, 'type': 'expense', 'category': expense.category.name, 'balance_after': expense.balance_after, 'amount': expense.amount, 'description': expense.description}
             for expense in expenses
         ]
         return generate_summary_pdf(entries)
