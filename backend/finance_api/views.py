@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from rest_framework import viewsets
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from .models import *
@@ -14,13 +14,13 @@ from django.db.models import Sum
 class IncomeSourceViewSet(viewsets.ModelViewSet):
     queryset = IncomeSource.objects.all()
     serializer_class = IncomeSourceSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_view_name(self):
         if hasattr(self, 'action'):
@@ -67,13 +67,13 @@ class IncomeViewSet(viewsets.ModelViewSet):
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     queryset = ExpenseCategory.objects.all()
     serializer_class = ExpenseCategorySerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
 
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_view_name(self):
         if hasattr(self, 'action'):
@@ -113,7 +113,7 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 
 
 class ExportingViewSet(viewsets.ViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['get'])
     def download_income_summary_pdf(self, request):
@@ -146,7 +146,7 @@ class ExportingViewSet(viewsets.ViewSet):
     
 
 class DashboardView(viewsets.ViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
         return Response({
@@ -168,7 +168,7 @@ class DashboardView(viewsets.ViewSet):
     
 
 class BalanceViewSet(viewsets.ViewSet):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
     queryset = Balance.objects.all()
     serializer_class = BalanceSerializer
 
