@@ -175,7 +175,12 @@ class BalanceViewSet(viewsets.ViewSet):
     def list(self, request):
         balance_record = Balance.objects.first()
         if balance_record:
-            return Response({'current_balance': balance_record.balance})
+            return Response({
+                'current_balance': balance_record.balance, 
+                'last_updated': balance_record.last_updated
+                })
         else:
             balance_record = Balance.objects.create(balance=0.00)
-            return Response({'current_balance': balance_record.balance})
+            return Response({
+                'current_balance': balance_record.balance
+                })
