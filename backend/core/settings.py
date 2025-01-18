@@ -151,3 +151,48 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
     'JWT_VERIFY_EXPIRATION': True,
 }
+
+LOGGING = {  
+    'version': 1,  
+    'disable_existing_loggers': False,  
+    'formatters': {  
+        'verbose': {  
+            'format': '{levelname} {asctime} {module} {message}',  
+            'style': '{',  
+        },  
+        'simple': {  
+            'format': '{levelname} {message}',  
+            'style': '{',  
+        },  
+    },  
+    'handlers': {  
+        'console': {  
+            'level': 'DEBUG',  
+            'class': 'logging.StreamHandler',  
+            'formatter': 'simple',  
+        },  
+        'file': {  
+            'level': 'ERROR',  
+            'class': 'logging.FileHandler',  
+            'filename': 'error.log',  
+            'formatter': 'verbose',  
+        },  
+    },  
+    'loggers': {  
+        'django': {  
+            'handlers': ['console'],  
+            'level': 'INFO',  
+            'propagate': True,  
+        },  
+        'django.server': {  
+            'handlers': ['console'],  
+            'level': 'ERROR',  
+            'propagate': False,  
+        },  
+        'finance_api': {  
+            'handlers': ['file'],  
+            'level': 'ERROR',  
+            'propagate': False,  
+        },  
+    },  
+}
