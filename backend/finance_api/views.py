@@ -204,7 +204,3 @@ class BalanceViewSet(viewsets.ViewSet):
             return Response({
                 'current_balance': balance_record.balance
                 })
-        
-
-
-#SAVINGS!!!
