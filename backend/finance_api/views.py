@@ -112,6 +112,26 @@ class ExpenseViewSet(viewsets.ModelViewSet):
         return Response(monthly_category_data)
 
 
+class SavingCategoryViewSet(viewsets.ModelViewSet):
+    queryset = SavingCategory.objects.all()
+    serializer_class = SavingCategorySerializer
+    permission_classes = [IsAuthenticated]
+
+
+class SavingViewSet(viewsets.ModelViewSet):
+    queryset = Saving.objects.all()
+    serializer_class = SavingSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_view_name(self):
+        if hasattr(self, 'action'):
+            if self.action == 'list':
+                return "List of Savings"
+            elif self.action == 'retrieve':
+                return "Detail of Saving"
+        return super(SavingViewSet, self).get_view_name()
+
+
 class ExportingViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
 
@@ -184,3 +204,7 @@ class BalanceViewSet(viewsets.ViewSet):
             return Response({
                 'current_balance': balance_record.balance
                 })
+        
+
+
+#SAVINGS!!!
