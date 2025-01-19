@@ -50,6 +50,29 @@ class Expense(models.Model):
         return f'{self.amount} for {self.category.name} on {self.date}'
     
 
+class SavingCategory(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+
+    class Meta:
+        db_table = 'saving_categories'
+
+    def __str__(self):
+        return self.name
+    
+
+class Saving(models.Model):
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    category = models.ForeignKey(SavingCategory, on_delete=models.DO_NOTHING)
+    date = models.DateField(default=get_current_date)
+    description = models.TextField(null=True, blank=True)
+
+    class Meta:
+        db_table = 'savings'
+
+    def __str__(self):
+        return f'{self.amount} for {self.category.name} on {self.date}'
+
+
 class Balance(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     last_updated = models.DateTimeField(auto_now=True)
