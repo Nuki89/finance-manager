@@ -154,14 +154,20 @@ class ExportingViewSet(viewsets.ViewSet):
     def download_summary_pdf(self, request):
         incomes = Income.objects.all()
         expenses = Expense.objects.all()
+        balances = Balance.objects.all()
         entries = [
             {'date': income.date, 'type': 'income', 'source': income.source.name, 'balance_after': income.balance_after, 'amount': income.amount, 'description': income.description}
             for income in incomes
         ] + [
             {'date': expense.date, 'type': 'expense', 'category': expense.category.name, 'balance_after': expense.balance_after, 'amount': expense.amount, 'description': expense.description}
             for expense in expenses
+        ] 
+        balance_data = [
+            {'total_balance': balance.balance, 'total_savings': balance.total_savings, 'last_updated': balance.last_updated} 
+            for balance in balances
         ]
-        return generate_summary_pdf(entries)
+
+        return generate_summary_pdf(entries, balance_data)
 
 
     def list(self, request):
@@ -196,20 +202,6 @@ class BalanceViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
     queryset = Balance.objects.all()
     serializer_class = BalanceSerializer
-
-    # def list(self, request):
-    #     balance_record = Balance.objects.first()
-    #     if balance_record:
-    #         return Response({
-    #             'current_balance': balance_record.balance, 
-    #             'last_updated': balance_record.last_updated
-    #             })
-    #     else:
-    #         balance_record = Balance.objects.create(balance=0.00)
-    #         return Response({
-    #             'current_balance': balance_record.balance
-    #             })
-
 
     def list(self, request):
         balance_record = Balance.objects.first()

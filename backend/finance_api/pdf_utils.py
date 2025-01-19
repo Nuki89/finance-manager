@@ -165,7 +165,7 @@ def draw_headers(p, y, width, type):
     return y
 
 
-def generate_summary_pdf(entries):
+def generate_summary_pdf(entries, balance_data):
     filename = random_filename()
     response = HttpResponse(content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
@@ -173,29 +173,51 @@ def generate_summary_pdf(entries):
     p.setTitle("Financial Summary")
     
     width, height = letter
-    p.setFont('Helvetica-Bold', 14)
-    p.setFillColor(colors.darkblue)
-    p.drawCentredString(width / 2.0, height - 50, "Financial Summary")
-
-    current_date = datetime.now().strftime('%d.%m.%Y')
-    p.setFont('Helvetica', 10)
-    p.setFillColor(colors.grey)
-    p.drawString(440, height - 80, f"Date of extract: {current_date}")
-
+    p.setFont('Helvetica-Bold', 12)
     p.setFillColor(colors.black)
-    y = height - 80
-    
+    p.drawString(50, height - 30, "Financial Summary")
+
+    y = height - 60
+
+    # DATE
+    current_date = datetime.now().strftime('%d.%m.%Y')
+    p.setFont('Helvetica', 9)
+    p.setFillColor(colors.grey)
+    p.drawString(450, y, f"Date of extract: {current_date}")
+
+    # CURRENCY
+    p.setFillColor(colors.black)
     p.setFont('Helvetica-Bold', 10)
     p.drawString(50, y, 'CURRENCY: EUR')
-    p.line(50, y - 4, width - 50, y - 4)
 
+    # p.line(50, y - 4, width - 50, y - 4)
+    y = height - 80
+
+    p.setFont('Helvetica-Bold', 9)
+    for entry in balance_data:
+        if y < 100:
+            p.showPage()
+            y = height - 100
+            
+        total_balance = "{:,.2f} €".format(entry['total_balance'])
+        total_savings = "{:,.2f} €".format(entry['total_savings'])
+        available_balance = "{:,.2f} €".format(entry['total_balance'] - entry['total_savings'])
+
+        # TOTAL DATA
+        p.drawString(50, y, 'Total Balance: ' + total_balance)
+        p.drawString(220, y, '|')  
+        p.drawString(240, y, 'Total Savings: ' + total_savings)
+        p.drawString(400, y, '|')  
+        p.drawString(420, y, 'Available Balance: ' + available_balance)
+
+    # LINE BETWEEN TOTAl DATA AND HEADER DATA
+    p.line(50, y - 4, width - 50, y - 4)
     p.setFillColor(colors.black)
     y = height - 100
 
     entries = sorted(entries, key=lambda x: x['date'])
 
     y = draw_headers(p, y, width, "All Entries")
-
     p.setFont('Helvetica', 8)
 
     for entry in entries:
@@ -209,7 +231,7 @@ def generate_summary_pdf(entries):
         entry_type = "Income" if entry['type'] == "income" else "Expense"
         category_source = entry['source'] if entry['type'] == "income" else entry['category']
         description = entry['description'] if entry['description'].strip() else "No description"
-
+        
         p.drawString(50, y, formatted_date)
         p.drawString(120, y, entry_type)
         p.drawString(180, y, str(category_source))
