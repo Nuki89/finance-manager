@@ -25,6 +25,7 @@ class IncomeSourceViewSet(viewsets.ModelViewSet):
             })
         return super().destroy(request, *args, **kwargs)
 
+
 class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer
