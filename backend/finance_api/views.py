@@ -197,15 +197,44 @@ class BalanceViewSet(viewsets.ViewSet):
     queryset = Balance.objects.all()
     serializer_class = BalanceSerializer
 
+    # def list(self, request):
+    #     balance_record = Balance.objects.first()
+    #     if balance_record:
+    #         return Response({
+    #             'current_balance': balance_record.balance, 
+    #             'last_updated': balance_record.last_updated
+    #             })
+    #     else:
+    #         balance_record = Balance.objects.create(balance=0.00)
+    #         return Response({
+    #             'current_balance': balance_record.balance
+    #             })
+
+
     def list(self, request):
         balance_record = Balance.objects.first()
+
         if balance_record:
+            if balance_record.total_savings == 0.0:
+                total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
+                balance_record.total_savings = total_savings
+                balance_record.save()
+            else:
+                total_savings = balance_record.total_savings
+
+            available_balance = balance_record.balance - total_savings
             return Response({
-                'current_balance': balance_record.balance, 
+                'total_balance': balance_record.balance,
+                'total_savings': total_savings,
+                'available_balance': available_balance,
                 'last_updated': balance_record.last_updated
-                })
+            })
         else:
             balance_record = Balance.objects.create(balance=0.00)
+            total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
             return Response({
-                'current_balance': balance_record.balance
-                })
+                'total_balance': balance_record.balance,
+                'total_savings': total_savings,
+                'available_balance': balance_record.balance,
+                'last_updated': balance_record.last_updated
+            })
