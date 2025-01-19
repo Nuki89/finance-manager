@@ -43,6 +43,25 @@ class ExpenseSerializer(serializers.HyperlinkedModelSerializer):
         fields = '__all__'
 
 
+class SavingCategorySerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = SavingCategory
+        fields = '__all__'
+
+
+class SavingSerializer(serializers.HyperlinkedModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+
+    category = serializers.PrimaryKeyRelatedField(queryset=SavingCategory.objects.all())
+    category_data = SavingCategorySerializer(source='category', read_only=True)
+
+    class Meta:
+        model = Saving
+        fields = '__all__'
+
+
 class BalanceSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
 
