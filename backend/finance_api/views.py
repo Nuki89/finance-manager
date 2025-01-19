@@ -131,6 +131,11 @@ class SavingViewSet(viewsets.ModelViewSet):
                 return "Detail of Saving"
         return super(SavingViewSet, self).get_view_name()
 
+    @action(detail=False, methods=['get'])
+    def summary_by_category(self, request):
+        saving_list = Saving.objects.values('category__name').annotate(total_amount=models.Sum('amount')).order_by('category')
+        return Response(saving_list)
+
 
 class ExportingViewSet(viewsets.ViewSet):
     permission_classes = [IsAuthenticated]
