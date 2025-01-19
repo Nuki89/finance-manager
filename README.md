@@ -30,24 +30,30 @@ python manage.py runserver
 ### Frontend (Angular)
 > [!IMPORTANT]
 > Install npm and Angular CLI before installing dependencies.
+1. Install npm and Angular CLI
 ```bash
 sudo apt install npm
 sudo npm install -g @angular/cli@18
 ```
-1. **Install Angular Dependencies:**
+2. Install dependencies
 Before installing dependencies remove existing modules and than reinstall them (if needed). 
 If you already had npm installed first run this command: `rm -rf node_modules`
 ```bash
 npm i
 ```
+3. Check for vulnerabilities
 After that use this code, to automaticly upgrade / fix vulnerabilities in npm packages
 ```bash
 npm audit fix
 ```
-2. **Start angular server:**
+4. Start the server
 ```bash
 cd frontend
 ng s -o
+```
+5. Testing
+```bash
+ng test
 ```
 
 ## Localhost
