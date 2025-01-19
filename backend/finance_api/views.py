@@ -3,6 +3,7 @@ from rest_framework import viewsets
 from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from .models import *
 from .serializers import *
 from .pdf_utils import *
@@ -16,6 +17,13 @@ class IncomeSourceViewSet(viewsets.ModelViewSet):
     serializer_class = IncomeSourceSerializer
     permission_classes = [IsAuthenticated]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.income_set.exists():
+            raise ValidationError({
+                "detail": "Cannot delete this source because it has associated incomes. Please delete all related incomes first."
+            })
+        return super().destroy(request, *args, **kwargs)
 
 class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all()
@@ -69,6 +77,14 @@ class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     serializer_class = ExpenseCategorySerializer
     permission_classes = [IsAuthenticated]
 
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.expense_set.exists():
+            raise ValidationError({
+                "detail": "Cannot delete this category because it has associated expenses. Please delete all related expenses first."
+            })
+        return super().destroy(request, *args, **kwargs)
+    
 
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
@@ -116,6 +132,14 @@ class SavingCategoryViewSet(viewsets.ModelViewSet):
     queryset = SavingCategory.objects.all()
     serializer_class = SavingCategorySerializer
     permission_classes = [IsAuthenticated]
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if instance.saving_set.exists():
+            raise ValidationError({
+                "detail": "Cannot delete this category because it has associated savings. Please delete all related savings first."
+            })
+        return super().destroy(request, *args, **kwargs)
 
 
 class SavingViewSet(viewsets.ModelViewSet):
