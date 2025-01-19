@@ -35,6 +35,7 @@ def update_balance_after_saving(sender, instance, created, **kwargs):
             if instance.amount > balance_record.balance:
                 raise ValueError("Insufficient balance")
             balance_record.balance -= instance.amount
+            balance_record.total_savings += instance.amount
             balance_record.save()
 
 @receiver(post_delete, sender=Income)
@@ -56,4 +57,5 @@ def handle_delete_saving(sender, instance, **kwargs):
     with transaction.atomic():
         balance_record = get_or_create_balance()
         balance_record.balance += instance.amount
+        balance_record.total_savings -= instance.amount
         balance_record.save()
