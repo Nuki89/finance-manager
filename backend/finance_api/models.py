@@ -75,6 +75,7 @@ class Saving(models.Model):
 
 class Balance(models.Model):
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    total_savings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     last_updated = models.DateTimeField(auto_now=True)
     
     class Meta:
