@@ -15,7 +15,8 @@ from django.db.models import Sum
 class IncomeSourceViewSet(viewsets.ModelViewSet):
     queryset = IncomeSource.objects.all()
     serializer_class = IncomeSourceSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -29,7 +30,8 @@ class IncomeSourceViewSet(viewsets.ModelViewSet):
 class IncomeViewSet(viewsets.ModelViewSet):
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_view_name(self):
         if hasattr(self, 'action'):
@@ -67,16 +69,12 @@ class IncomeViewSet(viewsets.ModelViewSet):
             total_amount=Sum('amount')).order_by('month', 'source__name')
         return Response(monthly_source_data)
 
-    # @action(detail=False, methods=['get'])
-    # def export_incomes_pdf(self, request):
-    #     incomes = Income.objects.all()
-    #     return generate_incomes_pdf(incomes)
-
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     queryset = ExpenseCategory.objects.all()
     serializer_class = ExpenseCategorySerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -90,7 +88,8 @@ class ExpenseCategoryViewSet(viewsets.ModelViewSet):
 class ExpenseViewSet(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_view_name(self):
         if hasattr(self, 'action'):
@@ -132,7 +131,8 @@ class ExpenseViewSet(viewsets.ModelViewSet):
 class SavingCategoryViewSet(viewsets.ModelViewSet):
     queryset = SavingCategory.objects.all()
     serializer_class = SavingCategorySerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -146,7 +146,8 @@ class SavingCategoryViewSet(viewsets.ModelViewSet):
 class SavingViewSet(viewsets.ModelViewSet):
     queryset = Saving.objects.all()
     serializer_class = SavingSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_view_name(self):
         if hasattr(self, 'action'):
@@ -163,7 +164,8 @@ class SavingViewSet(viewsets.ModelViewSet):
 
 
 class ExportingViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     @action(detail=False, methods=['get'])
     def download_income_summary_pdf(self, request):
@@ -202,7 +204,8 @@ class ExportingViewSet(viewsets.ViewSet):
     
 
 class DashboardView(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def list(self, request):
         return Response({
@@ -224,9 +227,10 @@ class DashboardView(viewsets.ViewSet):
     
 
 class BalanceViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
     queryset = Balance.objects.all()
     serializer_class = BalanceSerializer
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def list(self, request):
         balance_record = Balance.objects.first()
