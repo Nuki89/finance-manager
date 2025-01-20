@@ -7,17 +7,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  template: `
-    <form (ngSubmit)="onSubmit()">
-      <label for="username">Username:</label>
-      <input type="text" [(ngModel)]="username" name="username" required />
-
-      <label for="password">Password:</label>
-      <input type="password" [(ngModel)]="password" name="password" required />
-
-      <button type="submit">Login</button>
-    </form>
-  `
+  templateUrl: './login.component.html',
 })
 export class LoginComponent {
   username = '';
