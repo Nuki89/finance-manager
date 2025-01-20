@@ -18,7 +18,7 @@ export class IncomesComponent {
   ngOnInit() {
     this.incomeService.getIncome().subscribe((data: any) => {
       this.incomes = data
-      console.log(this.incomes)
+      console.log("Incomes: ", this.incomes)
     })
   }
 }
