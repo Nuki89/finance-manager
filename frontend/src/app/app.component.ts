@@ -18,13 +18,14 @@ export class AppComponent implements OnInit {
   constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.loading = true;
-    if (this.authService.isLoggedIn()) {
-      this.router.navigate(['home']);
-    } else {
-      this.router.navigate(['/login']);
-    }
-    this.loading = false;
+    // REMOVED SO NOW STAYS ON THE SAME PAGE WHEN RELOADED
+    // this.loading = true;
+    // if (this.authService.isLoggedIn()) {
+    //   this.router.navigate(['home']);
+    // } else {
+    //   this.router.navigate(['/login']);
+    // }
+    // this.loading = false;
   }
 
   // ngOnInit(): void {
