@@ -11,6 +11,7 @@ import { RouterModule } from '@angular/router';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
+  title: string = "Financko";
   firstName: string = 'Nuki';
   lastName: string = 'Pipika';
   email: string = 'nuki@gmail.com';
