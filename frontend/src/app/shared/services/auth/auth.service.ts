@@ -32,9 +32,9 @@ export class AuthService {
     if (this.isAuthenticated) {
       return true;
     }
-    if (!this.isBrowser()) {
-      return false; 
-    }
+    // if (!this.isBrowser()) {
+    //   return false; 
+    // }
     const token = sessionStorage.getItem(this.tokenKey);
     this.isAuthenticated = !!token;
     return this.isAuthenticated;
