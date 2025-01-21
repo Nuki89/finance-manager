@@ -27,5 +27,26 @@ export class AppComponent implements OnInit {
     }
     this.loading = false;
   }
+
+  // ngOnInit(): void {
+  //   this.loading = true;
+  
+  //   if (this.authService.isLoggedIn()) {
+  //     this.router.navigate(['home']).then(() => {
+  //       this.loading = false; 
+  //     });
+  //   } else {
+  //     this.router.navigate(['/login']).then(() => {
+  //       this.loading = false; 
+  //     });
+  //   }
+
+  //   if (typeof window !== 'undefined') {
+  //     import('flowbite').then(({ initFlowbite }) => {
+  //       initFlowbite();
+  //     });
+  //   }
+
+  // }
   
 }
