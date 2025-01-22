@@ -10,6 +10,7 @@ import { authGuard } from './shared/services/auth/auth.guard';
 import { IncomesComponent } from './routes/transactions/incomes/incomes.component';
 import { ExpensesComponent } from './routes/transactions/expenses/expenses.component';
 import { SavingsComponent } from './routes/transactions/savings/savings.component';
+import { ReportsComponent } from './routes/transactions/reports/reports.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,7 @@ export const routes: Routes = [
       { path: 'incomes', component: IncomesComponent },
       { path: 'expenses', component: ExpensesComponent },
       { path: 'savings', component: SavingsComponent },
+      { path: 'reports', component: ReportsComponent },
     ],
   },
   {
