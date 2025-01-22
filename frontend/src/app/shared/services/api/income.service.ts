@@ -14,4 +14,20 @@ export class IncomeService {
     return this.http.get(this.apiUrlListIncome)
   }
 
+  addIncome(payload: any) {
+    return this.http.post(this.apiUrlListIncome, payload)
+  }
+
+  deleteIncome(id: number) {
+    return this.http.delete(`${this.apiUrlListIncome}/${id}`)
+  }
+
+  updateIncome(id: number, payload: any) {
+    return this.http.put(`${this.apiUrlListIncome}/${id}`, payload)
+  }
+
+  getIncomeSource() {
+    return this.http.get(apiEndpoints.apiUrlListIncomeSources)
+  }
+
 }
