@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IncomeService } from '../../../shared/services/api/income.service';
+import { IncomeTableComponent } from "./income-table/income-table.component";
 
 @Component({
   selector: 'app-incomes',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, IncomeTableComponent],
   templateUrl: './incomes.component.html',
   styleUrls: ['./incomes.component.css']
 })
