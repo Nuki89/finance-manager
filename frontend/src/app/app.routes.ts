@@ -1,34 +1,39 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { MainLayoutComponent } from './core/layout/main-layout/main-layout.component';
+import { AuthLayoutComponent } from './core/layout/auth-layout/auth-layout.component';
 import { HomeComponent } from './routes/home/home.component';
 import { LoginComponent } from './routes/auth/login/login.component';
-import { authGuard } from './shared/services/auth/auth.guard';
-import { IncomesComponent } from './routes/transactions/incomes/incomes.component';
 import { RegisterComponent } from './routes/auth/register/register.component';
 import { ProfileComponent } from './routes/auth/profile/profile.component';
+import { authGuard } from './shared/services/auth/auth.guard';
+import { IncomesComponent } from './routes/transactions/incomes/incomes.component';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'home', pathMatch: 'full' },
-    { path: 'login', component: LoginComponent },
-    { path: 'register', component: RegisterComponent },
-    { path: 'profile', component: ProfileComponent },
-    {
-      path: 'home',
-      component: HomeComponent,
-      canActivate: [authGuard],
-    },
-    {
-      path: 'incomes',
-      component: IncomesComponent,
-      canActivate: [authGuard]
-    },
+  {
+    path: '',
+    component: MainLayoutComponent,
+    canActivate: [authGuard],
+    children: [
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: 'home', component: HomeComponent },
+      { path: 'profile', component: ProfileComponent },
+      { path: 'incomes', component: IncomesComponent },
+    ],
+  },
+  {
+    path: '',
+    component: AuthLayoutComponent,
+    children: [
+      { path: 'login', component: LoginComponent },
+      { path: 'register', component: RegisterComponent },
+    ],
+  },
+  { path: '**', redirectTo: '/login' },
+];
 
-    { path: '**', redirectTo: '/login' },
-  ];
-  
-  @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
-  })
-  export class AppRoutingModule {}
-
+@NgModule({
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule],
+})
+export class AppRoutingModule {}
