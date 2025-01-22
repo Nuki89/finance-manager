@@ -13,8 +13,9 @@ import { IncomeFormComponent } from './income-form/income-form.component';
   styleUrls: ['./incomes.component.css']
 })
 export class IncomesComponent {
+  income_sources: any = []
   incomes: any = []
-
+  
   constructor(private incomeService: IncomeService) { }
 
   ngOnInit() {
@@ -22,5 +23,15 @@ export class IncomesComponent {
       this.incomes = data
       console.log("Incomes: ", this.incomes)
     })
+
+    this.incomeService.getIncomeSource().subscribe((data: any) => {
+      this.income_sources = data
+      console.log("Income sources: ", this.income_sources)
+    })
+
+  }
+
+  getIncomeSources() {
+    return this.income_sources || [];
   }
 }

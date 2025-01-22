@@ -1,1 +1,114 @@
-<p>income-form works!</p>
+<form (ngSubmit)="onAddIncome()" class="p-6 bg-gray-50 rounded-lg shadow">
+
+    <div class="mb-6">
+    <label for="source" class="block text-sm font-medium text-gray-700">Source</label>
+    <div class="flex items-center gap-2 mt-1">
+    
+        <select
+            id="source"
+            class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            [(ngModel)]="selectedSource"
+            name="source"
+            required>
+            <option *ngFor="let source of sources" [value]="source.id">
+            {{ source.name }}
+            </option>
+        </select>
+
+        <input
+            type="text"
+            class="p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+            [(ngModel)]="newSourceName"
+            name="newSourceName"
+            placeholder="New Source"/>
+        
+        <button
+            type="button"
+            class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
+            (click)="addNewSource()">
+            Add
+        </button>
+        </div>
+    </div>
+
+    <div class="mb-6">
+        <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+        <input
+        type="number"
+        id="amount"
+        class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        [(ngModel)]="amount"
+        name="amount"
+        placeholder="Enter amount"
+        required/>
+    </div>
+
+    <div class="mb-6">
+        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+        id="description"
+        class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        [(ngModel)]="description"
+        name="description"
+        placeholder="Enter description"
+        rows="3"></textarea>
+    </div>
+
+    <button
+        type="submit"
+        class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Add Income
+    </button>
+</form>
+
+
+<!-- 
+<form (ngSubmit)="onAddIncome()" class="p-4 bg-gray-100 rounded shadow-md">
+
+    <div class="mb-4">
+      <label for="source" class="block text-gray-700">Source</label>
+      <select
+        id="source"
+        class="w-full p-2 border rounded"
+        [(ngModel)]="selectedSource"
+        name="source"
+        required
+      >
+        <option *ngFor="let source of sources" [value]="source.id">
+          {{ source.name }}
+        </option>
+      </select>
+    </div>
+  
+    <div class="mb-4">
+      <label for="amount" class="block text-gray-700">Amount</label>
+      <input
+        type="number"
+        id="amount"
+        class="w-full p-2 border rounded"
+        [(ngModel)]="amount"
+        name="amount"
+        placeholder="Enter amount"
+        required
+      />
+    </div>
+  
+    <div class="mb-4">
+      <label for="description" class="block text-gray-700">Description</label>
+      <textarea
+        id="description"
+        class="w-full p-2 border rounded"
+        [(ngModel)]="description"
+        name="description"
+        placeholder="Enter description"
+      ></textarea>
+    </div>
+  
+    <button
+      type="submit"
+      class="px-4 py-2 text-white bg-blue-600 rounded hover:bg-blue-700"
+    >
+      Add Income
+    </button>
+  </form>
+   -->
