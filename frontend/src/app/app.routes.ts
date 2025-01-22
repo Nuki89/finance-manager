@@ -9,6 +9,7 @@ import { ProfileComponent } from './routes/auth/profile/profile.component';
 import { authGuard } from './shared/services/auth/auth.guard';
 import { IncomesComponent } from './routes/transactions/incomes/incomes.component';
 import { ExpensesComponent } from './routes/transactions/expenses/expenses.component';
+import { SavingsComponent } from './routes/transactions/savings/savings.component';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'incomes', component: IncomesComponent },
       { path: 'expenses', component: ExpensesComponent },
+      { path: 'savings', component: SavingsComponent },
     ],
   },
   {
