@@ -4,15 +4,13 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { AuthService } from './auth.service';
 import { authGuard } from './auth.guard';
 
-
-
 describe('AuthGuard', () => {
   let guard: authGuard;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule], // Import necessary modules
-      providers: [AuthService], // Provide AuthService
+      imports: [RouterTestingModule, HttpClientTestingModule], 
+      providers: [AuthService], 
     });
 
     guard = TestBed.inject(authGuard);
