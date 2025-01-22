@@ -59,6 +59,28 @@ export class IncomeFormComponent {
   }
 
   addNewSource() {
-    console.log('Add new source clicked');
+    if (!this.newSourceName) {
+      alert('Please enter a source name.');
+      return;
+    }
+
+    const payload = {
+      name: this.newSourceName,
+    };
+
+    console.log('Payload:', payload);
+
+    this.http.post(apiEndpoints.apiUrlListIncomeSources, payload).subscribe(
+      (data: any) => {
+        console.log('Backend Response:', data);
+        alert('Income source added successfully!');
+        this.newSourceName = '';
+      },
+      (error) => {
+        console.error('Error adding income source:', error);
+        alert('Failed to add income source. Please try again.');
+      }
+    );
+  
   }
 }
