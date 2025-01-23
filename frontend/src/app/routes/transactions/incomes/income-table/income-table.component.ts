@@ -23,6 +23,7 @@ export class IncomeTableComponent {
 
   // isBrowser: boolean;
   rowData: any[] = [];
+  incomeList: any[] = [];
   colDefs: ColDef[] = [
     { field: 'date', headerName: 'Date', valueFormatter: this.dateFormatter },
     {
@@ -53,12 +54,33 @@ export class IncomeTableComponent {
     {
       headerName: 'Actions',
       cellRenderer: (params: any) => {
-        return `
-          <button class="bg-blue-500 text-white px-3 rounded">Edit</button>
-          <button class="bg-red-500 text-white px-3 rounded ml-2">Delete</button>
-        `;
+        const id = params.data.id;
+        const div = document.createElement('div');
+        
+        const editButton = document.createElement('button');
+        editButton.className = 'bg-blue-500 text-white px-3 rounded';
+        editButton.innerText = 'Edit';
+        editButton.addEventListener('click', () => {
+          
+          console.log('Edit button clicked with ID:', id);
+          this.handleEdit(id);
+        });
+    
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'bg-red-500 text-white px-3 rounded ml-2';
+        deleteButton.innerText = 'Delete';
+        deleteButton.addEventListener('click', () => {
+          console.log('Delete button clicked with ID:', id);
+          this.handleDelete(id); 
+        });
+    
+        div.appendChild(editButton);
+        div.appendChild(deleteButton);
+    
+        return div;
       },
-    },
+    }
+    
   ];
 
   gridOptions: GridOptions = {
@@ -129,6 +151,27 @@ export class IncomeTableComponent {
   sizeColumnsToFit() {
     if (this.agGrid && this.agGrid.api) {
       this.agGrid.api.sizeColumnsToFit();
+    }
+  }
+
+
+  handleEdit(id: number) {
+    console.log('Edit button clicked with ID:', id);
+  }
+
+
+  handleDelete(id: number) {
+    if (confirm('Are you sure you want to delete this income?')) {
+      this.incomeService.deleteIncome(id).subscribe(
+        (response: any) => {
+          alert('Income deleted successfully!');
+          window.location.reload();
+        },
+        (error) => {
+          console.error('Error deleting income:', error);
+          alert('Failed to delete income. Please try again.');
+        }
+      );
     }
   }
 

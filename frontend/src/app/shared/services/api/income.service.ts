@@ -19,8 +19,8 @@ export class IncomeService {
   }
 
   deleteIncome(id: number) {
-    return this.http.delete(`${this.apiUrlListIncome}/${id}`)
-  }
+    return this.http.delete(`${this.apiUrlListIncome.replace(/\/$/, '')}/${id}/`);
+}
 
   updateIncome(id: number, payload: any) {
     return this.http.put(`${this.apiUrlListIncome}/${id}`, payload)
