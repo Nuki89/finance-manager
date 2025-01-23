@@ -50,6 +50,7 @@ export class IncomeFormComponent {
         this.selectedSource = null;
         this.amount = null;
         this.description = '';
+        window.location.reload();
       },
       (error) => {
         console.error('Error adding income:', error);
@@ -75,6 +76,7 @@ export class IncomeFormComponent {
         console.log('Backend Response:', data);
         alert('Income source added successfully!');
         this.newSourceName = '';
+        window.location.reload();
       },
       (error) => {
         console.error('Error adding income source:', error);
