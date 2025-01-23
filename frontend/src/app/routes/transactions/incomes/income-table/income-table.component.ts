@@ -85,8 +85,8 @@ export class IncomeTableComponent {
 
   gridOptions: GridOptions = {
     pagination: true,
-    paginationPageSize: 10,
-    paginationPageSizeSelector: [10, 20, 30, 50, 100],
+    paginationPageSize: 5,
+    paginationPageSizeSelector: [5, 10, 20, 30, 50, 100],
     domLayout: 'autoHeight',
     onGridReady: () => {
       this.sizeColumnsToFit();
