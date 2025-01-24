@@ -74,7 +74,7 @@ export class IncomeFormComponent {
     this.http.post(apiEndpoints.apiUrlListIncomeSources, payload).subscribe(
       (data: any) => {
         console.log('Backend Response:', data);
-        alert('Income source added successfully!');
+        // alert('Income source added successfully!');
         this.newSourceName = '';
         window.location.reload();
       },
