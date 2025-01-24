@@ -27,6 +27,7 @@
     "@ng-icons/font-awesome": "^30.2.0",
     "@ng-icons/huge-icons": "^30.2.0",
     "ag-grid-angular": "^33.0.4",
+    "chart.js": "^4.4.7",
     "express": "^4.18.2",
     "flowbite": "^2.5.2",
     "rxjs": "~7.8.0",
