@@ -1,26 +1,12 @@
-// import { Component } from '@angular/core';
-// import { IncomesComponent } from "../transactions/incomes/incomes.component";
-// import { RouterModule } from '@angular/router';
-
-// @Component({
-//   selector: 'app-home',
-  // standalone: true,
-  // imports: [IncomesComponent, RouterModule],
-  // templateUrl: './home.component.html',
-  // styleUrl: './home.component.css'
-// })
-// export class HomeComponent {
-
-// }
-
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { PieChartComponent } from '../../shared/ui/charts/pie-chart.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, PieChartComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
