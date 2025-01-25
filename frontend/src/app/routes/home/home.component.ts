@@ -2,11 +2,12 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PieChartComponent } from '../../shared/ui/charts/pie-chart.component';
+import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, PieChartComponent],
+  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
