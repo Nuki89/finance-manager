@@ -1,4 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { AlertButtonComponent } from './alert-button.component';
 
@@ -8,9 +9,8 @@ describe('AlertButtonComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AlertButtonComponent]
-    })
-    .compileComponents();
+      imports: [RouterTestingModule, AlertButtonComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(AlertButtonComponent);
     component = fixture.componentInstance;
