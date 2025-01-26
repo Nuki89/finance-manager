@@ -32,11 +32,10 @@ export class LoginComponent {
   onSubmit(): void {
     this.authService.login(this.username, this.password).subscribe(
       () => {
-        this.toastr.success('Login successful');
+        this.toastr.success('You have successfully logged in.','Login successful');
       },
       error => {
-        // alert('Login failed');
-        this.toastr.error('Login failed');
+        this.toastr.error('Please check your username or password.', 'Login Failed');
       }
     );
   }
