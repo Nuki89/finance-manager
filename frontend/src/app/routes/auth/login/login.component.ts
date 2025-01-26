@@ -4,6 +4,7 @@ import { AuthService } from '../../../shared/services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { cryptoBtc } from '@ng-icons/cryptocurrency-icons';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-login',
@@ -18,16 +19,26 @@ export class LoginComponent {
 
   constructor(
     private authService: AuthService,
+    private toastr: ToastrService
   ) {}
+
+  ngOnInit(): void {
+    // if (this.authService.isLoggedIn()) {
+    //   this.authService.redirectToHome();
+    // }
+  }
+
 
   onSubmit(): void {
     this.authService.login(this.username, this.password).subscribe(
       () => {
-        console.log('Login successful');
+        this.toastr.success('Login successful');
       },
       error => {
-        console.error('Login failed:', error);
+        // alert('Login failed');
+        this.toastr.error('Login failed');
       }
     );
   }
+
 }
