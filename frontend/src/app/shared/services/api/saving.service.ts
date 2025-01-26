@@ -1,0 +1,34 @@
+import { HttpClient } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { apiEndpoints } from '../../../../environments/environment';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class SavingService {
+  private savingUrl = apiEndpoints.savingsUrl
+  private categoriesUrl = apiEndpoints.savingCategoriesUrl
+  
+  constructor(private http: HttpClient) { }
+
+  getSaving() {
+    return this.http.get(this.savingUrl)
+  }
+
+  addSaving(payload: any) {
+    return this.http.post(this.savingUrl, payload)
+  }
+
+  deleteSaving(id: number) {
+    return this.http.delete(`${this.savingUrl.replace(/\/$/, '')}/${id}/`);
+  }
+
+  updateSaving(id: number, payload: any) {
+    return this.http.put(`${this.savingUrl}/${id}`, payload)
+  }
+
+  getSavingSource() {
+    return this.http.get(this.categoriesUrl)
+  }
+
+}
