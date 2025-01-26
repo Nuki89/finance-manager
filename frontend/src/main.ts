@@ -31,8 +31,11 @@ bootstrapApplication(AppComponent, {
     provideAnimations(),
     provideToastr({
       timeOut: 3000,
+      closeButton: true,
       positionClass: 'toast-top-center',
       preventDuplicates: true,
+      progressBar: true,
+      progressAnimation: 'increasing',
     }),
     
   ],
