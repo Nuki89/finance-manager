@@ -1,8 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PieChartComponent } from '../../shared/ui/charts/pie-chart.component';
 import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
+import { ReportService } from '../../shared/services/api/report.service';
 
 @Component({
   selector: 'app-home',
@@ -12,9 +13,24 @@ import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
-  currentBalance = 1800;
+  balance: any;
+  currentBalance: number = 0;
   totalIncome = 5000;
   totalExpense = 3200;
+
+  constructor(private reportService: ReportService) {}
+
+  ngOnInit() {
+    this.balanceInfo();
+  }
+  
+  balanceInfo() {
+    this.reportService.getBalance().subscribe((data: any) => {
+      this.balance = data;
+      this.currentBalance = data.available_balance;    
+      console.log('Balance:', this.balance);
+    });
+  }
 
   spendingCategories = [
     { name: 'Rent', value: 1200 },
