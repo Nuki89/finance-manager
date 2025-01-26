@@ -4,6 +4,8 @@ import { FormsModule } from '@angular/forms';
 import { IncomeService } from '../../../../shared/services/api/income.service';
 import { HttpClient } from '@angular/common/http';
 import { apiEndpoints } from '../../../../../environments/environment';
+import { ToastrService } from 'ngx-toastr';
+import { timeout } from 'rxjs';
 
 @Component({
   selector: 'app-income-form',
@@ -27,7 +29,7 @@ export class IncomeFormComponent {
     })
   }
 
-  constructor(private incomeService: IncomeService, private http: HttpClient) { }
+  constructor(private incomeService: IncomeService, private http: HttpClient, private toastr: ToastrService) { }
 
   onAddIncome() {
     if (!this.selectedSource || !this.amount) {
@@ -46,7 +48,7 @@ export class IncomeFormComponent {
     this.http.post(apiEndpoints.incomeUrl, payload).subscribe(
       (data: any) => {
         console.log('Backend Response:', data);
-        alert('Income added successfully!');
+        this.toastr.success('Income added successfully!','Income added');
         this.selectedSource = null;
         this.amount = null;
         this.description = '';
@@ -54,7 +56,7 @@ export class IncomeFormComponent {
       },
       (error) => {
         console.error('Error adding income:', error);
-        alert('Failed to add income. Please try again.');
+        this.toastr.error('Failed to add income. Please try again.','Error adding income');
       }
     );
   }
@@ -74,13 +76,13 @@ export class IncomeFormComponent {
     this.http.post(apiEndpoints.incomeSourcesUrl, payload).subscribe(
       (data: any) => {
         console.log('Backend Response:', data);
-        // alert('Income source added successfully!');
+        this.toastr.success('Income source added successfully!','Income source added');
         this.newSourceName = '';
         window.location.reload();
       },
       (error) => {
         console.error('Error adding income source:', error);
-        alert('Failed to add income source. Please try again.');
+        this.toastr.error('Failed to add income source. Please try again.','Error adding income source');
       }
     );
   
