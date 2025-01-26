@@ -3,6 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { LoginComponent } from './login.component';
 import { AuthService } from '../../../shared/services/auth/auth.service';
+import { ToastrModule } from 'ngx-toastr';
 
 
 describe('LoginComponent', () => {
@@ -10,8 +11,8 @@ describe('LoginComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, LoginComponent], // Import LoginComponent
-      providers: [AuthService], // Provide AuthService
+      imports: [HttpClientTestingModule, RouterTestingModule, LoginComponent, ToastrModule.forRoot()], 
+      providers: [AuthService], 
     }).compileComponents();
 
     const fixture = TestBed.createComponent(LoginComponent);
