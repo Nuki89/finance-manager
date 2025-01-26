@@ -6,28 +6,29 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class IncomeService {
-  private apiUrlListIncome = apiEndpoints.apiUrlListIncomes
+  private incomeUrl = apiEndpoints.incomeUrl
+  private sourceUrl = apiEndpoints.incomeSourcesUrl
 
   constructor(private http: HttpClient) { }
 
   getIncome() {
-    return this.http.get(this.apiUrlListIncome)
+    return this.http.get(this.incomeUrl)
   }
 
   addIncome(payload: any) {
-    return this.http.post(this.apiUrlListIncome, payload)
+    return this.http.post(this.incomeUrl, payload)
   }
 
   deleteIncome(id: number) {
-    return this.http.delete(`${this.apiUrlListIncome.replace(/\/$/, '')}/${id}/`);
+    return this.http.delete(`${this.incomeUrl.replace(/\/$/, '')}/${id}/`);
 }
 
   updateIncome(id: number, payload: any) {
-    return this.http.put(`${this.apiUrlListIncome}/${id}`, payload)
+    return this.http.put(`${this.incomeUrl}/${id}`, payload)
   }
 
   getIncomeSource() {
-    return this.http.get(apiEndpoints.apiUrlListIncomeSources)
+    return this.http.get(this.sourceUrl)
   }
 
 }

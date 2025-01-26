@@ -43,7 +43,7 @@ export class IncomeFormComponent {
 
     console.log('Payload:', payload);
 
-    this.http.post(apiEndpoints.apiUrlListIncomes, payload).subscribe(
+    this.http.post(apiEndpoints.incomeUrl, payload).subscribe(
       (data: any) => {
         console.log('Backend Response:', data);
         alert('Income added successfully!');
@@ -71,7 +71,7 @@ export class IncomeFormComponent {
 
     console.log('Payload:', payload);
 
-    this.http.post(apiEndpoints.apiUrlListIncomeSources, payload).subscribe(
+    this.http.post(apiEndpoints.incomeSourcesUrl, payload).subscribe(
       (data: any) => {
         console.log('Backend Response:', data);
         // alert('Income source added successfully!');

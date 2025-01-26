@@ -6,8 +6,8 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class ExpenseService {
-  private expenseUrl = apiEndpoints.apiUrlListExpenses
-  private categoriesUrl = apiEndpoints.apiUrlListExpenseCategories
+  private expenseUrl = apiEndpoints.expenseUrl
+  private categoriesUrl = apiEndpoints.expenseCategoriesUrl
 
   constructor(private http: HttpClient) { }
 

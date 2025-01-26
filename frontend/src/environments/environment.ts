@@ -2,12 +2,12 @@ const BASE_URL = `http://127.0.0.1:8000`;
 
 export const apiEndpoints = {
     production: false,
-    apiUrlListIncomes: `${BASE_URL}/incomes/`,
-    apiUrlListIncomeSources: `${BASE_URL}/income-sources/`,
-    apiUrlListExpenses: `${BASE_URL}/expenses/`,
-    apiUrlListExpenseCategories: `${BASE_URL}/expense-categories/`,
-    apiUrlListSavings: `${BASE_URL}/savings/`,
-    apiUrlListSavingCategories: `${BASE_URL}/saving-categories/`,
-    apiUrlExportingPdf: `${BASE_URL}/exporting-pdf/`,
-    apiUrlBalance: `${BASE_URL}/balance/`,
+    incomeUrl: `${BASE_URL}/incomes/`,
+    incomeSourcesUrl: `${BASE_URL}/income-sources/`,
+    expenseUrl: `${BASE_URL}/expenses/`,
+    expenseCategoriesUrl: `${BASE_URL}/expense-categories/`,
+    savingsUrl: `${BASE_URL}/savings/`,
+    savingCategoriesUrl: `${BASE_URL}/saving-categories/`,
+    exportPdfUrl: `${BASE_URL}/exporting-pdf/`,
+    balanceUrl: `${BASE_URL}/balance/`,
 };

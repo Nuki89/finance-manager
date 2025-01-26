@@ -12,6 +12,10 @@ import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent {
+  currentBalance = 1800;
+  totalIncome = 5000;
+  totalExpense = 3200;
+
   spendingCategories = [
     { name: 'Rent', value: 1200 },
     { name: 'Food', value: 800 },
