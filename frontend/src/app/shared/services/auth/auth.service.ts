@@ -3,11 +3,13 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
+import { apiEndpoints } from '../../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  private tokenUrl = apiEndpoints.tokenUrl;
   private tokenKey = 'authToken';
   private isAuthenticated = false;
 
@@ -57,7 +59,7 @@ export class AuthService {
 
   login(username: string, password: string): Observable<any> {
     return new Observable(observer => {
-      this.http.post('http://127.0.0.1:8000/api/token/', { username, password }).subscribe(
+      this.http.post(this.tokenUrl, { username, password }).subscribe(
         (response: any) => {
           const token = response.access; 
           this.saveToken(token);
