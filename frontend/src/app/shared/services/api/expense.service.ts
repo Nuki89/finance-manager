@@ -27,6 +27,14 @@ export class ExpenseService {
     return this.http.put(`${this.expenseUrl}/${id}`, payload)
   }
 
+  getMonthlyExpense() {
+    return this.http.get(`${this.expenseUrl}monthly_summary`)
+  }
+
+  getExpenseCategory() {
+    return this.http.get(`${this.expenseUrl}monthly_category_summary`)
+  }
+
   getExpenseSource() {
     return this.http.get(this.categoriesUrl)
   }

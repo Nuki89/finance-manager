@@ -4,6 +4,8 @@ import { RouterModule } from '@angular/router';
 import { PieChartComponent } from '../../shared/ui/charts/pie-chart.component';
 import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
 import { ReportService } from '../../shared/services/api/report.service';
+import { IncomeService } from '../../shared/services/api/income.service';
+import { ExpenseService } from '../../shared/services/api/expense.service';
 
 @Component({
   selector: 'app-home',
@@ -15,10 +17,17 @@ import { ReportService } from '../../shared/services/api/report.service';
 export class HomeComponent {
   balance: any;
   currentBalance: number = 0;
-  totalIncome = 5000;
-  totalExpense = 3200;
+  totalIncome: number = 0;
+  totalExpense: number = 0;
+  totalSaving: number = 0;
 
-  constructor(private reportService: ReportService) {}
+  spendingCategories: { name: string; value: number }[] = [];
+
+  constructor(
+    private reportService: ReportService,
+    private incomeService: IncomeService,
+    private expenseService: ExpenseService,
+  ) {}
 
   ngOnInit() {
     this.balanceInfo();
@@ -26,21 +35,33 @@ export class HomeComponent {
   
   balanceInfo() {
     this.reportService.getBalance().subscribe((data: any) => {
-      this.balance = data;
+      this.balance = data;  
       this.currentBalance = data.available_balance;    
-      console.log('Balance:', this.balance);
+      this.totalSaving = data.total_savings;
+    });
+
+    this.incomeService.getMonthlyIncome().subscribe((data:any) => {
+      this.totalIncome = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
+    });
+
+    this.expenseService.getMonthlyExpense().subscribe((data:any) => {
+      this.totalExpense = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
+    });
+
+    this.expenseService.getExpenseCategory().subscribe((data:any) => {
+      this.spendingCategories = data.map((item: any) => ({
+        name: item.category__name,
+        value: item.total_amount     
+      }));
+      console.log(this.spendingCategories);
     });
   }
 
-  spendingCategories = [
-    { name: 'Rent', value: 1200 },
-    { name: 'Food', value: 800 },
-    { name: 'Travel', value: 400 },
-    { name: 'Other', value: 800 },
-  ];
-
   incomeVsExpense = {
-    labels: ['January', 'February', 'March', 'April'],
+    labels: [
+      'January', 'February', 'March', 'April', 
+      'May', 'June', 'July', 'August', 
+      'September', 'October', 'November', 'December'],
     datasets: [
       {
         label: 'Income',

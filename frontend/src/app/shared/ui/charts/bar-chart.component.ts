@@ -8,6 +8,7 @@ import { Chart, ChartConfiguration, registerables } from 'chart.js';
   styles: [`
     canvas {
       max-width: 100%;
+      height: 300px;
       margin: auto;
     }
   `]
@@ -33,6 +34,7 @@ export class BarChartComponent implements OnInit {
       data: this.data,
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
             position: 'top',

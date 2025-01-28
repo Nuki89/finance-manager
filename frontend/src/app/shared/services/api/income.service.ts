@@ -27,6 +27,10 @@ export class IncomeService {
     return this.http.put(`${this.incomeUrl}/${id}`, payload)
   }
 
+  getMonthlyIncome() {
+    return this.http.get(`${this.incomeUrl}monthly_summary`)
+  }
+
   getIncomeSource() {
     return this.http.get(this.sourceUrl)
   }
