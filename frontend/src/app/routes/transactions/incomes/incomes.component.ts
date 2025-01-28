@@ -18,20 +18,10 @@ export class IncomesComponent {
   
   constructor(private incomeService: IncomeService) { }
 
-  ngOnInit() {
-    this.incomeService.getIncome().subscribe((data: any) => {
-      this.incomes = data
-      console.log("Incomes: ", this.incomes)
-    })
-
-    this.incomeService.getIncomeSource().subscribe((data: any) => {
-      this.income_sources = data
-      console.log("Income sources: ", this.income_sources)
-    })
-
-  }
+  ngOnInit() {}
 
   getIncomeSources() {
     return this.income_sources || [];
   }
+
 }

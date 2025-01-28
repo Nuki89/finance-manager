@@ -5,7 +5,7 @@ import { IncomeService } from '../../../../shared/services/api/income.service';
 import { HttpClient } from '@angular/common/http';
 import { apiEndpoints } from '../../../../../environments/environment';
 import { ToastrService } from 'ngx-toastr';
-import { timeout } from 'rxjs';
+import { forkJoin, timeout } from 'rxjs';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 
 @Component({
@@ -32,11 +32,10 @@ export class IncomeFormComponent {
 
 
   ngOnInit() {
-    this.fetchIncome();
-    this.fetchSource();
+    this.loadData();
   }
 
-  
+
   onAddIncome() {
     if (!this.selectedSource || !this.amount) {
       this.toastr.error('Please fill in all required fields.','Error adding income');
@@ -49,17 +48,16 @@ export class IncomeFormComponent {
       description: this.description || '',
     };
 
-    console.log('Payload:', payload);
+    // console.log('Payload:', payload);
 
     this.http.post(apiEndpoints.incomeUrl, payload).subscribe(
       (data: any) => {
-        console.log('Backend Response:', data);
+        // console.log('Backend Response:', data);
         this.toastr.success('Income added successfully!','Income added');
         this.selectedSource = null;
         this.amount = null;
         this.description = '';
-        this.fetchIncome();
-        this.fetchSource();
+        this.loadData();
         this.sharedDataService.notifyIncomeChanged();
       },
       (error) => {
@@ -80,14 +78,14 @@ export class IncomeFormComponent {
       name: this.newSourceName,
     };
 
-    console.log('Payload:', payload);
+    // console.log('Payload:', payload);
 
     this.http.post(apiEndpoints.incomeSourcesUrl, payload).subscribe(
       (data: any) => {
-        console.log('Backend Response:', data);
+        // console.log('Backend Response:', data);
         this.toastr.success('Income source added successfully!','Income source added');
         this.newSourceName = '';
-        this.fetchSource();
+        this.loadData();
       },
       (error) => {
         console.error('Error adding income source:', error);
@@ -98,28 +96,20 @@ export class IncomeFormComponent {
   }
 
 
-  fetchIncome() {
-    this.http.get(apiEndpoints.incomeUrl).subscribe(
-      (data: any) => {
-        this.incomes = data;
-      },
-      (error) => {
-        console.error('Error fetching incomes:', error);
-      }
-    );
-  }
-
-
-  fetchSource() {
-    this.http.get(apiEndpoints.incomeSourcesUrl).subscribe(
-      (data: any) => {
-        this.sources = data;
+  loadData() {
+    forkJoin({
+      incomes: this.incomeService.getIncome(),
+      sources: this.incomeService.getIncomeSource()
+    }).subscribe(
+      ({ incomes, sources }) => {
+        this.incomes = incomes as any[];
+        this.sources = sources as any[];
         if (this.sources.length > 0) {
           this.selectedSource = this.sources[0].id;
         }
       },
       (error) => {
-        console.error('Error fetching income sources:', error);
+        console.error('Error fetching data:', error);
       }
     );
   }

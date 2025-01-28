@@ -21,7 +21,8 @@ export class IncomeTableComponent {
   private sharedDataService = inject(SharedDataService);
   private toastr = inject(ToastrService);
   private dialog = inject(MatDialog);
-  private incomeService = inject(IncomeService); //replaced this: constructor(private incomeService: IncomeService) {}
+  private incomeService = inject(IncomeService); 
+
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
   // get themeClass() {
@@ -53,7 +54,6 @@ export class IncomeTableComponent {
         editButton.innerText = 'Edit';
         editButton.addEventListener('click', () => {
           
-          console.log('Edit button clicked with ID:', id);
           this.handleEdit(id);
         });
     
@@ -61,7 +61,6 @@ export class IncomeTableComponent {
         deleteButton.className = 'bg-red-500 text-white px-3 rounded ml-2';
         deleteButton.innerText = 'Delete';
         deleteButton.addEventListener('click', () => {
-          console.log('Delete button clicked with ID:', id);
           this.handleDelete(id); 
         });
     
@@ -102,12 +101,14 @@ export class IncomeTableComponent {
     }
   };
 
+  
   ngOnInit(): void {
     this.fetchIncomes();
     this.sharedDataService.incomeChanged$.subscribe(() => {
       this.fetchIncomes(); // Refresh table data when notified
     });
   }
+
 
   fetchIncomes(): void {
     this.incomeService.getIncome().subscribe({
@@ -124,6 +125,7 @@ export class IncomeTableComponent {
     });
   }
 
+
   dateFormatter(params: any): string {
     const date = new Date(params.value);
     const day = date.getDate();
@@ -132,10 +134,12 @@ export class IncomeTableComponent {
     return `${day}.${month}.${year}`; 
   }
 
+
   currencyFormatter(params: any): string {
     return `${params.value} €`;
   }
   
+
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.sizeColumnsToFit();
