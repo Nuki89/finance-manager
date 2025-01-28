@@ -6,6 +6,7 @@ import { HttpClient } from '@angular/common/http';
 import { apiEndpoints } from '../../../../../environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { timeout } from 'rxjs';
+import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 
 @Component({
   selector: 'app-income-form',
@@ -22,18 +23,23 @@ export class IncomeFormComponent {
   description: string = ''; 
   incomes: any[] = [];
 
+  constructor(
+    private incomeService: IncomeService, 
+    private http: HttpClient, 
+    private toastr: ToastrService,
+    private sharedDataService: SharedDataService,
+    ) { }
+
+
   ngOnInit() {
-    this.incomeService.getIncome().subscribe((data: any) => {
-      this.incomes = data
-      // console.log("Incomes: ", this.incomes)
-    })
+    this.fetchIncome();
+    this.fetchSource();
   }
 
-  constructor(private incomeService: IncomeService, private http: HttpClient, private toastr: ToastrService) { }
-
+  
   onAddIncome() {
     if (!this.selectedSource || !this.amount) {
-      alert('Please fill in all required fields.');
+      this.toastr.error('Please fill in all required fields.','Error adding income');
       return;
     }
 
@@ -52,7 +58,9 @@ export class IncomeFormComponent {
         this.selectedSource = null;
         this.amount = null;
         this.description = '';
-        window.location.reload();
+        this.fetchIncome();
+        this.fetchSource();
+        this.sharedDataService.notifyIncomeChanged();
       },
       (error) => {
         console.error('Error adding income:', error);
@@ -61,9 +69,10 @@ export class IncomeFormComponent {
     );
   }
 
+
   addNewSource() {
     if (!this.newSourceName) {
-      alert('Please enter a source name.');
+      this.toastr.error('Please enter a source name.','Error adding income source');
       return;
     }
 
@@ -78,7 +87,7 @@ export class IncomeFormComponent {
         console.log('Backend Response:', data);
         this.toastr.success('Income source added successfully!','Income source added');
         this.newSourceName = '';
-        window.location.reload();
+        this.fetchSource();
       },
       (error) => {
         console.error('Error adding income source:', error);
@@ -87,4 +96,33 @@ export class IncomeFormComponent {
     );
   
   }
+
+
+  fetchIncome() {
+    this.http.get(apiEndpoints.incomeUrl).subscribe(
+      (data: any) => {
+        this.incomes = data;
+      },
+      (error) => {
+        console.error('Error fetching incomes:', error);
+      }
+    );
+  }
+
+
+  fetchSource() {
+    this.http.get(apiEndpoints.incomeSourcesUrl).subscribe(
+      (data: any) => {
+        this.sources = data;
+        if (this.sources.length > 0) {
+          this.selectedSource = this.sources[0].id;
+        }
+      },
+      (error) => {
+        console.error('Error fetching income sources:', error);
+      }
+    );
+  }
+
+
 }

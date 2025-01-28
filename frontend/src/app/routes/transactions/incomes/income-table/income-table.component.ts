@@ -3,6 +3,10 @@ import { AgGridAngular, AgGridModule } from 'ag-grid-angular';
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
 import { IncomeService } from '../../../../shared/services/api/income.service';
+import { ToastrService } from 'ngx-toastr';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
+import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -14,6 +18,9 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   styleUrl: './income-table.component.css'
 })
 export class IncomeTableComponent {
+  private sharedDataService = inject(SharedDataService);
+  private toastr = inject(ToastrService);
+  private dialog = inject(MatDialog);
   private incomeService = inject(IncomeService); //replaced this: constructor(private incomeService: IncomeService) {}
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
@@ -22,10 +29,11 @@ export class IncomeTableComponent {
   // }
 
   // isBrowser: boolean;
+
   rowData: any[] = [];
   incomeList: any[] = [];
   colDefs: ColDef[] = [
-    { field: 'date', headerName: 'Date', valueFormatter: this.dateFormatter },
+    { field: 'date', headerName: 'Date', valueFormatter: this.dateFormatter , sort: 'desc'},
     {
       field: 'source',
       headerName: 'Source',
@@ -34,23 +42,6 @@ export class IncomeTableComponent {
     { field: 'amount', headerName: 'Amount', valueFormatter: this.currencyFormatter },
     { field: 'description', headerName: 'Description' },
     { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },
-    // {
-    //   field: 'options',
-    //   headerName: 'Options',
-    //   sortable: false,
-    //   width: 110,
-    //   cellStyle: { 'text-align': 'right', display: 'flex' },
-    //   // cellRenderer: ActionsRendererComponent,
-    //   cellRendererParams: ({ data }: { data: any }) => ({
-    //     actions: [
-    //       {
-    //         type: 'edit',
-    //         action: () => this.openModal(data),
-    //       },
-    //     ],
-    //   }),
-    // },
-
     {
       headerName: 'Actions',
       cellRenderer: (params: any) => {
@@ -113,6 +104,9 @@ export class IncomeTableComponent {
 
   ngOnInit(): void {
     this.fetchIncomes();
+    this.sharedDataService.incomeChanged$.subscribe(() => {
+      this.fetchIncomes(); // Refresh table data when notified
+    });
   }
 
   fetchIncomes(): void {
@@ -161,22 +155,32 @@ export class IncomeTableComponent {
 
 
   handleDelete(id: number) {
-    if (confirm('Are you sure you want to delete this income?')) {
-      this.incomeService.deleteIncome(id).subscribe(
-        (response: any) => {
-          alert('Income deleted successfully!');
-          window.location.reload();
-        },
-        (error) => {
-          console.error('Error deleting income:', error);
-          alert('Failed to delete income. Please try again.');
-        }
-      );
-    }
+    const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Income',
+        message: 'Are you sure you want to delete this income?',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.incomeService.deleteIncome(id).subscribe(
+          () => {
+            this.toastr.success('Income deleted successfully!');
+            this.fetchIncomes();
+          },
+          (error) => {
+            this.toastr.error('Failed to delete income. Please try again.');
+            console.error('Error deleting income:', error);
+          }
+        );
+      }
+    });
   }
 
 
-  openModal(rowData: any) {
+  openEditModal(rowData: any) {
     // const modalRef = this.modalService.open(ModalDtDetailsComponent, {
     //   centered: true,
     // });
