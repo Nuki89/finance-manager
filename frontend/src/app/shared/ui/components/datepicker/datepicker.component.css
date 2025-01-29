@@ -1,0 +1,5 @@
+::ng-deep .mat-form-field {
+    width: 100%;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+  }  
