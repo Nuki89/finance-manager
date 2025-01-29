@@ -43,4 +43,8 @@ export class IncomeService {
     return this.http.delete(`${this.sourceUrl.replace(/\/$/, '')}/${id}/`);
   }
 
+  getIncomeMonthlySource() {
+    return this.http.get(`${this.incomeUrl}monthly_source_summary`)
+  }
+
 }

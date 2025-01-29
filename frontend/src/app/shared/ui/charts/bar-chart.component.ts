@@ -8,7 +8,7 @@ import { Chart, ChartConfiguration, registerables } from 'chart.js';
   styles: [`
     canvas {
       max-width: 100%;
-      height: 300px;
+      height: 350px;
       margin: auto;
     }
   `]

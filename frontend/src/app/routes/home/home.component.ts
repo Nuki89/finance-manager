@@ -22,6 +22,7 @@ export class HomeComponent {
   totalSaving: number = 0;
 
   spendingCategories: { name: string; value: number }[] = [];
+  incomeSources: { name: string; value: number }[] = [];
 
   constructor(
     private reportService: ReportService,
@@ -54,6 +55,14 @@ export class HomeComponent {
         value: item.total_amount     
       }));
       console.log(this.spendingCategories);
+    });
+
+    this.incomeService.getIncomeMonthlySource().subscribe((data:any) => {
+      this.incomeSources = data.map((item: any) => ({
+        name: item.source__name,
+        value: item.total_amount     
+      }));
+      console.log(data);
     });
   }
 
