@@ -1,98 +1,99 @@
 <div class="grid grid-cols-2 gap-6">
 
-<form (ngSubmit)="onAddIncome()" class="p-6 bg-gray-50 rounded-lg shadow">
+    <form (ngSubmit)="onAddIncome()" class="p-6 bg-gray-50 rounded-lg shadow">
 
-    <div class="mb-6">
-    <label for="source" class="block text-sm font-medium text-gray-700">Source</label>
-    <div class="flex items-center gap-2 mt-1">
-    
-        <select
-            id="source"
-            class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [(ngModel)]="selectedSource"
-            name="source"
-            (change)="onSourceSelect()"
-            required>
-            <option *ngFor="let source of sources" [value]="source.id">
-            {{ source.name }}
-            </option>
-        </select>
-
-        <input
-            type="text"
-            class="p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
-            [(ngModel)]="newSourceName"
-            name="newSourceName"
-            placeholder="New Source"/>
+        <div class="mb-6">
+        <label for="source" class="block text-sm font-medium text-gray-700">Source</label>
+            <div class="flex items-center gap-2 mt-1">
         
+                <select
+                    id="source"
+                    class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                    [(ngModel)]="selectedSource"
+                    name="source"
+                    (change)="onSourceSelect()"
+                    required>
+                    <option *ngFor="let source of sources" [value]="source.id">
+                    {{ source.name }}
+                    </option>
+                </select>
+
+                <input
+                    type="text"
+                    class="p-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+                    [(ngModel)]="newSourceName"
+                    name="newSourceName"
+                    placeholder="New Source"/>
+                
+                <button
+                    type="button"
+                    class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
+                    (click)="addNewSource()">
+                    Add
+                </button>
+                
+            </div>
+        </div>
+
+        <div class="mb-6">
+            <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+            <input
+            type="number"
+            id="amount"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            [(ngModel)]="amount"
+            name="amount"
+            placeholder="Enter amount"
+            required/>
+        </div>
+
+        <div class="mb-6">
+            <app-datepicker (dateChange)="onDatePicked($event)"></app-datepicker>
+        </div>
+
+        <div class="mb-6">
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea
+            id="description"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            [(ngModel)]="description"
+            name="description"
+            placeholder="Enter description"
+            rows="3"></textarea>
+        </div>
+
+        <button
+            type="submit"
+            class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+            Add Income
+        </button>
+    </form>
+
+    <div *ngIf="selectedSourceObj" class="p-6 bg-gray-50 rounded-lg shadow">
+
+        <div class="mb-4">
+            <label for="editSourceName" class="block text-sm font-medium text-gray-700">Source Name</label>
+            <input
+                type="text"
+                id="editSourceName"
+                class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                [(ngModel)]="selectedSourceObj.name"
+                name="editSourceName"/>
+        </div>
+
         <button
             type="button"
-            class="px-4 py-2 text-white bg-green-600 rounded hover:bg-green-700"
-            (click)="addNewSource()">
-            Add
+            class="px-4 py-2 text-white bg-yellow-600 rounded-md hover:bg-yellow-700">
+
+            Update Source
         </button>
-        </div>
+
+        <button
+            type="button"
+            class="px-4 py-2 ml-2 text-white bg-red-600 rounded-md hover:bg-red-700"
+            (click)="handleDeleteSource(selectedSourceObj.id)">
+            Delete Source
+        </button>
     </div>
-
-    <div class="mb-6">
-        <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-        <input
-        type="number"
-        id="amount"
-        class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-        [(ngModel)]="amount"
-        name="amount"
-        placeholder="Enter amount"
-        required/>
-    </div>
-
-    <div class="mb-6">
-        <app-datepicker (dateChange)="onDatePicked($event)"></app-datepicker>
-    </div>
-
-    <div class="mb-6">
-        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
-        <textarea
-        id="description"
-        class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-        [(ngModel)]="description"
-        name="description"
-        placeholder="Enter description"
-        rows="3"></textarea>
-    </div>
-
-    <button
-        type="submit"
-        class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
-        Add Income
-    </button>
-</form>
-
-<div *ngIf="selectedSourceObj" class="p-6 bg-gray-50 rounded-lg shadow">
-
-    <div class="mb-4">
-        <label for="editSourceName" class="block text-sm font-medium text-gray-700">Source Name</label>
-        <input
-            type="text"
-            id="editSourceName"
-            class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-            [(ngModel)]="selectedSourceObj.name"
-            name="editSourceName"/>
-    </div>
-
-    <button
-        type="button"
-        class="px-4 py-2 text-white bg-yellow-600 rounded-md hover:bg-yellow-700">
-
-        Update Source
-    </button>
-
-    <button
-        type="button"
-        class="px-4 py-2 ml-2 text-white bg-red-600 rounded-md hover:bg-red-700"
-        (click)="handleDeleteSource(selectedSourceObj.id)">
-        Delete Source
-    </button>
-</div>
 
 </div>
