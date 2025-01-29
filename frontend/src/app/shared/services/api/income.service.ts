@@ -21,7 +21,7 @@ export class IncomeService {
 
   deleteIncome(id: number) {
     return this.http.delete(`${this.incomeUrl.replace(/\/$/, '')}/${id}/`);
-}
+  }
 
   updateIncome(id: number, payload: any) {
     return this.http.put(`${this.incomeUrl}/${id}`, payload)
@@ -33,6 +33,14 @@ export class IncomeService {
 
   getIncomeSource() {
     return this.http.get(this.sourceUrl)
+  }
+
+  updateIncomeSource(id: number, payload: any) {
+    return this.http.put(`${this.sourceUrl}${id}`, payload)
+  }
+
+  deleteIncomeSource(id: number) {
+    return this.http.delete(`${this.sourceUrl.replace(/\/$/, '')}/${id}/`);
   }
 
 }
