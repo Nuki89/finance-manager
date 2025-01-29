@@ -5,13 +5,17 @@ import { IncomeService } from '../../../../shared/services/api/income.service';
 import { HttpClient } from '@angular/common/http';
 import { apiEndpoints } from '../../../../../environments/environment';
 import { ToastrService } from 'ngx-toastr';
-import { forkJoin, timeout } from 'rxjs';
+import { forkJoin } from 'rxjs';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
+import { DatepickerComponent } from "../../../../shared/ui/components/datepicker/datepicker.component";
+import moment from 'moment';
+import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-income-form',
   standalone: true,
-  imports : [CommonModule, FormsModule ],
+  imports: [CommonModule, FormsModule, DatepickerComponent],
   templateUrl: './income-form.component.html',
   styleUrls: ['./income-form.component.css'],
 })
@@ -22,17 +26,26 @@ export class IncomeFormComponent {
   amount: number | null = null; 
   description: string = ''; 
   incomes: any[] = [];
+  selectedSourceObj: any | null = null;
+  selectedDate: Date | null = null;
 
   constructor(
     private incomeService: IncomeService, 
     private http: HttpClient, 
     private toastr: ToastrService,
     private sharedDataService: SharedDataService,
+    private dialog: MatDialog
     ) { }
 
 
   ngOnInit() {
     this.loadData();
+  }
+
+
+  onDatePicked(date: Date) {
+    this.selectedDate = date;
+    // console.log("Selected Date in IncomeFormComponent:", this.selectedDate);
   }
 
 
@@ -42,9 +55,14 @@ export class IncomeFormComponent {
       return;
     }
 
+    const formattedDate = this.selectedDate
+    ? moment(this.selectedDate).format('YYYY-MM-DD')  
+    : moment().format('YYYY-MM-DD');  
+
     const payload = {
       source: this.selectedSource,
       amount: this.amount,
+      date: formattedDate,
       description: this.description || '',
     };
 
@@ -56,6 +74,7 @@ export class IncomeFormComponent {
         this.toastr.success('Income added successfully!','Income added');
         this.selectedSource = null;
         this.amount = null;
+        this.selectedDate = null;
         this.description = '';
         this.loadData();
         this.sharedDataService.notifyIncomeChanged();
@@ -106,12 +125,48 @@ export class IncomeFormComponent {
         this.sources = sources as any[];
         if (this.sources.length > 0) {
           this.selectedSource = this.sources[0].id;
+          this.onSourceSelect();
         }
       },
       (error) => {
         console.error('Error fetching data:', error);
       }
     );
+  }
+
+
+  onSourceSelect() {
+    this.selectedSourceObj = this.sources.find(
+      (source) => source.id === Number(this.selectedSource)  
+    ) || null;
+  }
+
+
+  handleDeleteSource(id: number) {
+    const sourceToDelete = this.sources.find(source => source.id === id);
+
+    const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Income Source',
+        message: `Are you sure you want to delete "${sourceToDelete?.name}"?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.incomeService.deleteIncomeSource(id).subscribe(
+          () => {
+            this.toastr.success(`Income source "${sourceToDelete?.name}" deleted successfully!`);
+            this.loadData(); 
+          },
+          (error) => {
+            this.toastr.error(`Failed to delete "${sourceToDelete?.name}". Please try again.`);
+            console.error('Error deleting income source:', error);
+          }
+        );
+      }
+    });
   }
 
 
