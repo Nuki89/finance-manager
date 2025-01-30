@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { IncomeFormComponent } from './income-form.component';
 import { ToastrModule } from 'ngx-toastr';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('IncomeFormComponent', () => {
   let component: IncomeFormComponent;
@@ -9,7 +10,7 @@ describe('IncomeFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [IncomeFormComponent, HttpClientTestingModule, ToastrModule.forRoot()],
+      imports: [IncomeFormComponent, HttpClientTestingModule, ToastrModule.forRoot(), BrowserAnimationsModule],
     })
     .compileComponents();
 

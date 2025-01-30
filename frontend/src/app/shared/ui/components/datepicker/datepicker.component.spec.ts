@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { DatepickerComponent } from './datepicker.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('DatepickerComponent', () => {
   let component: DatepickerComponent;
@@ -8,7 +9,7 @@ describe('DatepickerComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DatepickerComponent]
+      imports: [DatepickerComponent, BrowserAnimationsModule]
     })
     .compileComponents();
 
