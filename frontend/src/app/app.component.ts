@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './shared/services/auth/auth.service';
-import { HeaderComponent } from "./core/layout/header/header.component";
 
 @Component({
   selector: 'app-root',
@@ -10,8 +9,7 @@ import { HeaderComponent } from "./core/layout/header/header.component";
   imports: [
     CommonModule, 
     RouterOutlet, 
-    HeaderComponent, 
-    RouterModule],
+    RouterModule,],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
