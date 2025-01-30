@@ -12,7 +12,7 @@ import { AuthService } from '../../../shared/services/auth/auth.service';
   styleUrl: './header.component.css'
 })
 export class HeaderComponent {
-  title: string = "Financko";
+  title: string = "Coiny";
   firstName: string = 'Nuki';
   lastName: string = 'Pipika';
   email: string = 'nuki@gmail.com';
