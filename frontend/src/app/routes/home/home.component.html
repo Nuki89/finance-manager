@@ -4,7 +4,7 @@
 
 </div> -->
 
-<div class="p-6 space-y-6">
+<div class="p-4 space-y-6">
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <div class="card lg:col-span-1">
@@ -71,7 +71,7 @@
             <li class="flex justify-between" *ngFor="let transaction of recentTransactions">
                 <span>{{ transaction.name }}</span>
                 <span [class.text-red-500]="transaction.amount < 0" [class.text-green-500]="transaction.amount > 0">
-                <!-- {{ transaction.amount | currency }} -->
+                
                 1000
                 </span>
             </li>
