@@ -92,13 +92,13 @@ class IncomeViewSet(viewsets.ModelViewSet):
             month=TruncMonth('date')).values('month').annotate(
             total_amount=Sum('amount')).order_by('month')
         return Response(last_year_data)
-    
-    @action(detail=False, methods={'get'})
+
+    @action(detail=False, methods=['get'])
     def last_year_source_summary(self, request):
-        last_year = datetime.now().year
-        last_year_data = Income.objects.filter(date__year=last_year).annotate(
-            month=TruncMonth('date')).values('month', 'source__name').annotate(
-            total_amount=Sum('amount')).order_by('month', 'source__name')
+        last_year = datetime.now().year  # Get last year's data
+        last_year_data = Income.objects.filter(date__year=last_year).values('source__name').annotate(
+            total_amount=Sum('amount')
+        ).order_by('source__name')
         return Response(last_year_data)
 
 
