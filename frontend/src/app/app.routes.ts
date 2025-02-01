@@ -12,6 +12,7 @@ import { ExpensesComponent } from './routes/transactions/expenses/expenses.compo
 import { SavingsComponent } from './routes/transactions/savings/savings.component';
 import { ReportsComponent } from './routes/transactions/reports/reports.component';
 import { ForgotPwdComponent } from './routes/auth/forgot-pwd/forgot-pwd.component';
+import { TermsPolicyComponent } from './routes/auth/terms-policy/terms-policy.component';
 
 export const routes: Routes = [
   {
@@ -35,6 +36,7 @@ export const routes: Routes = [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
       { path: 'forgot-password', component: ForgotPwdComponent },
+      { path: 'terms-and-privacy', component: TermsPolicyComponent },
     ],
   },
   { path: '**', redirectTo: '/login' },

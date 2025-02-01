@@ -11,5 +11,5 @@ import { RouterModule } from '@angular/router';
   styleUrl: './terms-policy.component.css'
 })
 export class TermsPolicyComponent {
-
+  effective_date = "1.2.2025"
 }
