@@ -68,6 +68,22 @@ class IncomeViewSet(viewsets.ModelViewSet):
             month=TruncMonth('date')).values('month', 'source__name').annotate(
             total_amount=Sum('amount')).order_by('month', 'source__name')
         return Response(monthly_source_data)
+    
+    @action(detail=False, methods=['get'])
+    def last_month_summary(self, request):
+        datemonth = datetime.now().month
+        last_month_data = Income.objects.filter(date__month=datemonth).annotate(
+            month=TruncMonth('date')).values('month').annotate(
+            total_amount=Sum('amount')).order_by('month')
+        return Response(last_month_data)
+
+    @action(detail=False, methods=['get'])
+    def last_month_source_summary(self, request):
+        datemonth = datetime.now().month
+        last_month_data = Income.objects.filter(date__month=datemonth).annotate(
+            month=TruncMonth('date')).values('month', 'source__name').annotate(
+            total_amount=Sum('amount')).order_by('month', 'source__name')
+        return Response(last_month_data)
 
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
