@@ -95,7 +95,7 @@ class IncomeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'])
     def last_year_source_summary(self, request):
-        last_year = datetime.now().year  # Get last year's data
+        last_year = datetime.now().year
         last_year_data = Income.objects.filter(date__year=last_year).values('source__name').annotate(
             total_amount=Sum('amount')
         ).order_by('source__name')
@@ -158,6 +158,38 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             month=TruncMonth('date')).values('month', 'category__name').annotate(
             total_amount=Sum('amount')).order_by('month', 'category__name')
         return Response(monthly_category_data)
+
+    @action(detail=False, methods=['get'])
+    def last_month_summary(self, request):
+        datemonth = datetime.now().month
+        last_month_data = Expense.objects.filter(date__month=datemonth).annotate(
+            month=TruncMonth('date')).values('month').annotate(
+            total_amount=Sum('amount')).order_by('month')
+        return Response(last_month_data)
+
+    @action(detail=False, methods=['get'])
+    def last_month_category_summary(self, request):
+        datemonth = datetime.now().month
+        last_month_data = Expense.objects.filter(date__month=datemonth).annotate(
+            month=TruncMonth('date')).values('month', 'category__name').annotate(
+            total_amount=Sum('amount')).order_by('month', 'category__name')
+        return Response(last_month_data)
+    
+    @action(detail=False, methods=['get'])
+    def last_year_summary(self, request):
+        last_year = datetime.now().year
+        last_year_data = Expense.objects.filter(date__year=last_year).annotate(
+            month=TruncMonth('date')).values('month').annotate(
+            total_amount=Sum('amount')).order_by('month')
+        return Response(last_year_data)
+
+    @action(detail=False, methods=['get'])
+    def last_year_category_summary(self, request):
+        last_year = datetime.now().year
+        last_year_data = Expense.objects.filter(date__year=last_year).values('category__name').annotate(
+            total_amount=Sum('amount')
+        ).order_by('category__name')
+        return Response(last_year_data)
 
 
 class SavingCategoryViewSet(viewsets.ModelViewSet):

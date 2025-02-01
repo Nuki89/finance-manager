@@ -47,4 +47,12 @@ export class IncomeService {
     return this.http.get(`${this.incomeUrl}monthly_source_summary`)
   }
 
+  getLastMonthSourceSummary() {
+    return this.http.get(`${this.incomeUrl}last_month_source_summary`)
+  }
+
+  getYearlySourceSummary() {
+    return this.http.get(`${this.incomeUrl}last_year_source_summary`)
+  }
+
 }
