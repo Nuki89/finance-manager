@@ -11,6 +11,7 @@ import { IncomesComponent } from './routes/transactions/incomes/incomes.componen
 import { ExpensesComponent } from './routes/transactions/expenses/expenses.component';
 import { SavingsComponent } from './routes/transactions/savings/savings.component';
 import { ReportsComponent } from './routes/transactions/reports/reports.component';
+import { ForgotPwdComponent } from './routes/auth/forgot-pwd/forgot-pwd.component';
 
 export const routes: Routes = [
   {
@@ -33,6 +34,7 @@ export const routes: Routes = [
     children: [
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'forgot-password', component: ForgotPwdComponent },
     ],
   },
   { path: '**', redirectTo: '/login' },
