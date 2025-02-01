@@ -16,13 +16,13 @@
         </div>
         <div class="card">
             <div class="card-content text-center">
-                <h2 class="text-xl font-bold">Total Income (Monthly)</h2>
+                <h2 class="text-xl font-bold">Total Income ({{ selectedView }})</h2>
                 <p class="text-3xl font-semibold text-blue-500">{{ totalIncome }} €</p>
             </div>
         </div>
         <div class="card">
             <div class="card-content text-center">
-                <h2 class="text-xl font-bold">Total Expense (Monthly)</h2>
+                <h2 class="text-xl font-bold">Total Expense ({{ selectedView }})</h2>
                 <p class="text-3xl font-semibold text-red-500">{{ totalExpense }} €</p>
             </div>
         </div>
@@ -38,7 +38,7 @@
 
         <div class="card">
             <div class="card-content">
-                <h2 class="text-lg font-bold mb-4">Income Sources</h2>
+                <h2 class="text-lg font-bold mb-4">Income Sources ({{ selectedView }})</h2>
                 <div *ngIf="incomeSources.length > 0">
                     <app-pie-chart [data]="incomeSources"></app-pie-chart>
                 </div>
@@ -54,7 +54,7 @@
 
         <div class="card">
             <div class="card-content">
-                <h2 class="text-lg font-bold mb-4">Spending Categories</h2>
+                <h2 class="text-lg font-bold mb-4">Spending Categories ({{ selectedView }})</h2>
                 <div *ngIf="spendingCategories.length > 0">
                     <app-pie-chart [data]="spendingCategories"></app-pie-chart>
                 </div>

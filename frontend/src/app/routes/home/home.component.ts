@@ -21,6 +21,8 @@ export class HomeComponent {
   totalExpense: number = 0;
   totalSaving: number = 0;
 
+  selectedView: string = 'month';
+
   spendingCategories: { name: string; value: number }[] = [];
   incomeSources: { name: string; value: number }[] = [];
 
@@ -49,7 +51,7 @@ export class HomeComponent {
       this.totalExpense = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
     });
 
-    this.expenseService.getExpenseCategory().subscribe((data:any) => {
+    this.expenseService.getLastMonthCategorySummary().subscribe((data:any) => {
       this.spendingCategories = data.map((item: any) => ({
         name: item.category__name,
         value: item.total_amount     
@@ -57,7 +59,7 @@ export class HomeComponent {
       console.log(this.spendingCategories);
     });
 
-    this.incomeService.getIncomeMonthlySource().subscribe((data:any) => {
+    this.incomeService.getLastMonthSourceSummary().subscribe((data:any) => {
       this.incomeSources = data.map((item: any) => ({
         name: item.source__name,
         value: item.total_amount     
