@@ -43,11 +43,11 @@ export class HomeComponent {
       this.totalSaving = data.total_savings;
     });
 
-    this.incomeService.getMonthlyIncome().subscribe((data:any) => {
+    this.incomeService.getLastMonthIncome().subscribe((data:any) => {
       this.totalIncome = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
     });
 
-    this.expenseService.getMonthlyExpense().subscribe((data:any) => {
+    this.expenseService.getLastMonthExpense().subscribe((data:any) => {
       this.totalExpense = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
     });
 

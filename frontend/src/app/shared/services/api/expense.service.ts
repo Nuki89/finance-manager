@@ -43,6 +43,10 @@ export class ExpenseService {
     return this.http.get(`${this.expenseUrl}last_month_category_summary`)
   }
 
+  getLastMonthExpense() {
+    return this.http.get(`${this.expenseUrl}last_month_summary`)
+  }
+
   getYearlyCategorySummary() {
     return this.http.get(`${this.expenseUrl}last_year_category_summary`)
   }
