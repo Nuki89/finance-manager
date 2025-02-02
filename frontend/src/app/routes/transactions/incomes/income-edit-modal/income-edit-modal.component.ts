@@ -8,8 +8,6 @@ import { ToastrService } from 'ngx-toastr';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import moment from 'moment';
-import { apiEndpoints } from '../../../../../environments/environment';
-import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-income-edit-modal',
@@ -37,15 +35,12 @@ export class IncomeEditModalComponent {
     @Inject(MAT_DIALOG_DATA) public rawData: any
     ) { }
 
+    
   ngOnInit() {
     this.loadData();
-    if (this.rawData) {
-      this.selectedSource = this.rawData.source_data ? this.rawData.source_data.id : this.rawData.source; 
-      this.amount = this.rawData.amount;
-      this.description = this.rawData.description;
-      this.selectedDate = this.rawData.date ? new Date(this.rawData.date) : new Date();
-    }
+    this.initializeForm();
   }
+
 
   loadData() {
     this.incomeService.getIncomeSource().subscribe({
@@ -61,6 +56,17 @@ export class IncomeEditModalComponent {
       }
     });
   }
+
+
+  initializeForm() {
+    if (this.rawData) {
+      this.selectedSource = this.rawData.source_data ? this.rawData.source_data.id : this.rawData.source; 
+      this.amount = this.rawData.amount;
+      this.description = this.rawData.description;
+      this.selectedDate = this.rawData.date ? new Date(this.rawData.date) : new Date();
+    }
+  }
+
 
   onSaveIncome() {
       if (!this.selectedSource || !this.amount) {
@@ -81,33 +87,42 @@ export class IncomeEditModalComponent {
   
       // console.log('Payload:', payload);
   
-      this.http.put(apiEndpoints.incomeUrl, payload).subscribe(
+      this.incomeService.updateIncome(this.rawData.id, payload).subscribe(
         (data: any) => {
           // console.log('Backend Response:', data);
-          this.toastr.success('Income added successfully!','Income added');
+          this.toastr.success('Income updated successfully!','Income updated');
           this.selectedSource = null;
           this.amount = null;
           this.selectedDate = null;
           this.description = '';
           this.loadData();
           this.sharedDataService.notifyIncomeChanged();
+          this.closeAddModal();
         },
         (error) => {
-          console.error('Error adding income:', error);
-          this.toastr.error('Failed to add income. Please try again.','Error adding income');
+          console.error('Error updating income:', error);
+          this.toastr.error('Failed to update income. Please try again.','Error updating income');
         }
       );
     }
+
 
   onDatePicked(date: Date) {
     this.selectedDate = date;
     // console.log("Selected Date in IncomeFormComponent:", this.selectedDate);
   }
 
+
   onSourceSelect() {
     this.selectedSourceObj = this.sources.find(
       (source) => source.id === Number(this.selectedSource)  
     ) || null;
   }
+
+
+  closeAddModal() {
+    this.dialog.closeAll();
+  }
+
 
 }
