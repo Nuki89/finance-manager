@@ -3,7 +3,6 @@ import { Component, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { IncomeService } from '../../../../shared/services/api/income.service';
 import { HttpClient } from '@angular/common/http';
-import { apiEndpoints } from '../../../../../environments/environment';
 import { ToastrService } from 'ngx-toastr';
 import { forkJoin } from 'rxjs';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
@@ -68,7 +67,7 @@ export class IncomeFormComponent {
 
     // console.log('Payload:', payload);
 
-    this.http.post(apiEndpoints.incomeUrl, payload).subscribe(
+    this.incomeService.addIncome(payload).subscribe(
       (data: any) => {
         // console.log('Backend Response:', data);
         this.toastr.success('Income added successfully!','Income added');
@@ -99,7 +98,7 @@ export class IncomeFormComponent {
 
     // console.log('Payload:', payload);
 
-    this.http.post(apiEndpoints.incomeSourcesUrl, payload).subscribe(
+    this.incomeService.addIncomeSource(payload).subscribe(
       (data: any) => {
         // console.log('Backend Response:', data);
         this.toastr.success('Income source added successfully!','Income source added');
@@ -112,6 +111,32 @@ export class IncomeFormComponent {
       }
     );
   
+  }
+
+
+  updateIncomeSource(id: number, name: string) {
+    if (!name) {
+      this.toastr.error('Please enter a source name.','Error updating income source');
+      return;
+    }
+
+    const payload = {
+      name: name,
+    };
+
+    // console.log('Payload:', payload);
+
+    this.incomeService.updateIncomeSource(id, payload).subscribe(
+      (data: any) => {
+        // console.log('Backend Response:', data);
+        this.toastr.success('Income source updated successfully!','Income source updated');
+        this.loadData();
+      },
+      (error) => {
+        console.error('Error updating income source:', error);
+        this.toastr.error('Failed to update income source. Please try again.','Error updating income source');
+      }
+    );
   }
 
 
