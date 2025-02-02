@@ -28,6 +28,13 @@ export class AppComponent implements OnInit {
     //   this.router.navigate(['/login']);
     // }
     // this.loading = false;
+
+    if (typeof window !== 'undefined') {
+      import('flowbite').then(({ initFlowbite }) => {
+        initFlowbite();
+      });
+    }
+    
   }
 
   // ngOnInit(): void {
@@ -43,11 +50,11 @@ export class AppComponent implements OnInit {
   //     });
   //   }
 
-  //   if (typeof window !== 'undefined') {
-  //     import('flowbite').then(({ initFlowbite }) => {
-  //       initFlowbite();
-  //     });
-  //   }
+    // if (typeof window !== 'undefined') {
+    //   import('flowbite').then(({ initFlowbite }) => {
+    //     initFlowbite();
+    //   });
+    // }
 
   // }
   
