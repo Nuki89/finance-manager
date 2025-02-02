@@ -7,6 +7,7 @@ import { ToastrService } from 'ngx-toastr';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
+import { IncomeEditModalComponent } from '../income-edit-modal/income-edit-modal.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -54,7 +55,7 @@ export class IncomeTableComponent {
         editButton.innerText = 'Edit';
         editButton.addEventListener('click', () => {
           
-          this.handleEdit(id);
+          this.handleEdit(id, params.data);
         });
     
         const deleteButton = document.createElement('button');
@@ -105,7 +106,7 @@ export class IncomeTableComponent {
   ngOnInit(): void {
     this.fetchIncomes();
     this.sharedDataService.incomeChanged$.subscribe(() => {
-      this.fetchIncomes(); // Refresh table data when notified
+      this.fetchIncomes(); 
     });
   }
 
@@ -153,8 +154,18 @@ export class IncomeTableComponent {
   }
 
 
-  handleEdit(id: number) {
-    console.log('Edit button clicked with ID:', id);
+  handleEdit(id: number, rowData: any) {
+    const dialogRef = this.dialog.open(IncomeEditModalComponent, {
+      width: '600px',
+      data: {
+        id: rowData.id,
+        amount: rowData.amount,
+        date: rowData.date,
+        description: rowData.description,
+        source: rowData.source,
+        source_data: rowData.source_data 
+      }
+    });
   }
 
 

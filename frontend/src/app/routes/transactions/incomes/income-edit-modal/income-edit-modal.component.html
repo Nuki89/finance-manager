@@ -1,0 +1,54 @@
+<form (ngSubmit)="onSaveIncome()" class="card p-6 rounded-lg shadow">
+
+    <div class="mb-6">
+    <label for="source" class="block text-sm font-medium text-gray-700">Source</label>
+        <div class="flex items-center gap-2 mt-1">
+    
+            <select
+                id="source"
+                class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                [(ngModel)]="selectedSource"
+                name="source"
+                (change)="onSourceSelect()"
+                required>
+                <option *ngFor="let source of sources" [value]="source.id">
+                {{ source.name }}
+                </option>
+            </select>
+
+        </div>
+    </div>
+
+    <div class="mb-6">
+        <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+        <div class="flex items-center gap-2 mt-1">
+            <input
+            type="number"
+            id="amount"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            [(ngModel)]="amount"
+            name="amount"
+            placeholder="Enter amount"
+            required/>
+
+            <app-datepicker (dateChange)="onDatePicked($event)"></app-datepicker>
+        </div>
+    </div>
+
+    <div class="mb-6">
+        <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+        <textarea
+        id="description"
+        class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+        [(ngModel)]="description"
+        name="description"
+        placeholder="Enter description"
+        rows="3"></textarea>
+    </div>
+
+    <button
+        type="submit"
+        class="px-4 py-2 text-white bg-green-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+        Save Income
+    </button>
+</form>
