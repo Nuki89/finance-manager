@@ -147,8 +147,6 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:4200',
 ]
 
-CORS_ALLOW_ALL_ORIGINS = True
-
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  
     'REFRESH_TOKEN_LIFETIME': timedelta(days=5),
@@ -194,8 +192,38 @@ LOGGING = {
         },  
         'finance_api': {  
             'handlers': ['file'],  
-            'level': 'ERROR',  
+            'level': 'INFO',  
             'propagate': False,  
         },  
     },  
 }
+
+# CORS_ALLOW_ALL_ORIGINS = False
+# CORS_ALLOW_CREDENTIALS = True
+
+# CORS_ALLOW_HEADERS = [
+#     "content-type",
+#     "authorization",
+#     "x-csrftoken",
+# ]
+
+# CORS_EXPOSE_HEADERS = ["content-type", "X-CSRFToken"]
+
+# CSRF_COOKIE_SECURE = False  # Change to True in production (HTTPS required)
+# CSRF_COOKIE_HTTPONLY = True  # Ensure JavaScript cannot access CSRF token
+# CSRF_COOKIE_SAMESITE = "Lax"  # Allows CSRF token for cross-origin requests
+# SESSION_COOKIE_SAMESITE = "Lax"
+
+# SIMPLE_JWT = {
+#     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+#     "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+#     "ROTATE_REFRESH_TOKENS": True,
+#     "BLACKLIST_AFTER_ROTATION": True,
+#     "AUTH_HEADER_TYPES": ("Bearer",),
+#     "AUTH_COOKIE": "access_token",  # Name of the authentication cookie
+#     "AUTH_COOKIE_SECURE": False,  # Set True for production
+#     "AUTH_COOKIE_HTTP_ONLY": True,  # Prevent JavaScript access
+#     "AUTH_COOKIE_PATH": "/",  # Allow usage site-wide
+#     "AUTH_COOKIE_SAMESITE": "Lax",
+#     "AUTH_COOKIE": "refresh_token",
+# }

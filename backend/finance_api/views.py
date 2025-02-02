@@ -1,7 +1,7 @@
 from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.exceptions import ValidationError
 from .models import *
@@ -10,6 +10,65 @@ from .pdf_utils import *
 
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
+
+from django.contrib.auth import authenticate
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def protected_view(request):
+    return Response({"message": "You have access to this secure API!"})
+
+
+@api_view(['POST'])
+def login_view(request):
+    username = request.data.get('username')
+    password = request.data.get('password')
+
+    user = authenticate(username=username, password=password)
+    if user is not None:
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        response = Response({"message": "Login successful"})
+        response.set_cookie(
+            key=settings.SIMPLE_JWT["AUTH_COOKIE"],
+            value=access_token,
+            httponly=settings.SIMPLE_JWT["AUTH_COOKIE_HTTP_ONLY"],
+            secure=settings.SIMPLE_JWT["AUTH_COOKIE_SECURE"],
+            samesite=settings.SIMPLE_JWT["AUTH_COOKIE_SAMESITE"],
+            path=settings.SIMPLE_JWT["AUTH_COOKIE_PATH"],
+        )
+        return response
+    else:
+        return Response({"error": "Invalid credentials"}, status=400)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    try:
+        refresh_token = request.COOKIES.get("refresh_token")  
+
+        if refresh_token:
+            token = RefreshToken(refresh_token)
+            token.blacklist() 
+
+        response = Response({"message": "Logout successful"}, status=status.HTTP_200_OK)
+        response.delete_cookie("refresh_token") 
+        response.delete_cookie("access_token")  
+        return response
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def is_logged_in(request):
+    return Response({"isAuthenticated": True})
 
 
 class IncomeSourceViewSet(viewsets.ModelViewSet):
