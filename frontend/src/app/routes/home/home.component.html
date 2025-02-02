@@ -36,12 +36,33 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
-        <div class="card">
+        <!-- <div class="card">
             <div class="card-content">
                 <h2 class="text-lg font-bold mb-4">Income Sources ({{ selectedView }})</h2>
                 <div *ngIf="incomeSources.length > 0">
                     <app-pie-chart [data]="incomeSources"></app-pie-chart>
                 </div>
+            </div>
+        </div> -->
+
+        <div class="card">
+            <div class="card-content">
+                <h2 class="text-lg font-bold mb-4">Income Sources ({{ selectedView }})</h2>
+        
+                <div *ngIf="loading; else incomeChart" class="flex flex-col justify-center items-center h-52 space-y-2">
+                    <ng-icon name="hugeLoading03" class="animate-spin text-gray-500" style="width: 50px; height: 50px;"></ng-icon>
+                    <p class="text-gray-500 text-sm">Loading data<span class="dots"></span></p>
+                </div>
+        
+                <ng-template #incomeChart>
+                    <div *ngIf="incomeSources.length > 0; else noData">
+                        <app-pie-chart [data]="incomeSources"></app-pie-chart>
+                    </div>
+                </ng-template>
+        
+                <ng-template #noData>
+                    <p class="text-gray-500">No income data available for {{ selectedView }}.</p>
+                </ng-template>
             </div>
         </div>
 

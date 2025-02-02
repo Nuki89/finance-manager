@@ -6,15 +6,22 @@ import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
 import { ReportService } from '../../shared/services/api/report.service';
 import { IncomeService } from '../../shared/services/api/income.service';
 import { ExpenseService } from '../../shared/services/api/expense.service';
+import { ToggleViewService } from '../../shared/services/shared/toggle-view.service';
+import { Subscription } from 'rxjs';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { hugeLoading03 } from '@ng-icons/huge-icons';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent],
+  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon],
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  styleUrls: ['./home.component.css'],
+  viewProviders : [provideIcons({ hugeLoading03 })]
 })
 export class HomeComponent {
+  private viewSubscription!: Subscription;
+  loading: boolean = true;
   balance: any;
   currentBalance: number = 0;
   totalIncome: number = 0;
@@ -30,10 +37,17 @@ export class HomeComponent {
     private reportService: ReportService,
     private incomeService: IncomeService,
     private expenseService: ExpenseService,
+    private toggleViewService: ToggleViewService
   ) {}
 
   ngOnInit() {
     this.balanceInfo();
+
+    this.viewSubscription = this.toggleViewService.viewMode$.subscribe(view => {
+      this.selectedView = view;
+      this.fetchIncomeData();
+    });
+
   }
   
   balanceInfo() {
@@ -41,10 +55,6 @@ export class HomeComponent {
       this.balance = data;  
       this.currentBalance = data.available_balance;    
       this.totalSaving = data.total_savings;
-    });
-
-    this.incomeService.getLastMonthIncome().subscribe((data:any) => {
-      this.totalIncome = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
     });
 
     this.expenseService.getLastMonthExpense().subscribe((data:any) => {
@@ -59,13 +69,51 @@ export class HomeComponent {
       console.log(this.spendingCategories);
     });
 
-    this.incomeService.getLastMonthSourceSummary().subscribe((data:any) => {
-      this.incomeSources = data.map((item: any) => ({
-        name: item.source__name,
-        value: item.total_amount     
-      }));
-      console.log(data);
+    this.incomeService.getLastMonthIncome().subscribe((data:any) => {
+      this.totalIncome = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
     });
+
+    // this.incomeService.getYearlySourceSummary().subscribe((data:any) => {
+    //   this.incomeSources = data.map((item: any) => ({
+    //     name: item.source__name,
+    //     value: item.total_amount     
+    //   }));
+    //   console.log(data);
+    // });
+
+    // this.incomeService.getLastMonthSourceSummary().subscribe((data:any) => {
+    //   this.incomeSources = data.map((item: any) => ({
+    //     name: item.source__name,
+    //     value: item.total_amount     
+    //   }));
+    //   console.log(data);
+    // });
+  }
+
+  
+  fetchIncomeData(): void {
+    this.loading = true; 
+
+    const dataFetcher =
+      this.selectedView === 'Yearly'
+        ? this.incomeService.getYearlySourceSummary()
+        : this.incomeService.getLastMonthSourceSummary();
+
+    dataFetcher.subscribe(
+      (data: any) => {
+        this.incomeSources = data.map((item: any) => ({
+          name: item.source__name,
+          value: item.total_amount
+        }));
+        console.log(`${this.selectedView} Income Sources:`, data);
+        this.loading = false; 
+      },
+      (error) => {
+        console.error(`Error fetching ${this.selectedView} income sources:`, error);
+        this.incomeSources = [];
+        this.loading = false;
+      }
+    );
   }
 
   incomeVsExpense = {
