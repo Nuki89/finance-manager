@@ -1,8 +1,7 @@
-<mat-form-field style="width: 100%; background-color: #f9f9f9; border-radius: 5px;">
+<mat-form-field>
     <mat-label>Choose a date</mat-label>
     <input matInput [matDatepicker]="picker" (dateChange)="onDateSelected($event)"/>
     <mat-hint>DD/MM/YYYY</mat-hint>
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
+    <mat-datepicker #picker panelClass="datepickerForm"></mat-datepicker>
 </mat-form-field>
-  

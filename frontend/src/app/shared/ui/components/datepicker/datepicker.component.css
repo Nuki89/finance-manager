@@ -1,5 +1,13 @@
-::ng-deep .mat-form-field {
-    width: 100%;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-  }  
+.mat-mdc-form-field-subscript-wrapper {
+  display: none !important; 
+}
+
+.datepickerForm {
+  background:lightblue;
+}
+
+.mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
+  width: 180px !important;
+  height: 50px !important;
+  background-color: rgb(255, 255, 255) !important;
+}
