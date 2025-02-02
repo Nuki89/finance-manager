@@ -26,4 +26,10 @@ export class HeaderComponent {
     console.log('Logout successful');
   }
 
+  // onLogout(): void {
+  //   this.authService.logout().subscribe(() => {
+  //     console.log('Logout successful');
+  //   });
+  // }
+
 }

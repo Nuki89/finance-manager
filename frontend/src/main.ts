@@ -19,6 +19,7 @@ bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideHttpClient(
+      // withInterceptors([]) 
       withInterceptors([authInterceptor]) 
     ),
     provideAnimations(),
