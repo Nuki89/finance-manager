@@ -19,12 +19,12 @@ export class IncomeService {
     return this.http.post(this.incomeUrl, payload)
   }
 
-  deleteIncome(id: number) {
-    return this.http.delete(`${this.incomeUrl.replace(/\/$/, '')}/${id}/`);
+  updateIncome(id: number, payload: any) {
+    return this.http.put(`${this.incomeUrl.replace(/\/$/, '')}/${id}/`, payload);
   }
 
-  updateIncome(id: number, payload: any) {
-    return this.http.put(`${this.incomeUrl}/${id}`, payload)
+  deleteIncome(id: number) {
+    return this.http.delete(`${this.incomeUrl.replace(/\/$/, '')}/${id}/`);
   }
 
   getMonthlyIncome() {
@@ -35,8 +35,12 @@ export class IncomeService {
     return this.http.get(this.sourceUrl)
   }
 
+  addIncomeSource(payload: any) {
+    return this.http.post(this.sourceUrl, payload)
+  }
+
   updateIncomeSource(id: number, payload: any) {
-    return this.http.put(`${this.sourceUrl}${id}`, payload)
+    return this.http.put(`${this.sourceUrl.replace(/\/$/, '')}/${id}/`, payload);
   }
 
   deleteIncomeSource(id: number) {
