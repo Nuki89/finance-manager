@@ -13,7 +13,7 @@ import { ToggleViewService } from '../../../shared/services/shared/toggle-view.s
   imports: [CommonModule, RouterModule, FormsModule, NgIcon],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
-  viewProviders : [provideIcons({ hugeSettings01})]
+  viewProviders : [provideIcons({ hugeSettings01 })]
 })
 export class HeaderComponent {
   title: string = "Coiny";

@@ -1,0 +1,30 @@
+import { Component } from '@angular/core';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatTabsModule } from '@angular/material/tabs';
+
+@Component({
+  selector: 'app-settings',
+  standalone: true,
+  imports: [MatFormFieldModule, MatInputModule, MatButtonModule, MatTabsModule],
+  templateUrl: './settings.component.html',
+  styleUrl: './settings.component.css'
+})
+export class SettingsComponent {
+  selectedTabIndex: number = 0;
+
+  constructor() {}
+
+  ngOnInit() {
+    const savedTab = localStorage.getItem('selectedSettingsTab');
+    if (savedTab !== null) {
+      this.selectedTabIndex = Number(savedTab);
+    }
+  }
+
+  onTabChange(event: any) {
+    this.selectedTabIndex = event.index;
+    localStorage.setItem('selectedSettingsTab', event.index.toString()); 
+  }
+}

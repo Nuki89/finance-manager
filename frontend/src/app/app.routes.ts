@@ -13,6 +13,7 @@ import { SavingsComponent } from './routes/transactions/savings/savings.componen
 import { ReportsComponent } from './routes/transactions/reports/reports.component';
 import { ForgotPwdComponent } from './routes/auth/forgot-pwd/forgot-pwd.component';
 import { TermsPolicyComponent } from './routes/auth/terms-policy/terms-policy.component';
+import { SettingsComponent } from './routes/settings/settings.component';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,7 @@ export const routes: Routes = [
       { path: 'expenses', component: ExpensesComponent },
       { path: 'savings', component: SavingsComponent },
       { path: 'reports', component: ReportsComponent },
+      { path: 'settings', component: SettingsComponent },
     ],
   },
   {
