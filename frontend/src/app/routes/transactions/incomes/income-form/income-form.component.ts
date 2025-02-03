@@ -38,6 +38,7 @@ export class IncomeFormComponent {
 
 
   ngOnInit() {
+    this.selectedDate = new Date();
     this.loadData();
   }
 
