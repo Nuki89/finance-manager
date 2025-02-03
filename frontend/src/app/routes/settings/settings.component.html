@@ -2,13 +2,13 @@
     
     <mat-tab-group [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onTabChange($event)">
         <mat-tab label="General">
-          General settings!
+            <app-general-settings/>
         </mat-tab>
         <mat-tab label="Account">
-          Account settings!
+            <app-account-settings/>
         </mat-tab>
         <mat-tab label="Finance">
-          Finance settings!
+            <app-finance-settings/>
         </mat-tab>
         <mat-tab label="Notifications">
           Notifications!

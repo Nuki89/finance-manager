@@ -3,11 +3,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatTabsModule } from '@angular/material/tabs';
+import { GeneralSettingsComponent } from "./general-settings/general-settings.component";
+import { AccountSettingsComponent } from "./account-settings/account-settings.component";
+import { FinanceSettingsComponent } from './finance-settings/finance-settings.component';
 
 @Component({
   selector: 'app-settings',
   standalone: true,
-  imports: [MatFormFieldModule, MatInputModule, MatButtonModule, MatTabsModule],
+  imports: [MatFormFieldModule, MatInputModule, MatButtonModule, MatTabsModule, GeneralSettingsComponent, AccountSettingsComponent, FinanceSettingsComponent],
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.css'
 })
