@@ -183,10 +183,16 @@ export class IncomeFormComponent {
         this.incomeService.deleteIncomeSource(id).subscribe(
           () => {
             this.toastr.success(`Income source "${sourceToDelete?.name}" deleted successfully!`);
-            this.loadData(); 
+            this.loadData();
           },
           (error) => {
-            this.toastr.error(`Failed to delete "${sourceToDelete?.name}". Please try again.`);
+            const specificErrorMessage = "Cannot delete this source because it has associated incomes. Please delete all related incomes first.";
+            
+            if (error.status === 400 && error.error?.detail === specificErrorMessage) {
+              this.toastr.warning(specificErrorMessage);
+            } else {
+              this.toastr.error(`Failed to delete "${sourceToDelete?.name}". Please try again.`);
+            }
             console.error('Error deleting income source:', error);
           }
         );
