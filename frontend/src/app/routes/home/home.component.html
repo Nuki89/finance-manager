@@ -16,14 +16,12 @@
         </div>
         <div class="card">
             <div class="card-content text-center">
-                <h2 class="text-xl font-bold">Total Income ({{ selectedView }})</h2>
-                <p class="text-3xl font-semibold text-blue-500">{{ totalIncome }} €</p>
+                <app-income-summary></app-income-summary>
             </div>
         </div>
         <div class="card">
             <div class="card-content text-center">
-                <h2 class="text-xl font-bold">Total Expense ({{ selectedView }})</h2>
-                <p class="text-3xl font-semibold text-red-500">{{ totalExpense }} €</p>
+                <app-expense-summary></app-expense-summary>
             </div>
         </div>
         <div class="card">
@@ -35,15 +33,6 @@
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
-
-        <!-- <div class="card">
-            <div class="card-content">
-                <h2 class="text-lg font-bold mb-4">Income Sources ({{ selectedView }})</h2>
-                <div *ngIf="incomeSources.length > 0">
-                    <app-pie-chart [data]="incomeSources"></app-pie-chart>
-                </div>
-            </div>
-        </div> -->
 
         <div class="card">
             <div class="card-content">
@@ -76,9 +65,21 @@
         <div class="card">
             <div class="card-content">
                 <h2 class="text-lg font-bold mb-4">Spending Categories ({{ selectedView }})</h2>
-                <div *ngIf="spendingCategories.length > 0">
-                    <app-pie-chart [data]="spendingCategories"></app-pie-chart>
+        
+                <div *ngIf="loading; else expenseChart" class="flex flex-col justify-center items-center h-52 space-y-2">
+                    <ng-icon name="hugeLoading03" class="animate-spin text-gray-500" style="width: 50px; height: 50px;"></ng-icon>
+                    <p class="text-gray-500 text-sm">Loading data<span class="dots"></span></p>
                 </div>
+        
+                <ng-template #expenseChart>
+                    <div *ngIf="spendingCategories.length > 0; else noData">
+                        <app-pie-chart [data]="spendingCategories"></app-pie-chart>
+                    </div>
+                </ng-template>
+        
+                <ng-template #noData>
+                    <p class="text-gray-500">No expense data available for {{ selectedView }}.</p>
+                </ng-template>
             </div>
         </div>
 

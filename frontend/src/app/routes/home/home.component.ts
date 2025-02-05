@@ -10,11 +10,13 @@ import { ToggleViewService } from '../../shared/services/shared/toggle-view.serv
 import { Subscription } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeLoading03 } from '@ng-icons/huge-icons';
+import { IncomeSummaryComponent } from './components/income-summary/income-summary.component';
+import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon],
+  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   viewProviders : [provideIcons({ hugeLoading03 })]
@@ -45,7 +47,7 @@ export class HomeComponent {
 
     this.viewSubscription = this.toggleViewService.viewMode$.subscribe(view => {
       this.selectedView = view;
-      this.fetchIncomeData();
+      this.loadAllData();
     });
 
   }
@@ -57,114 +59,70 @@ export class HomeComponent {
       this.totalSaving = data.total_savings;
     });
 
-    this.expenseService.getLastMonthExpense().subscribe((data:any) => {
-      this.totalExpense = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
-    });
-
-    this.expenseService.getLastMonthCategorySummary().subscribe((data:any) => {
-      this.spendingCategories = data.map((item: any) => ({
-        name: item.category__name,
-        value: item.total_amount     
-      }));
-      console.log(this.spendingCategories);
-    });
-
-    // this.incomeService.getLastMonthIncome().subscribe((data:any) => {
-    //   this.totalIncome = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
-    // });
-
-    // this.incomeService.getLastYearIncome().subscribe((data:any) => {
-    //   this.totalIncome = data.reduce((sum: any, item: { total_amount: any; }) => sum + item.total_amount, 0);
-    // });
-
-    // this.incomeService.getYearlySourceSummary().subscribe((data:any) => {
-    //   this.incomeSources = data.map((item: any) => ({
-    //     name: item.source__name,
-    //     value: item.total_amount     
-    //   }));
-    //   console.log(data);
-    // });
-
-    // this.incomeService.getLastMonthSourceSummary().subscribe((data:any) => {
-    //   this.incomeSources = data.map((item: any) => ({
-    //     name: item.source__name,
-    //     value: item.total_amount     
-    //   }));
-    //   console.log(data);
-    // });
   }
 
+  loadAllData(): void {
+    this.loading = true;
   
-  // fetchIncomeData(): void {
-  //   this.loading = true; 
-
-  //   const dataFetcher =
-  //     this.selectedView === 'Yearly'
-  //       ? this.incomeService.getYearlySourceSummary()
-  //       : this.incomeService.getLastMonthSourceSummary();
-
-  //   dataFetcher.subscribe(
-  //     (data: any) => {
-  //       this.incomeSources = data.map((item: any) => ({
-  //         name: item.source__name,
-  //         value: item.total_amount
-  //       }));
-  //       console.log(`${this.selectedView} Income Sources:`, data);
-  //       this.loading = false; 
-  //     },
-  //     (error) => {
-  //       console.error(`Error fetching ${this.selectedView} income sources:`, error);
-  //       this.incomeSources = [];
-  //       this.loading = false;
-  //     }
-  //   );
-  // }
-
-  fetchIncomeData(): void {
-    this.loading = true; 
-
-    const sourceDataFetcher =
-      this.selectedView === 'Yearly'
-        ? this.incomeService.getYearlySourceSummary()
-        : this.incomeService.getLastMonthSourceSummary();
-
-    const totalIncomeFetcher =
-      this.selectedView === 'Yearly'
-        ? this.incomeService.getLastYearIncome()
-        : this.incomeService.getLastMonthIncome();
-
-    sourceDataFetcher.subscribe(
-      (data: any) => {
-        this.incomeSources = data.map((item: any) => ({
-          name: item.source__name,
-          value: item.total_amount
-        }));
-        this.checkLoadingComplete();
-      },
-      (error) => {
-        console.error(`Error fetching ${this.selectedView} income sources:`, error);
-        this.incomeSources = [];
-        this.checkLoadingComplete();
-      }
-    );
-
-    totalIncomeFetcher.subscribe(
-      (data: any) => {
-        this.totalIncome = data.reduce((sum: any, item: { total_amount: any }) => sum + item.total_amount, 0);
-        this.checkLoadingComplete();
-      },
-      (error) => {
-        console.error(`Error fetching ${this.selectedView} total income:`, error);
-        this.totalIncome = 0;
-        this.checkLoadingComplete();
-      }
-    );
+    Promise.all([this.fetchIncomeData(), this.fetchExpenseData()])
+      .then(() => {
+        this.loading = false;
+      })
+      .catch(() => {
+        this.loading = false;
+      });
   }
 
-  checkLoadingComplete(): void {
-    if (this.incomeSources.length > 0 || this.totalIncome !== 0) {
-      this.loading = false;
-    }
+  fetchIncomeData(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const sourceDataFetcher =
+        this.selectedView === 'Yearly'
+          ? this.incomeService.getYearlySourceSummary()
+          : this.incomeService.getLastMonthSourceSummary();
+  
+      sourceDataFetcher.subscribe(
+        (data: any) => {
+          this.incomeSources = [...data.map((item: any) => ({
+            name: item.source__name,
+            value: item.total_amount
+          }))];
+  
+          console.log("Updated Income Sources:", this.incomeSources);
+          resolve(); 
+        },
+        (error) => {
+          console.error(`Error fetching ${this.selectedView} income sources:`, error);
+          this.incomeSources = [];
+          reject();
+        }
+      );
+    });
+  }
+  
+  fetchExpenseData(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const categoryDataFetcher =
+        this.selectedView === 'Yearly'
+          ? this.expenseService.getYearlyCategorySummary()
+          : this.expenseService.getLastMonthCategorySummary();
+  
+      categoryDataFetcher.subscribe(
+        (data: any) => {
+          this.spendingCategories = [...data.map((item: any) => ({
+            name: item.category__name,
+            value: item.total_amount
+          }))];
+  
+          console.log("Updated Spending Categories:", this.spendingCategories);
+          resolve(); 
+        },
+        (error) => {
+          console.error(`Error fetching ${this.selectedView} spending categories:`, error);
+          this.spendingCategories = [];
+          reject();
+        }
+      );
+    });
   }
 
   incomeVsExpense = {
