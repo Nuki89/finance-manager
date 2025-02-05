@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ForgotPwdComponent } from './forgot-pwd.component';
+import { RouterTestingModule } from '@angular/router/testing';
 
 describe('ForgotPwdComponent', () => {
   let component: ForgotPwdComponent;
@@ -8,7 +9,7 @@ describe('ForgotPwdComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ForgotPwdComponent]
+      imports: [ForgotPwdComponent, RouterTestingModule]
     })
     .compileComponents();
 

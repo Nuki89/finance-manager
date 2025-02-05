@@ -17,7 +17,7 @@ import { Component, AfterViewInit, HostListener } from '@angular/core';
   selector: 'app-particles-background',
   standalone: true,
   templateUrl: './particles-background.component.html',
-  styleUrls: ['./particles-background.component.scss']
+  styleUrls: ['./particles-background.component.css']
 })
 export class ParticlesBackgroundComponent implements AfterViewInit {
   private canvas!: HTMLCanvasElement;
