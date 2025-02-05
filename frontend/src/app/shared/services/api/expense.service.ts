@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { apiEndpoints } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { catchError, Observable, of, tap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,10 +10,37 @@ export class ExpenseService {
   private expenseUrl = apiEndpoints.expenseUrl
   private categoriesUrl = apiEndpoints.expenseCategoriesUrl
 
+  private expenseCache: any[] | null = null;
+  private lastFetchTime: number = 0;
+  private CACHE_DURATION = 60 * 1000;
+
   constructor(private http: HttpClient) { }
 
-  getExpense() {
-    return this.http.get(this.expenseUrl)
+  private handleError(operation = 'operation', fallbackValue: any = []) {
+    return (error: any): Observable<any[]> => {
+      console.error(`${operation} failed:`, error);
+      return of(fallbackValue);
+    };
+  }
+
+  // getAllExpenses() {
+  //   return this.http.get(this.expenseUrl)
+  // }
+
+  getAllExpenses() {
+    const now = Date.now();
+    if (this.expenseCache && now - this.lastFetchTime < this.CACHE_DURATION) { 
+      console.log('Returning cached expenses');
+      return of(this.expenseCache);
+    }
+
+    return this.http.get(this.expenseUrl).pipe(
+      tap(data => {
+        this.expenseCache = data as any[];
+        this.lastFetchTime = Date.now();
+      }),
+      catchError(this.handleError('getAllExpenses', []))
+    );
   }
 
   addExpense(payload: any) {
@@ -31,7 +59,7 @@ export class ExpenseService {
     return this.http.get(`${this.expenseUrl}monthly_summary`)
   }
 
-  getExpenseCategory() {
+  getMonthlyCategorySummary() {
     return this.http.get(`${this.expenseUrl}monthly_category_summary`)
   }
 
