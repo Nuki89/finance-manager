@@ -50,48 +50,28 @@ export class IncomeFormComponent {
     this.loadData();
   }
 
+  loadData() {
+    forkJoin({
+      incomes: this.incomeService.getIncome(),
+      sources: this.incomeService.getIncomeSource()
+    }).subscribe(
+      ({ incomes, sources }) => {
+        this.incomes = incomes as any[];
+        this.sources = sources as any[];
+        if (this.sources.length > 0) {
+          this.selectedSource = this.sources[0].id;
+          this.onSourceSelect();
+        }
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    );
+  }
 
   onDatePicked(date: Date) {
     this.selectedDate = date;
     // console.log("Selected Date in IncomeFormComponent:", this.selectedDate);
-  }
-
-
-  onAddIncome() {
-    if (!this.selectedSource || !this.amount) {
-      this.toastr.error('Please fill in all required fields.','Error adding income');
-      return;
-    }
-
-    const formattedDate = this.selectedDate
-    ? moment(this.selectedDate).format('YYYY-MM-DD')  
-    : moment().format('YYYY-MM-DD');  
-
-    const payload = {
-      source: this.selectedSource,
-      amount: this.amount,
-      date: formattedDate,
-      description: this.description || '',
-    };
-
-    // console.log('Payload:', payload);
-
-    this.incomeService.addIncome(payload).subscribe(
-      (data: any) => {
-        // console.log('Backend Response:', data);
-        this.toastr.success('Income added successfully!','Income added');
-        this.selectedSource = null;
-        this.amount = null;
-        this.selectedDate = null;
-        this.description = '';
-        this.loadData();
-        this.sharedDataService.notifyIncomeChanged();
-      },
-      (error) => {
-        console.error('Error adding income:', error);
-        this.toastr.error('Failed to add income. Please try again.','Error adding income');
-      }
-    );
   }
 
   openAddSourceModal() {
@@ -108,7 +88,6 @@ export class IncomeFormComponent {
       }
     });
   }
-
 
   openUpdateSourceModal(selectedSource: any) {
     if (!selectedSource) {
@@ -129,26 +108,6 @@ export class IncomeFormComponent {
         this.loadData(); 
       }
     });
-  }
-
-
-  loadData() {
-    forkJoin({
-      incomes: this.incomeService.getIncome(),
-      sources: this.incomeService.getIncomeSource()
-    }).subscribe(
-      ({ incomes, sources }) => {
-        this.incomes = incomes as any[];
-        this.sources = sources as any[];
-        if (this.sources.length > 0) {
-          this.selectedSource = this.sources[0].id;
-          this.onSourceSelect();
-        }
-      },
-      (error) => {
-        console.error('Error fetching data:', error);
-      }
-    );
   }
 
   onSourceSelect() {
@@ -188,6 +147,40 @@ export class IncomeFormComponent {
         );
       }
     });
+  }
+
+  onAddIncome() {
+    if (!this.selectedSource || !this.amount) {
+      this.toastr.error('Please fill in all required fields.','Error adding income');
+      return;
+    }
+
+    const formattedDate = this.selectedDate
+    ? moment(this.selectedDate).format('YYYY-MM-DD')  
+    : moment().format('YYYY-MM-DD');  
+
+    const payload = {
+      source: this.selectedSource,
+      amount: this.amount,
+      date: formattedDate,
+      description: this.description || '',
+    };
+
+    this.incomeService.addIncome(payload).subscribe(
+      (data: any) => {
+        this.toastr.success('Income added successfully!','Income added');
+        this.selectedSource = null;
+        this.amount = null;
+        this.selectedDate = null;
+        this.description = '';
+        this.loadData();
+        this.sharedDataService.notifyIncomeChanged();
+      },
+      (error) => {
+        console.error('Error adding income:', error);
+        this.toastr.error('Failed to add income. Please try again.','Error adding income');
+      }
+    );
   }
 
 }
