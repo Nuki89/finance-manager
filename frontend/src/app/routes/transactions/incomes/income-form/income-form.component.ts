@@ -10,13 +10,21 @@ import { DatepickerComponent } from "../../../../shared/ui/components/datepicker
 import moment from 'moment';
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
 import { MatDialog } from '@angular/material/dialog';
+import { SourceEditModalComponent } from '../source-edit-modal/source-edit-modal.component';
+import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
+import { SourceAddModalComponent } from '../source-add-modal/source-add-modal.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
+
+ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-income-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatepickerComponent],
+  imports: [CommonModule, FormsModule, DatepickerComponent, NgIcon],
   templateUrl: './income-form.component.html',
   styleUrls: ['./income-form.component.css'],
+  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]
 })
 export class IncomeFormComponent {
   @Input() sources: any[] = []; 
@@ -86,58 +94,41 @@ export class IncomeFormComponent {
     );
   }
 
-
-  addNewSource() {
-    if (!this.newSourceName) {
-      this.toastr.error('Please enter a source name.','Error adding income source');
-      return;
-    }
-
-    const payload = {
-      name: this.newSourceName,
-    };
-
-    // console.log('Payload:', payload);
-
-    this.incomeService.addIncomeSource(payload).subscribe(
-      (data: any) => {
-        // console.log('Backend Response:', data);
-        this.toastr.success('Income source added successfully!','Income source added');
-        this.newSourceName = '';
-        this.loadData();
+  openAddSourceModal() {
+    const dialogRef = this.dialog.open(SourceAddModalComponent, {
+      width: '400px',
+      data: {
+        selectedSource: null,
       },
-      (error) => {
-        console.error('Error adding income source:', error);
-        this.toastr.error('Failed to add income source. Please try again.','Error adding income source');
+    });
+
+    dialogRef.afterClosed().subscribe((updatedSource) => {
+      if (updatedSource) {
+        this.loadData();
       }
-    );
-  
+    });
   }
 
 
-  updateIncomeSource(id: number, name: string) {
-    if (!name) {
-      this.toastr.error('Please enter a source name.','Error updating income source');
+  openUpdateSourceModal(selectedSource: any) {
+    if (!selectedSource) {
+      this.toastr.error('No source selected.', 'Error');
       return;
     }
-
-    const payload = {
-      name: name,
-    };
-
-    // console.log('Payload:', payload);
-
-    this.incomeService.updateIncomeSource(id, payload).subscribe(
-      (data: any) => {
-        // console.log('Backend Response:', data);
-        this.toastr.success('Income source updated successfully!','Income source updated');
-        this.loadData();
+  
+    const dialogRef = this.dialog.open(SourceEditModalComponent, {
+      width: '400px',
+      data: {
+        selectedSource: { ...this.selectedSourceObj },
+        sources: this.sources,
       },
-      (error) => {
-        console.error('Error updating income source:', error);
-        this.toastr.error('Failed to update income source. Please try again.','Error updating income source');
+    });
+  
+    dialogRef.afterClosed().subscribe((updatedSource) => {
+      if (updatedSource) {
+        this.loadData(); 
       }
-    );
+    });
   }
 
 
@@ -160,13 +151,11 @@ export class IncomeFormComponent {
     );
   }
 
-
   onSourceSelect() {
     this.selectedSourceObj = this.sources.find(
       (source) => source.id === Number(this.selectedSource)  
     ) || null;
   }
-
 
   handleDeleteSource(id: number) {
     const sourceToDelete = this.sources.find(source => source.id === id);
@@ -200,6 +189,5 @@ export class IncomeFormComponent {
       }
     });
   }
-
 
 }
