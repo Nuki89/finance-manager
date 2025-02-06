@@ -1,0 +1,34 @@
+<div class="flex justify-between items-center">
+    <h4 class="p-2">Edit source modal</h4>
+    <button (click)="closeModal()" class="p-2 rounded-full ">
+        <ng-icon name="heroXMark" class="text-2xl"/>
+    </button>
+</div>
+<hr>
+
+<div *ngIf="selectedSourceObj" class="card p-6 rounded-lg shadow">
+
+    <div class="mb-4">
+        <label for="editSourceName" class="block text-sm font-medium text-gray-700">Source Name</label>
+        <input
+            type="text"
+            id="editSourceName"
+            class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            [(ngModel)]="selectedSourceObj.name"
+            name="editSourceName"/>
+    </div>
+
+    <button
+        type="button"
+        class="px-4 py-2 text-white bg-blue-600 rounded-md hover:bg-blue-700"
+        (click)="updateIncomeSource(selectedSourceObj.id, selectedSourceObj.name)">
+        Save
+    </button>
+
+    <button
+        type="button"
+        class="px-4 py-2 ml-2 text-white bg-red-600 rounded-md hover:bg-red-700"
+        (click)="handleDeleteSource(selectedSourceObj.id)">
+        Delete
+    </button>
+</div>
