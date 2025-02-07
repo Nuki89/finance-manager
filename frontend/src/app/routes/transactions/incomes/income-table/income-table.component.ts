@@ -8,6 +8,9 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 import { IncomeEditModalComponent } from '../income-edit-modal/income-edit-modal.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
+import { TableActionCellComponent } from '../../../../shared/ui/components/table-action-cell/table-action-cell.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -16,7 +19,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   standalone: true,
   imports: [AgGridModule],
   templateUrl: './income-table.component.html',
-  styleUrl: './income-table.component.css'
+  styleUrl: './income-table.component.css',
+  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]
 })
 export class IncomeTableComponent {
   private sharedDataService = inject(SharedDataService);
@@ -46,31 +50,38 @@ export class IncomeTableComponent {
     { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },
     {
       headerName: 'Actions',
-      cellRenderer: (params: any) => {
-        const id = params.data.id;
-        const div = document.createElement('div');
+      cellRenderer: TableActionCellComponent,
+      cellRendererParams: {
+        context: { componentParent: this }, 
+      }
+    },
+    // {
+    //   headerName: 'Actions',
+    //   cellRenderer: (params: any) => {
+    //     const id = params.data.id;
+    //     const div = document.createElement('div');
         
-        const editButton = document.createElement('button');
-        editButton.className = 'bg-blue-500 text-white px-3 rounded';
-        editButton.innerText = 'Edit';
-        editButton.addEventListener('click', () => {
+    //     const editButton = document.createElement('button');
+    //     editButton.className = 'bg-blue-500 text-white px-3 rounded';
+    //     editButton.innerText = 'Edit';
+    //     editButton.addEventListener('click', () => {
           
-          this.handleEdit(id, params.data);
-        });
+    //       this.handleEdit(id, params.data);
+    //     });
     
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'bg-red-500 text-white px-3 rounded ml-2';
-        deleteButton.innerText = 'Delete';
-        deleteButton.addEventListener('click', () => {
-          this.handleDelete(id); 
-        });
+    //     const deleteButton = document.createElement('button');
+    //     deleteButton.className = 'bg-red-500 text-white px-3 rounded ml-2';
+    //     deleteButton.innerText = 'Delete';
+    //     deleteButton.addEventListener('click', () => {
+    //       this.handleDelete(id); 
+    //     });
     
-        div.appendChild(editButton);
-        div.appendChild(deleteButton);
+    //     div.appendChild(editButton);
+    //     div.appendChild(deleteButton);
     
-        return div;
-      },
-    }
+    //     return div;
+    //   },
+    // }
     
   ];
 
@@ -82,6 +93,7 @@ export class IncomeTableComponent {
     onGridReady: () => {
       this.sizeColumnsToFit();
     },
+    context: { componentParent: this },
     defaultColDef: {
       flex: 1,
       editable: false,
