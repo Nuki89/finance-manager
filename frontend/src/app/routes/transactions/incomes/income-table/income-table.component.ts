@@ -48,13 +48,6 @@ export class IncomeTableComponent {
     { field: 'amount', headerName: 'Amount', valueFormatter: this.currencyFormatter },
     { field: 'description', headerName: 'Description' },
     { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },
-    // {
-    //   headerName: 'Actions',
-    //   cellRenderer: TableActionCellComponent,
-    //   cellRendererParams: {
-    //     context: { componentParent: this }, 
-    //   }
-    // },
     {
       headerName: 'Actions',
       cellRenderer: (params: any) => {
@@ -93,7 +86,6 @@ export class IncomeTableComponent {
     onGridReady: () => {
       this.sizeColumnsToFit();
     },
-    context: { componentParent: this },
     defaultColDef: {
       flex: 1,
       editable: false,

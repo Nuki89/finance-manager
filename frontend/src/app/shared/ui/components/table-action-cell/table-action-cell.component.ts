@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, NO_ERRORS_SCHEMA } from '@angular/core';
 import { NgIcon } from '@ng-icons/core';
 import { heroTrash, heroPencilSquare } from '@ng-icons/heroicons/outline';
 
@@ -8,15 +8,14 @@ import { heroTrash, heroPencilSquare } from '@ng-icons/heroicons/outline';
   standalone: true,
   imports: [CommonModule, NgIcon],
   template: `
-    <div class="flex gap-2">
-      <button class="bg-blue-500 text-white px-3 rounded" (click)="onEdit()">
-        <ng-icon [name]="heroPencilSquare"></ng-icon>
-      </button>
-      
-      <button class="bg-red-500 text-white px-3 rounded" (click)="onDelete()">
-        <ng-icon [name]="heroTrash"></ng-icon>
-      </button>
-    </div>
+    <button (click)="onEdit()">
+      <ng-icon [icon]="heroPencilSquare"></ng-icon>
+    </button>
+    <button (click)="onDelete()">
+      <ng-icon [icon]="heroTrash"></ng-icon>
+    </button>
+
+
   `,
   styles: [`
     button {
@@ -28,22 +27,13 @@ import { heroTrash, heroPencilSquare } from '@ng-icons/heroicons/outline';
       cursor: pointer;
     }
   `],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class TableActionCellComponent {
-  @Input() params: any;
+  @Input() onEdit!: () => void;
+  @Input() onDelete!: () => void;
 
-  heroPencilSquare = heroPencilSquare;
   heroTrash = heroTrash;
+  heroPencilSquare = heroPencilSquare;
 
-  onEdit() {
-    if (this.params.context?.componentParent?.handleEdit) {
-      this.params.context.componentParent.handleEdit(this.params.data.id, this.params.data);
-    }
-  }
-
-  onDelete() {
-    if (this.params.context?.componentParent?.handleDelete) {
-      this.params.context.componentParent.handleDelete(this.params.data.id);
-    }
-  }
 }
