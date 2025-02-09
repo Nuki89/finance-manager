@@ -17,7 +17,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-income-table',
   standalone: true,
-  imports: [AgGridModule],
+  imports: [AgGridModule, NgIcon],
   templateUrl: './income-table.component.html',
   styleUrl: './income-table.component.css',
   viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]

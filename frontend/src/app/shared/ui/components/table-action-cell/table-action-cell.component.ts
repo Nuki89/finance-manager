@@ -10,14 +10,16 @@ import { ICellRendererParams } from 'ag-grid-community';
   standalone: true,
   imports: [CommonModule, NgIcon],
   template: `
-    <button class="bg-blue-500 text-white px-3 rounded ml-2" (click)="onEdit()">
-      Edit
-      <!-- <ng-icon [icon]="heroPencilSquare"></ng-icon> -->
+  <div class="flex justify-center space-x-2">
+
+    <button class="flex items-center justify-center w-10 h-10 border border-blue-500 text-blue-500 rounded transition duration-200 hover:bg-blue-500 hover:text-white" (click)="onEdit()">
+      <ng-icon name="heroPencilSquare" class="text-2xl"/>
     </button>
-    <button class="bg-red-500 text-white px-3 rounded ml-2" (click)="onDelete()">
-      <!-- <ng-icon [icon]="heroTrash"></ng-icon> -->
-       Delete
+
+    <button class="flex items-center justify-center w-10 h-10 border border-red-500 text-red-500 rounded transition duration-200 hover:bg-red-500 hover:text-white" (click)="onDelete()">
+      <ng-icon name="heroTrash" class="text-2xl"/>
     </button>
+  </div>
   `,
   encapsulation: ViewEncapsulation.None,
   schemas: [NO_ERRORS_SCHEMA]
