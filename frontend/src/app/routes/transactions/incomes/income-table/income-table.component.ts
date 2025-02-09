@@ -47,34 +47,43 @@ export class IncomeTableComponent {
     },
     { field: 'amount', headerName: 'Amount', valueFormatter: this.currencyFormatter },
     { field: 'description', headerName: 'Description' },
-    { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },
+    { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },  
     {
       headerName: 'Actions',
-      cellRenderer: (params: any) => {
-        const id = params.data.id;
-        const div = document.createElement('div');
+      filter: false,
+      cellRenderer: TableActionCellComponent,
+      cellRendererParams: {
+        onEdit: (params: any) => this.handleEdit(params.data.id, params.data),
+        onDelete: (params: any) => this.handleDelete(params.data.id),
+      }
+    },
+    // {
+    //   headerName: 'Actions',
+    //   cellRenderer: (params: any) => {
+    //     const id = params.data.id;
+    //     const div = document.createElement('div');
         
-        const editButton = document.createElement('button');
-        editButton.className = 'bg-blue-500 text-white px-3 rounded';
-        editButton.innerText = 'Edit';
-        editButton.addEventListener('click', () => {
+    //     const editButton = document.createElement('button');
+    //     editButton.className = 'bg-blue-500 text-white px-3 rounded';
+    //     editButton.innerText = 'Edit';
+    //     editButton.addEventListener('click', () => {
           
-          this.handleEdit(id, params.data);
-        });
+    //       this.handleEdit(id, params.data);
+    //     });
     
-        const deleteButton = document.createElement('button');
-        deleteButton.className = 'bg-red-500 text-white px-3 rounded ml-2';
-        deleteButton.innerText = 'Delete';
-        deleteButton.addEventListener('click', () => {
-          this.handleDelete(id); 
-        });
+    //     const deleteButton = document.createElement('button');
+    //     deleteButton.className = 'bg-red-500 text-white px-3 rounded ml-2';
+    //     deleteButton.innerText = 'Delete';
+    //     deleteButton.addEventListener('click', () => {
+    //       this.handleDelete(id); 
+    //     });
     
-        div.appendChild(editButton);
-        div.appendChild(deleteButton);
+    //     div.appendChild(editButton);
+    //     div.appendChild(deleteButton);
     
-        return div;
-      },
-    }
+    //     return div;
+    //   },
+    // },  
     
   ];
 
@@ -86,6 +95,10 @@ export class IncomeTableComponent {
     onGridReady: () => {
       this.sizeColumnsToFit();
     },
+    context: {
+      componentParent: this 
+    },
+    components: { tableActionCell: TableActionCellComponent },
     defaultColDef: {
       flex: 1,
       editable: false,
