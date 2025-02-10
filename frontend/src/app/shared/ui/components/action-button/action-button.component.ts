@@ -8,20 +8,26 @@ import { NgIcon } from '@ng-icons/core';
   imports: [CommonModule, NgIcon],
   template: `
     <button 
-      class="flex items-center justify-center w-10 h-10 border rounded transition duration-200"
-      [ngClass]="buttonClass"
+      class="flex items-center justify-center border rounded transition duration-200"
+      [ngClass]="[buttonClass, size === 'icon' ? 'w-10 h-10' : 'px-4 py-2']"
       (click)="handleClick($event)"
       [title]="tooltip"
+      [type]="type"
     >
-      <ng-icon [name]="icon" class="text-2xl"/>
+      <ng-icon *ngIf="icon" [name]="icon" class="text-2xl" [ngClass]="text ? 'mr-2' : ''"></ng-icon>
+      <span *ngIf="text">{{ text }}</span>
     </button>
   `,
   styles: ``
 })
 export class ActionButtonComponent {
-  @Input() icon!: string;
+  @Input() icon?: string;
+  @Input() text?: string;
   @Input() buttonClass!: string;
   @Input() tooltip!: string;
+  @Input() type: 'button' | 'submit' | 'reset' = 'button';
+  @Input() size: 'normal' | 'icon' = 'normal';
+
   @Output() actionClick = new EventEmitter<Event>();
 
   handleClick(event: Event) {

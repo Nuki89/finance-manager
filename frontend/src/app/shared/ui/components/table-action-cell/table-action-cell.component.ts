@@ -3,14 +3,15 @@ import { Component, Input, NO_ERRORS_SCHEMA, ViewEncapsulation } from '@angular/
 import { NgIcon } from '@ng-icons/core';
 import { ICellRendererAngularComp } from 'ag-grid-angular';
 import { ICellRendererParams } from 'ag-grid-community';
+import { ActionButtonComponent } from '../action-button/action-button.component';
 
 @Component({
   selector: 'app-table-action-cell',
   standalone: true,
-  imports: [CommonModule, NgIcon],
+  imports: [CommonModule, NgIcon, ActionButtonComponent],
   template: `
   <div class="flex justify-center space-x-2">
-    <button 
+    <!-- <button 
       *ngFor="let action of actions" 
       class="flex items-center justify-center w-10 h-10 border rounded transition duration-200"
       [ngClass]="action.class"
@@ -18,7 +19,17 @@ import { ICellRendererParams } from 'ag-grid-community';
       [title]="action.tooltip"
     >
       <ng-icon [name]="action.icon" class="text-2xl"/>
-    </button>
+    </button> -->
+
+    <app-action-button 
+      *ngFor="let action of actions"
+      [icon]="action.icon"
+      [buttonClass]="action.class"
+      [tooltip]="action.tooltip"
+      size="icon"
+      (actionClick)="action.handler()"
+    >
+    </app-action-button>
   </div>
   `,
   encapsulation: ViewEncapsulation.None,

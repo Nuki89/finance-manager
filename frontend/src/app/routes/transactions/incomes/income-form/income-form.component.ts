@@ -15,13 +15,14 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { SourceAddModalComponent } from '../source-add-modal/source-add-modal.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
+import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-income-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatepickerComponent, NgIcon],
+  imports: [CommonModule, FormsModule, DatepickerComponent, NgIcon, ActionButtonComponent],
   templateUrl: './income-form.component.html',
   styleUrls: ['./income-form.component.css'],
   viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]
