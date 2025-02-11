@@ -8,13 +8,16 @@ import { ToastrService } from 'ngx-toastr';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import moment from 'moment';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { heroXMark } from '@ng-icons/heroicons/outline';
 
 @Component({
   selector: 'app-income-edit-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatepickerComponent],
+  imports: [CommonModule, FormsModule, DatepickerComponent, NgIcon],
   templateUrl: './income-edit-modal.component.html',
-  styleUrl: './income-edit-modal.component.css'
+  styleUrl: './income-edit-modal.component.css',
+  viewProviders : [provideIcons({ heroXMark })]
 })
 export class IncomeEditModalComponent {
   selectedSource: any = null;
@@ -97,7 +100,7 @@ export class IncomeEditModalComponent {
           this.description = '';
           this.loadData();
           this.sharedDataService.notifyIncomeChanged();
-          this.closeAddModal();
+          this.closeModal();
         },
         (error) => {
           console.error('Error updating income:', error);
@@ -120,7 +123,7 @@ export class IncomeEditModalComponent {
   }
 
 
-  closeAddModal() {
+  closeModal() {
     this.dialog.closeAll();
   }
 
