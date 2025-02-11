@@ -4,7 +4,7 @@ import { AuthService } from '../../../shared/services/auth/auth.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { cryptoBtc } from '@ng-icons/cryptocurrency-icons';
-import { bootstrapEye, bootstrapEyeSlash } from '@ng-icons/bootstrap-icons';
+import { bootstrapEye, bootstrapEyeSlash, bootstrapExclamationDiamond } from '@ng-icons/bootstrap-icons';
 import { ToastrService } from 'ngx-toastr';
 import { RouterModule } from '@angular/router';
 
@@ -13,13 +13,14 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, NgIcon, RouterModule],
   templateUrl: './login.component.html',
-  viewProviders : [provideIcons({ cryptoBtc, bootstrapEye, bootstrapEyeSlash })]
+  viewProviders : [provideIcons({ cryptoBtc, bootstrapEye, bootstrapEyeSlash, bootstrapExclamationDiamond })]
 })
 export class LoginComponent {
   title = "Coiny"
   username = '';
   password = '';
   isInvalid: boolean = false;
+  isRemembered: boolean = false;
 
   showPassword: boolean = false;
 
@@ -38,18 +39,14 @@ export class LoginComponent {
     // }
   }
 
-
   onSubmit(): void {
     this.authService.login(this.username, this.password).subscribe(
       () => {
-        this.isInvalid = true;
-        // console.log(this.isInvalid);
-        // this.toastr.success('You have successfully logged in.','Login successful');
+        this.isInvalid = false;
+        console.log('Remember me:', this.isRemembered);
       },
       error => {
-        this.isInvalid = false;
-        // console.log(this.isInvalid);
-        this.toastr.error('Please check your username or password.', 'Login Failed');
+        this.isInvalid = true;
       }
     );
   }
