@@ -1,4 +1,5 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
+import { ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -36,31 +37,8 @@ export class HeaderComponent {
     console.log('Logout successful');
   }
 
-  ngAfterViewInit(): void {
-    const button = document.getElementById('user-menu-button');
-    const dropdown = document.getElementById('user-dropdown');
-
-    if (button && dropdown) {
-      button.addEventListener('click', () => {
-        if (dropdown.classList.contains('hidden')) {
-          dropdown.classList.remove('hidden');
-          dropdown.classList.add('relative'); 
-        } else {
-          dropdown.classList.add('hidden');
-          dropdown.classList.remove('relative');
-        }
-      });
-    }
-  }
-
   toggleView(): void {
     this.toggleViewService.toggleView();
   }
-
-  // onLogout(): void {
-  //   this.authService.logout().subscribe(() => {
-  //     console.log('Logout successful');
-  //   });
-  // }
 
 }

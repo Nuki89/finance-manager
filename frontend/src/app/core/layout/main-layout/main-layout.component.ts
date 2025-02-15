@@ -12,4 +12,12 @@ import { ParticlesBackgroundComponent } from '../../../shared/ui/components/part
 })
 export class MainLayoutComponent {
 
+  ngOnInit(): void {
+    if (typeof window !== 'undefined') {
+      import('flowbite').then(({ initFlowbite }) => {
+        initFlowbite();
+      });
+    }
+    
+  }
 }
