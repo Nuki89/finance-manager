@@ -8,6 +8,7 @@ import { AuthService } from '../../../shared/services/auth/auth.service';
 import { hugeSettings01 } from '@ng-icons/huge-icons';
 import { ToggleViewService } from '../../../shared/services/shared/toggle-view.service';
 import { AppComponent } from '../../../app.component';
+import { MainLayoutComponent } from '../main-layout/main-layout.component';
 
 @Component({
   selector: 'app-header',
@@ -27,6 +28,7 @@ export class HeaderComponent {
 
   constructor(
     private appComponent: AppComponent,
+    private mainLayoutComponent: MainLayoutComponent,
     private authService: AuthService,
     private toggleViewService: ToggleViewService) {
       this.currentView = this.toggleViewService.getCurrentView();
@@ -45,10 +47,15 @@ export class HeaderComponent {
     this.toggleViewService.toggleView();
   }
 
+  // toggleParticles() {
+  //   this.appComponent.toggleParticles();
+  //   this.showParticles = !this.showParticles;
+  //   console.log(this.showParticles);
+  // }
+
   toggleParticles() {
-    this.appComponent.toggleParticles();
+    this.mainLayoutComponent.toggleParticles();
     this.showParticles = !this.showParticles;
-    console.log(this.showParticles);
   }
 
 }

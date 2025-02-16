@@ -1,6 +1,6 @@
 <div class="main-layout flex relative">
 
-  <app-particles-background></app-particles-background>
+  <app-particles-background *ngIf="showParticles"></app-particles-background>
 
   <div class="main-content flex-grow flex flex-col">
     <app-header></app-header>
