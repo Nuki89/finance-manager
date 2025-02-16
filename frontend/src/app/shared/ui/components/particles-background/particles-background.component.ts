@@ -1,16 +1,3 @@
-// import { Component } from '@angular/core';
-
-// @Component({
-//   selector: 'app-particles-background',
-//   standalone: true,
-//   imports: [],
-//   templateUrl: './particles-background.component.html',
-//   styleUrl: './particles-background.component.css'
-// })
-// export class ParticlesBackgroundComponent {
-
-// }
-
 import { Component, AfterViewInit, HostListener } from '@angular/core';
 
 @Component({
@@ -42,10 +29,8 @@ export class ParticlesBackgroundComponent implements AfterViewInit {
       let size = Math.random() * 5 + 1;
       let x = Math.random() * (innerWidth - size * 2 - size * 2) + size * 2;
       let y = Math.random() * (innerHeight - size * 2 - size * 2) + size * 2;
-      // let directionX = Math.random() * 3 - 1;
-      // let directionY = Math.random() * 3 - 1;
-      let directionX = (Math.random() * 0.6) - 0.5;
-      let directionY = (Math.random() * 0.6) - 0.5;
+      let directionX = Math.random() * 0.8 - 0.4;
+      let directionY = Math.random() * 0.8 - 0.4;
       let color = '#000000';
 
       this.particlesArray.push(new Particle(x, y, directionX, directionY, size, color, this.ctx));
