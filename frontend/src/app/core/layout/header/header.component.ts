@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth/auth.service';
 import { hugeSettings01 } from '@ng-icons/huge-icons';
 import { ToggleViewService } from '../../../shared/services/shared/toggle-view.service';
+import { AppComponent } from '../../../app.component';
 
 @Component({
   selector: 'app-header',
@@ -22,14 +23,17 @@ export class HeaderComponent {
   lastName: string = 'Pipika';
   email: string = 'nuki@gmail.com';
   currentView: 'Monthly' | 'Yearly';
+  showParticles = false;
 
   constructor(
+    private appComponent: AppComponent,
     private authService: AuthService,
     private toggleViewService: ToggleViewService) {
       this.currentView = this.toggleViewService.getCurrentView();
       this.toggleViewService.viewMode$.subscribe(view => {
       this.currentView = view;
     });
+    
   }
 
   onLogout(): void {
@@ -39,6 +43,12 @@ export class HeaderComponent {
 
   toggleView(): void {
     this.toggleViewService.toggleView();
+  }
+
+  toggleParticles() {
+    this.appComponent.toggleParticles();
+    this.showParticles = !this.showParticles;
+    console.log(this.showParticles);
   }
 
 }

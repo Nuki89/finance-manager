@@ -1,23 +1,34 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterModule, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './shared/services/auth/auth.service';
+import { ParticlesBackgroundComponent } from "./shared/ui/components/particles-background/particles-background.component";
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterOutlet, 
-    RouterModule,],
+    CommonModule,
+    RouterOutlet,
+    RouterModule,
+    ParticlesBackgroundComponent
+],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
   title = 'finance-manager';
-  loading = false;
+  showParticles = false;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router) {
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        this.showParticles = event.url.includes('/login') || event.url.includes('/main');
+      }
+    });
+  }
 
   ngOnInit(): void {
     // REMOVED SO NOW STAYS ON THE SAME PAGE WHEN RELOADED
@@ -37,25 +48,9 @@ export class AppComponent implements OnInit {
     
   }
 
-  // ngOnInit(): void {
-  //   this.loading = true;
+  toggleParticles() {
+    this.showParticles = !this.showParticles;
+  }
   
-  //   if (this.authService.isLoggedIn()) {
-  //     this.router.navigate(['home']).then(() => {
-  //       this.loading = false; 
-  //     });
-  //   } else {
-  //     this.router.navigate(['/login']).then(() => {
-  //       this.loading = false; 
-  //     });
-  //   }
-
-    // if (typeof window !== 'undefined') {
-    //   import('flowbite').then(({ initFlowbite }) => {
-    //     initFlowbite();
-    //   });
-    // }
-
-  // }
   
 }
