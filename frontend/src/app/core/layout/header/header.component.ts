@@ -9,6 +9,7 @@ import { hugeSettings01 } from '@ng-icons/huge-icons';
 import { ToggleViewService } from '../../../shared/services/shared/toggle-view.service';
 import { AppComponent } from '../../../app.component';
 import { MainLayoutComponent } from '../main-layout/main-layout.component';
+import { ToggleParticlesService } from '../../../shared/services/shared/toggle-particles.service';
 
 @Component({
   selector: 'app-header',
@@ -30,12 +31,19 @@ export class HeaderComponent {
     private appComponent: AppComponent,
     private mainLayoutComponent: MainLayoutComponent,
     private authService: AuthService,
+    private toggleParticlesService: ToggleParticlesService,
     private toggleViewService: ToggleViewService) {
       this.currentView = this.toggleViewService.getCurrentView();
       this.toggleViewService.viewMode$.subscribe(view => {
       this.currentView = view;
     });
     
+  }
+
+  ngOnInit(): void {
+    this.toggleParticlesService.showParticles$.subscribe(state => {
+      this.showParticles = state;
+    });
   }
 
   onLogout(): void {
@@ -47,15 +55,8 @@ export class HeaderComponent {
     this.toggleViewService.toggleView();
   }
 
-  // toggleParticles() {
-  //   this.appComponent.toggleParticles();
-  //   this.showParticles = !this.showParticles;
-  //   console.log(this.showParticles);
-  // }
-
   toggleParticles() {
-    this.mainLayoutComponent.toggleParticles();
-    this.showParticles = !this.showParticles;
+    this.toggleParticlesService.toggleParticles();
   }
 
 }
