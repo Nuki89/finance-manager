@@ -8,7 +8,7 @@ import { NgIcon } from '@ng-icons/core';
   imports: [CommonModule, NgIcon],
   template: `
     <button 
-      class="flex items-center justify-center border rounded transition duration-200"
+      class="flex items-center justify-center rounded-lg transition duration-400"
       [ngClass]="[buttonClass, size === 'icon' ? 'w-10 h-10' : 'px-4 py-2']"
       (click)="handleClick($event)"
       [title]="tooltip"
