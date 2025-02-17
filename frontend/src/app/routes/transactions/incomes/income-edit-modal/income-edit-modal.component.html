@@ -39,7 +39,7 @@
             placeholder="Enter amount"
             required/>
 
-            <app-datepicker (dateChange)="onDatePicked($event)"></app-datepicker>
+            <app-datepicker (dateChange)="onDatePicked($event)" [initialDate]="selectedDate"></app-datepicker>
         </div>
     </div>
 

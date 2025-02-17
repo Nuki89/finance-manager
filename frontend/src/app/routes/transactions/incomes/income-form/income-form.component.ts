@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { Component, Input, SimpleChanges } from '@angular/core';
+import { FormControl, FormsModule } from '@angular/forms';
 import { IncomeService } from '../../../../shared/services/api/income.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
@@ -36,6 +36,9 @@ export class IncomeFormComponent {
   incomes: any[] = [];
   selectedSourceObj: any | null = null;
   selectedDate: Date | null = null;
+  initialDate: Date | null = null;
+
+  date = new FormControl();
 
   constructor(
     private incomeService: IncomeService, 
@@ -48,7 +51,22 @@ export class IncomeFormComponent {
 
   ngOnInit() {
     this.selectedDate = new Date();
+    // this.setDateValue();
     this.loadData();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['initialDate'] && changes['initialDate'].currentValue) {
+      this.setDateValue();
+    }
+  }
+
+  private setDateValue() {
+    if (this.initialDate) {
+      this.date.setValue(moment(this.initialDate).toDate()); 
+    } else {
+      this.date.setValue(moment().toDate());
+    }
   }
 
   loadData() {

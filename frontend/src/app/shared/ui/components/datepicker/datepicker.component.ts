@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, Input, ViewEncapsulation, OnChanges, SimpleChanges } from '@angular/core';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -32,9 +32,27 @@ export const MY_DATE_FORMAT = {
   styleUrls: ['./datepicker.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
-export class DatepickerComponent {
+export class DatepickerComponent implements OnChanges {
+  @Input() initialDate: Date | null = null;
   @Output() dateChange = new EventEmitter<Date>();
-  date = new FormControl(moment().toDate());
+
+  date = new FormControl();
+
+  ngOnInit() {
+    this.setDateValue();
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['initialDate'] && changes['initialDate'].currentValue) {
+      this.setDateValue();
+    }
+  }
+
+  private setDateValue() {
+    if (this.initialDate) {
+      this.date.setValue(moment(this.initialDate).toDate()); 
+    }
+  }
 
   onDateSelected(event: any) {
     const selectedDate = event.value;
