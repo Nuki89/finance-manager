@@ -1,21 +1,8 @@
-<!-- <div class="max-w-screen-xl flex flex-col mx-auto p-4">
-    
-    <p>incomes works!</p>
-
-    <div>
-        <h2>Income table</h2>
-        <app-income-table></app-income-table>
-    </div>
-
-</div> -->
-
 <div class="max-w-screen-xl flex flex-col mx-auto p-4 space-y-4">
     <div>
         <app-income-form [sources]="getIncomeSources()"></app-income-form>
     </div>
     <div class="space-y-2 overflow-x-auto">
-        <div class="p-4 border-gray-200 bg-gray-50 rounded-lg shadow">
-            <app-income-table></app-income-table>
-        </div>
+        <app-income-table/>        
     </div>
 </div>
