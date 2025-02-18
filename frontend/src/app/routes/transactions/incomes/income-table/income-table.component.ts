@@ -11,13 +11,16 @@ import { IncomeEditModalComponent } from '../income-edit-modal/income-edit-modal
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { TableActionCellComponent } from '../../../../shared/ui/components/table-action-cell/table-action-cell.component';
+import { CommonModule } from '@angular/common';
+import { NgControl } from '@angular/forms';
+import { DarkModeService } from '../../../../shared/services/shared/dark-mode.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-income-table',
   standalone: true,
-  imports: [AgGridModule, NgIcon],
+  imports: [CommonModule, AgGridModule, NgIcon],
   templateUrl: './income-table.component.html',
   styleUrl: './income-table.component.css',
   viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]
@@ -27,12 +30,13 @@ export class IncomeTableComponent {
   private toastr = inject(ToastrService);
   private dialog = inject(MatDialog);
   private incomeService = inject(IncomeService); 
+  private darkService = inject(DarkModeService);
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
-  // get themeClass() {
-  //   return this.darkService.isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
-  // }
+  get themeClass() {
+    return this.darkService.isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
+  }
 
   // isBrowser: boolean;
 
