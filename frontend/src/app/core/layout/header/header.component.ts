@@ -1,5 +1,4 @@
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -7,17 +6,15 @@ import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../shared/services/auth/auth.service';
 import { hugeSettings01 } from '@ng-icons/huge-icons';
 import { ToggleViewService } from '../../../shared/services/shared/toggle-view.service';
-import { AppComponent } from '../../../app.component';
-import { MainLayoutComponent } from '../main-layout/main-layout.component';
 import { ToggleParticlesService } from '../../../shared/services/shared/toggle-particles.service';
 import { DarkModeComponent } from "../../../shared/ui/components/dark-mode/dark-mode.component";
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, NgIcon, DarkModeComponent],
+  imports: [CommonModule, RouterModule, FormsModule, DarkModeComponent],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.css',
+  styleUrls: ['./header.component.css'],
   viewProviders : [provideIcons({ hugeSettings01 })]
 })
 export class HeaderComponent {
@@ -29,8 +26,6 @@ export class HeaderComponent {
   showParticles = false;
 
   constructor(
-    private appComponent: AppComponent,
-    private mainLayoutComponent: MainLayoutComponent,
     private authService: AuthService,
     private toggleParticlesService: ToggleParticlesService,
     private toggleViewService: ToggleViewService) {
