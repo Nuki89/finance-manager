@@ -10,11 +10,12 @@ import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import moment from 'moment';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroXMark } from '@ng-icons/heroicons/outline';
+import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 
 @Component({
   selector: 'app-income-edit-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatepickerComponent, NgIcon],
+  imports: [CommonModule, FormsModule, DatepickerComponent, NgIcon, ActionButtonComponent],
   templateUrl: './income-edit-modal.component.html',
   styleUrl: './income-edit-modal.component.css',
   viewProviders : [provideIcons({ heroXMark })]
