@@ -7,11 +7,12 @@ import { FormsModule } from '@angular/forms';
 import { MatDialogRef } from '@angular/material/dialog';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroXMark } from '@ng-icons/heroicons/outline';
+import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 
 @Component({
   selector: 'app-source-add-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon],
+  imports: [CommonModule, FormsModule, NgIcon, ActionButtonComponent],
   templateUrl: './source-add-modal.component.html',
   styleUrl: './source-add-modal.component.css',
   viewProviders : [provideIcons({ heroXMark })]
