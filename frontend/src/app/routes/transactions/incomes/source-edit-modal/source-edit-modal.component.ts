@@ -10,11 +10,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroXMark } from '@ng-icons/heroicons/outline';
+import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 
 @Component({
   selector: 'app-source-edit-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon],
+  imports: [CommonModule, FormsModule, NgIcon, ActionButtonComponent],
   templateUrl: './source-edit-modal.component.html',
   styleUrl: './source-edit-modal.component.css',
   viewProviders : [provideIcons({ heroXMark })]
