@@ -47,28 +47,32 @@ export class ExpenseService {
     return this.http.post(this.expenseUrl, payload)
   }
 
-  deleteExpense(id: number) {
-    return this.http.delete(`${this.expenseUrl.replace(/\/$/, '')}/${id}/`);
-  }
-
   updateExpense(id: number, payload: any) {
     return this.http.put(`${this.expenseUrl}/${id}`, payload)
   }
 
-  getMonthlyExpense() {
-    return this.http.get(`${this.expenseUrl}monthly_summary`)
-  }
-
-  getMonthlyCategorySummary() {
-    return this.http.get(`${this.expenseUrl}monthly_category_summary`)
+  deleteExpense(id: number) {
+    return this.http.delete(`${this.expenseUrl.replace(/\/$/, '')}/${id}/`);
   }
 
   getExpenseSource() {
     return this.http.get(this.categoriesUrl)
   }
 
-  getLastMonthCategorySummary() {
-    return this.http.get(`${this.expenseUrl}last_month_category_summary`)
+  addExpenseSource(payload: any) {
+    return this.http.post(this.categoriesUrl, payload)
+  }
+
+  updateExpenseSource(id: number, payload:any) {
+    return this.http.put(`${this.categoriesUrl.replace(/\/$/, '')}/${id}/`, payload);
+  }
+
+  deleteExpenseSource(id: number) {
+    return this.http.delete(`${this.categoriesUrl.replace(/\/$/, '')}/${id}/`);
+  }
+
+  getMonthlyExpense() {
+    return this.http.get(`${this.expenseUrl}monthly_summary`)
   }
 
   getLastMonthExpense() {
@@ -77,6 +81,14 @@ export class ExpenseService {
 
   getLastYearExpense() {
     return this.http.get(`${this.expenseUrl}last_year_summary`)
+  }
+
+  getMonthlyCategorySummary() {
+    return this.http.get(`${this.expenseUrl}monthly_category_summary`)
+  }
+
+  getLastMonthCategorySummary() {
+    return this.http.get(`${this.expenseUrl}last_month_category_summary`)
   }
 
   getYearlyCategorySummary() {
