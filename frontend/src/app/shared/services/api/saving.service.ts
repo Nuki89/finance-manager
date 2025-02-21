@@ -19,16 +19,28 @@ export class SavingService {
     return this.http.post(this.savingUrl, payload)
   }
 
-  deleteSaving(id: number) {
-    return this.http.delete(`${this.savingUrl.replace(/\/$/, '')}/${id}/`);
-  }
-
   updateSaving(id: number, payload: any) {
     return this.http.put(`${this.savingUrl}/${id}`, payload)
   }
 
+  deleteSaving(id: number) {
+    return this.http.delete(`${this.savingUrl.replace(/\/$/, '')}/${id}/`);
+  }
+
   getSavingSource() {
     return this.http.get(this.categoriesUrl)
+  }
+
+  addSavingSource(payload: any) {
+    return this.http.post(this.categoriesUrl, payload)
+  }
+
+  updateSavingSource(id: number, payload: any) {
+    return this.http.put(`${this.categoriesUrl.replace(/\/$/, '')}/${id}/`, payload);
+  }
+
+  deleteSavingSource(id: number) {
+    return this.http.delete(`${this.categoriesUrl.replace(/\/$/, '')}/${id}/`);
   }
 
 }

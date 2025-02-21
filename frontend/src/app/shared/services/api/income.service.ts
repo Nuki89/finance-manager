@@ -27,10 +27,6 @@ export class IncomeService {
     return this.http.delete(`${this.incomeUrl.replace(/\/$/, '')}/${id}/`);
   }
 
-  
-
-  
-
   getIncomeSource() {
     return this.http.get(this.sourceUrl)
   }
