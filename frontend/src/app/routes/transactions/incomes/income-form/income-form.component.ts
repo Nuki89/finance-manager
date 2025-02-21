@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, SimpleChanges } from '@angular/core';
+import { Component, Input, Optional, SimpleChanges, Inject } from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
 import { IncomeService } from '../../../../shared/services/api/income.service';
 import { HttpClient } from '@angular/common/http';
@@ -9,7 +9,7 @@ import { SharedDataService } from '../../../../shared/services/shared/shared-dat
 import { DatepickerComponent } from "../../../../shared/ui/components/datepicker/datepicker.component";
 import moment from 'moment';
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { SourceEditModalComponent } from '../source-edit-modal/source-edit-modal.component';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { SourceAddModalComponent } from '../source-add-modal/source-add-modal.component';
@@ -45,7 +45,9 @@ export class IncomeFormComponent {
     private http: HttpClient, 
     private toastr: ToastrService,
     private sharedDataService: SharedDataService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    @Optional() private dialogRef: MatDialogRef<IncomeFormComponent>,
+    @Optional() @Inject(MAT_DIALOG_DATA) public data: any 
     ) { }
 
 
@@ -194,6 +196,11 @@ export class IncomeFormComponent {
         this.description = '';
         this.loadData();
         this.sharedDataService.notifyIncomeChanged();
+
+        if (this.dialogRef) {
+          this.dialogRef.close(true);
+        }
+
       },
       (error) => {
         console.error('Error adding income:', error);

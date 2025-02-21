@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PieChartComponent } from '../../shared/ui/charts/pie-chart.component';
 import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
@@ -12,16 +12,20 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeLoading03 } from '@ng-icons/huge-icons';
 import { IncomeSummaryComponent } from './components/income-summary/income-summary.component';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary.component';
+import { ActionButtonComponent } from '../../shared/ui/components/action-button/action-button.component';
+import { IncomeFormComponent } from '../transactions/incomes/income-form/income-form.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent],
+  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent, ActionButtonComponent, IncomeFormComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   viewProviders : [provideIcons({ hugeLoading03 })]
 })
 export class HomeComponent {
+  @ViewChild(IncomeSummaryComponent) incomeSummaryComponent!: IncomeSummaryComponent;
   private viewSubscription!: Subscription;
   loading: boolean = true;
   balance: any;
@@ -35,11 +39,17 @@ export class HomeComponent {
   spendingCategories: { name: string; value: number }[] = [];
   incomeSources: { name: string; value: number }[] = [];
 
+  selectedSource: any = null; 
+  incomes: any[] = [];
+  @Input() sources: any[] = []; 
+  selectedSourceObj: any | null = null;
+
   constructor(
     private reportService: ReportService,
     private incomeService: IncomeService,
     private expenseService: ExpenseService,
-    private toggleViewService: ToggleViewService
+    private toggleViewService: ToggleViewService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit() {
@@ -150,8 +160,22 @@ export class HomeComponent {
     { name: 'Subscription', amount: -15 },
   ];
 
-  addIncome() {
-    console.log('Add Income clicked');
+  openAddIncomeModal() {
+    const dialogRef = this.dialog.open(IncomeFormComponent, {
+      width: '800px',
+      data: {
+        selectedSource: null,
+        title: 'Add New Income',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((onAddIncome) => {
+      console.log('Dialog closed:', onAddIncome);
+      if (onAddIncome) {
+        this.loadAllData();
+        this.incomeSummaryComponent.fetchIncomeData();
+      }
+    });
   }
 
   addExpense() {
