@@ -27,13 +27,9 @@ export class IncomeService {
     return this.http.delete(`${this.incomeUrl.replace(/\/$/, '')}/${id}/`);
   }
 
-  getMonthlyIncome() {
-    return this.http.get(`${this.incomeUrl}monthly_summary`)
-  }
+  
 
-  getLastYearIncome() {
-    return this.http.get(`${this.incomeUrl}last_year_summary`)
-  }
+  
 
   getIncomeSource() {
     return this.http.get(this.sourceUrl)
@@ -51,16 +47,24 @@ export class IncomeService {
     return this.http.delete(`${this.sourceUrl.replace(/\/$/, '')}/${id}/`);
   }
 
+  getMonthlyIncome() {
+    return this.http.get(`${this.incomeUrl}monthly_summary`)
+  }
+
+  getLastMonthIncome() {
+    return this.http.get(`${this.incomeUrl}last_month_summary`)
+  }
+
+  getLastYearIncome() {
+    return this.http.get(`${this.incomeUrl}last_year_summary`)
+  }
+
   getIncomeMonthlySource() {
     return this.http.get(`${this.incomeUrl}monthly_source_summary`)
   }
 
   getLastMonthSourceSummary() {
     return this.http.get(`${this.incomeUrl}last_month_source_summary`)
-  }
-
-  getLastMonthIncome() {
-    return this.http.get(`${this.incomeUrl}last_month_summary`)
   }
 
   getYearlySourceSummary() {
