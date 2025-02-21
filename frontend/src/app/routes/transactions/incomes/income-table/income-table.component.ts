@@ -61,14 +61,14 @@ export class IncomeTableComponent {
           {
             type: 'edit',
             icon: 'heroPencilSquare',
-            class: 'border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white',
+            class: 'text-blue-500 border border-blue-500 bg-white hover:bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 hover:text-white shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80',
             tooltip: 'Edit',
             handler: () => params.context.componentParent.handleEdit(params.data.id, params.data),
           },
           {
             type: 'delete',
             icon: 'heroTrash',
-            class: 'border border-red-500 text-red-500 hover:bg-red-500 hover:text-white',
+            class: 'text-red-500 border border-red-500 bg-white hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600 hover:text-white shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80',
             tooltip: 'Delete',
             handler: () => params.context.componentParent.handleDelete(params.data.id),
           }
