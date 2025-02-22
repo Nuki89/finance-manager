@@ -13,6 +13,7 @@ import moment from 'moment';
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 import { CategoryAddModalComponent } from '../category-add-modal/category-add-modal.component';
+import { CategoryEditModalComponent } from '../category-edit-modal/category-edit-modal.component';
 
 @Component({
   selector: 'app-expense-form',
@@ -103,32 +104,32 @@ export class ExpenseFormComponent {
       },
     });
 
-    dialogRef.afterClosed().subscribe((updatedCategorie) => {
-      if (updatedCategorie) {
+    dialogRef.afterClosed().subscribe((updatedCategory) => {
+      if (updatedCategory) {
         this.loadData();
       }
     });
   }
   
   openUpdateCategoryModal(selectedCategory: any) {
-    // if (!selectedCategory) {
-    //   this.toastr.error('No source selected.', 'Error');
-    //   return;
-    // }
+    if (!selectedCategory) {
+      this.toastr.error('No category selected.', 'Error');
+      return;
+    }
   
-    // const dialogRef = this.dialog.open(SourceEditModalComponent, {
-    //   width: '400px',
-    //   data: {
-    //     selectedCategory: { ...this.selectedCategorieObj },
-    //     categories: this.categories,
-    //   },
-    // });
+    const dialogRef = this.dialog.open(CategoryEditModalComponent, {
+      width: '400px',
+      data: {
+        selectedCategory: { ...this.selectedCategorieObj },
+        categories: this.categories,
+      },
+    });
   
-    // dialogRef.afterClosed().subscribe((updatedCategorie) => {
-    //   if (updatedCategorie) {
-    //     this.loadData(); 
-    //   }
-    // });
+    dialogRef.afterClosed().subscribe((updatedCategory) => {
+      if (updatedCategory) {
+        this.loadData(); 
+      }
+    });
   }
 
   handleDeleteCategory(id: number) {
