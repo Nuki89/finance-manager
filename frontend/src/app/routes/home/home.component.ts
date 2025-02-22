@@ -15,17 +15,19 @@ import { ExpenseSummaryComponent } from './components/expense-summary/expense-su
 import { ActionButtonComponent } from '../../shared/ui/components/action-button/action-button.component';
 import { IncomeFormComponent } from '../transactions/incomes/income-form/income-form.component';
 import { MatDialog } from '@angular/material/dialog';
+import { ExpenseFormComponent } from '../transactions/expenses/expense-form/expense-form.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent, ActionButtonComponent, IncomeFormComponent],
+  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent, ActionButtonComponent, IncomeFormComponent, ExpenseFormComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   viewProviders : [provideIcons({ hugeLoading03 })]
 })
 export class HomeComponent {
   @ViewChild(IncomeSummaryComponent) incomeSummaryComponent!: IncomeSummaryComponent;
+  @ViewChild(ExpenseSummaryComponent) expenseSummaryComponent!: ExpenseSummaryComponent;
   private viewSubscription!: Subscription;
   loading: boolean = true;
   balance: any;
@@ -174,6 +176,24 @@ export class HomeComponent {
       if (onAddIncome) {
         this.loadAllData();
         this.incomeSummaryComponent.fetchIncomeData();
+      }
+    });
+  }
+
+  openAddExpenseModal() {
+    const dialogRef = this.dialog.open(ExpenseFormComponent, {
+      width: '800px',
+      data: {
+        selectedSource: null,
+        title: 'Add New Expense',
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((onAddExpense) => {
+      console.log('Dialog closed:', onAddExpense);
+      if (onAddExpense) {
+        this.loadAllData();
+        this.expenseSummaryComponent.fetchExpenseData();
       }
     });
   }

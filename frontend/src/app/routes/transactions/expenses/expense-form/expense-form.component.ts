@@ -73,8 +73,7 @@ export class ExpenseFormComponent {
       ({ expenses, categories }) => {
         this.expenses = expenses as any[];
         this.categories = categories as any[];
-        console.log('Expenses:', this.expenses);
-        console.log('Categories:', this.categories);
+
         if (this.categories.length > 0) {
           this.selectedCategory = this.categories[0].id;
           this.onCategorySelect();
