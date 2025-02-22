@@ -4,7 +4,7 @@ import { forkJoin } from 'rxjs';
 import { ExpenseService } from '../../../../shared/services/api/expense.service';
 import { FormControl, FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../../shared/ui/components/datepicker/datepicker.component';
-import { NgIcon, provideIcons } from '@ng-icons/core';
+import { provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -16,7 +16,7 @@ import { SharedDataService } from '../../../../shared/services/shared/shared-dat
 @Component({
   selector: 'app-expense-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatepickerComponent, NgIcon, ActionButtonComponent],
+  imports: [CommonModule, FormsModule, DatepickerComponent, ActionButtonComponent],
   templateUrl: './expense-form.component.html',
   styleUrls: ['./expense-form.component.css'],
   viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]
