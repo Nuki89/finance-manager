@@ -12,6 +12,7 @@ import { ToastrService } from 'ngx-toastr';
 import moment from 'moment';
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
+import { CategoryAddModalComponent } from '../category-add-modal/category-add-modal.component';
 
 @Component({
   selector: 'app-expense-form',
@@ -66,7 +67,7 @@ export class ExpenseFormComponent {
   loadData() {
     forkJoin({
       expenses: this.expenseService.getAllExpenses(),
-      categories: this.expenseService.getExpenseCategories()
+      categories: this.expenseService.getExpenseCategory()
     }).subscribe(
       ({ expenses, categories }) => {
         this.expenses = expenses as any[];
@@ -95,18 +96,18 @@ export class ExpenseFormComponent {
   }
 
   openAddCategoryModal() {
-    // const dialogRef = this.dialog.open(SourceAddModalComponent, {
-    //   width: '400px',
-    //   data: {
-    //     selectedCategory: null,
-    //   },
-    // });
+    const dialogRef = this.dialog.open(CategoryAddModalComponent, {
+      width: '400px',
+      data: {
+        selectedCategory: null,
+      },
+    });
 
-    // dialogRef.afterClosed().subscribe((updatedCategorie) => {
-    //   if (updatedCategorie) {
-    //     this.loadData();
-    //   }
-    // });
+    dialogRef.afterClosed().subscribe((updatedCategorie) => {
+      if (updatedCategorie) {
+        this.loadData();
+      }
+    });
   }
   
   openUpdateCategoryModal(selectedCategory: any) {

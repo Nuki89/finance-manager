@@ -55,11 +55,11 @@ export class ExpenseService {
     return this.http.delete(`${this.expenseUrl.replace(/\/$/, '')}/${id}/`);
   }
 
-  getExpenseCategories() {
+  getExpenseCategory() {
     return this.http.get(this.categoriesUrl)
   }
 
-  addExpenseCategories(payload: any) {
+  addExpenseCategory(payload: any) {
     return this.http.post(this.categoriesUrl, payload)
   }
 
