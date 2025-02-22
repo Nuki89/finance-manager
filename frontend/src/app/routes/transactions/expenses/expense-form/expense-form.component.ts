@@ -77,7 +77,7 @@ export class ExpenseFormComponent {
         console.log('Categories:', this.categories);
         if (this.categories.length > 0) {
           this.selectedCategory = this.categories[0].id;
-          this.onCategorieSelect();
+          this.onCategorySelect();
         }
       },
       (error) => {
@@ -86,7 +86,7 @@ export class ExpenseFormComponent {
     );
   }
 
-  onCategorieSelect() {
+  onCategorySelect() {
     this.selectedCategorieObj = this.categories.find(
       (categorie) => categorie.id === Number(this.selectedCategory)  
     ) || null;
@@ -145,20 +145,20 @@ export class ExpenseFormComponent {
 
     dialogRef.afterClosed().subscribe((result: any) => {
       if (result) {
-        this.expenseService.deleteExpenseCategories(id).subscribe(
+        this.expenseService.deleteExpenseCategory(id).subscribe(
           () => {
             this.toastr.success(`Expense category "${categoryToDelete?.name}" deleted successfully!`);
             this.loadData();
           },
           (error) => {
-            const specificErrorMessage = "Cannot delete this category because it has associated incomes. Please delete all related incomes first.";
+            const specificErrorMessage = "Cannot delete this category because it has associated expense. Please delete all related expenses first.";
             
             if (error.status === 400 && error.error?.detail === specificErrorMessage) {
               this.toastr.warning(specificErrorMessage);
             } else {
               this.toastr.error(`Failed to delete "${categoryToDelete?.name}". Please try again.`);
             }
-            console.error('Error deleting income category:', error);
+            console.error('Error deleting expense category:', error);
           }
         );
       }
@@ -167,7 +167,7 @@ export class ExpenseFormComponent {
 
   onAddExpense() {
     if (!this.selectedCategory || !this.amount) {
-      this.toastr.error('Please fill in all required fields.','Error adding income');
+      this.toastr.error('Please fill in all required fields.','Error adding expense');
       return;
     }
 
@@ -176,7 +176,7 @@ export class ExpenseFormComponent {
     : moment().format('YYYY-MM-DD');  
 
     const payload = {
-      source: this.selectedCategory,
+      category: this.selectedCategory,
       amount: this.amount,
       date: formattedDate,
       description: this.description || '',
@@ -184,13 +184,13 @@ export class ExpenseFormComponent {
 
     this.expenseService.addExpense(payload).subscribe(
       (data: any) => {
-        this.toastr.success('Income added successfully!','Income added');
+        this.toastr.success('Expense added successfully!','Expense added');
         this.selectedCategory = null;
         this.amount = null;
         this.selectedDate = null;
         this.description = '';
         this.loadData();
-        this.sharedDataService.notifyIncomeChanged();
+        this.sharedDataService.notifyExpenseChanged();
 
         if (this.dialogRef) {
           this.dialogRef.close(true);
@@ -198,8 +198,8 @@ export class ExpenseFormComponent {
 
       },
       (error) => {
-        console.error('Error adding income:', error);
-        this.toastr.error('Failed to add income. Please try again.','Error adding income');
+        console.error('Error adding expense:', error);
+        this.toastr.error('Failed to add expense. Please try again.','Error adding expense');
       }
     );
   }

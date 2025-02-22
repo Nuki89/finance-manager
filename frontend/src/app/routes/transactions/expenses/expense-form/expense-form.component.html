@@ -15,7 +15,7 @@
                     class="w-full p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                     [(ngModel)]="selectedCategory"
                     name="category"
-                    (change)="onCategorieSelect()"
+                    (change)="onCategorySelect()"
                     required>
                     <option *ngFor="let category of categories" [value]="category.id">
                     {{ category.name }}
