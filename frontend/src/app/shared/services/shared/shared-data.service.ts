@@ -6,11 +6,17 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SharedDataService {
   private incomeChangedSource = new BehaviorSubject<void>(undefined);
+  private expenseChangedSource = new BehaviorSubject<void>(undefined);
 
   incomeChanged$ = this.incomeChangedSource.asObservable();
+  expenseChanged$ = this.expenseChangedSource.asObservable();
 
   notifyIncomeChanged() {
     this.incomeChangedSource.next();
+  }
+
+  notifyExpenseChanged() {
+    this.expenseChangedSource.next();
   }
 
 }
