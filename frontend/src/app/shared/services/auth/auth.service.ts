@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { isPlatformBrowser } from '@angular/common';
 import { apiEndpoints } from '../../../../environments/environment';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
+    private toastr: ToastrService,
     @Inject(PLATFORM_ID) private platformId: Object 
   ) {}
 
@@ -30,17 +32,46 @@ export class AuthService {
     return sessionStorage.getItem(this.tokenKey); 
   }
 
-  isLoggedIn(): boolean {
-    if (this.isAuthenticated) {
+  isTokenExpired(token?: string): boolean {
+    token = token ?? this.getToken() ?? undefined;
+    if (!token) {
       return true;
     }
-    // if (!this.isBrowser()) {
-    //   return false; 
-    // }
-    const token = sessionStorage.getItem(this.tokenKey);
-    this.isAuthenticated = !!token;
-    return this.isAuthenticated;
+    try {
+      const payloadBase64 = token.split('.')[1];
+      const payloadJson = atob(payloadBase64);
+      const payload = JSON.parse(payloadJson);
+
+      if (payload.exp) {
+        return payload.exp * 1000 < Date.now();
+      }
+      return false;
+    } catch (error) {
+      return true;
+    }
   }
+
+  isLoggedIn(): boolean {
+    const token = this.getToken();
+    if (!token || this.isTokenExpired(token)) {
+      this.isAuthenticated = false;
+      return false;
+    }
+    this.isAuthenticated = true;
+    return true;
+  }
+
+  // isLoggedIn(): boolean {
+  //   if (this.isAuthenticated) {
+  //     return true;
+  //   }
+  //   // if (!this.isBrowser()) {
+  //   //   return false; 
+  //   // }
+  //   const token = sessionStorage.getItem(this.tokenKey);
+  //   this.isAuthenticated = !!token;
+  //   return this.isAuthenticated;
+  // }
 
   private saveToken(token: string): void {
     if (this.isBrowser()) {
