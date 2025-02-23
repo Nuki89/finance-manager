@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, HostListener } from '@angular/core';
+import { Component, inject, ViewChild, HostListener, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular'; 
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
@@ -12,7 +12,6 @@ import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { TableActionCellComponent } from '../../../../shared/ui/components/table-action-cell/table-action-cell.component';
 import { CommonModule } from '@angular/common';
-import { NgControl } from '@angular/forms';
 import { DarkModeService } from '../../../../shared/services/shared/dark-mode.service';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -22,8 +21,8 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   standalone: true,
   imports: [CommonModule, AgGridModule, NgIcon],
   templateUrl: './income-table.component.html',
-  styleUrl: './income-table.component.css',
-  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]
+  styleUrls: ['./income-table.component.css'],
+  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })],
 })
 export class IncomeTableComponent {
   private sharedDataService = inject(SharedDataService);
@@ -31,14 +30,13 @@ export class IncomeTableComponent {
   private dialog = inject(MatDialog);
   private incomeService = inject(IncomeService); 
   private darkService = inject(DarkModeService);
+  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
   get themeClass() {
     return this.darkService.isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
   }
-
-  // isBrowser: boolean;
 
   rowData: any[] = [];
   incomeList: any[] = [];
@@ -88,13 +86,16 @@ export class IncomeTableComponent {
   ];
 
   gridOptions: GridOptions = {
-    // pagination: true,
-    // paginationPageSize: 5,
-    // paginationPageSizeSelector: [5, 10, 20, 30, 50, 100],
-    // domLayout: 'autoHeight',
     domLayout: 'normal',
     onGridReady: () => {
       this.sizeColumnsToFit();
+
+      setTimeout(() => {
+        const gridElement = document.querySelector('ag-grid-angular');
+        if (gridElement) {
+          gridElement.classList.add(this.themeClass);      
+        }
+      }, 0);
     },
     context: {
       componentParent: this 
@@ -110,24 +111,27 @@ export class IncomeTableComponent {
       sortable: true,
       filter: false,
       unSortIcon: true,
-    },
-    getRowStyle: params => {
-      if (params.node && params.node.rowIndex !== null && params.node.rowIndex % 2 === 0) {
-        return { background: 'var(--ag-even-row-background-color)' };
-      } else {
-        return { background: 'var(--ag-odd-row-background-color)' };
-      }
     }
   };
 
   
   ngOnInit(): void {
     this.fetchIncomes();
+
+    this.darkService.darkMode$.subscribe(() => {
+      setTimeout(() => {
+        const gridElement = document.querySelector('ag-grid-angular');
+        if (gridElement) {
+          gridElement.classList.add(this.themeClass);
+        }
+      }, 0);
+    });
+
     this.sharedDataService.incomeChanged$.subscribe(() => {
       this.fetchIncomes(); 
     });
   }
-
+  
 
   fetchIncomes(): void {
     this.incomeService.getIncome().subscribe({
@@ -211,14 +215,5 @@ export class IncomeTableComponent {
       }
     });
   }
-
-
-  openEditModal(rowData: any) {
-    // const modalRef = this.modalService.open(ModalDtDetailsComponent, {
-    //   centered: true,
-    // });
-    // modalRef.componentInstance.rowData = rowData;
-  }
-
 
 }
