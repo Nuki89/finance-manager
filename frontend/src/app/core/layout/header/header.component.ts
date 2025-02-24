@@ -8,6 +8,8 @@ import { hugeSettings01 } from '@ng-icons/huge-icons';
 import { ToggleViewService } from '../../../shared/services/shared/toggle-view.service';
 import { ToggleParticlesService } from '../../../shared/services/shared/toggle-particles.service';
 import { DarkModeComponent } from "../../../shared/ui/components/dark-mode/dark-mode.component";
+import { DarkModeService } from '../../../shared/services/shared/dark-mode.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-header',
@@ -24,9 +26,12 @@ export class HeaderComponent {
   email: string = 'nuki@gmail.com';
   currentView: 'Monthly' | 'Yearly';
   showParticles = false;
+  private destroy$ = new Subject<void>();
+  isDarkMode: boolean = false;
 
   constructor(
     private authService: AuthService,
+    private darkService: DarkModeService,
     private toggleParticlesService: ToggleParticlesService,
     private toggleViewService: ToggleViewService) {
       this.currentView = this.toggleViewService.getCurrentView();
@@ -40,6 +45,21 @@ export class HeaderComponent {
     this.toggleParticlesService.showParticles$.subscribe(state => {
       this.showParticles = state;
     });
+    this.subscribeToDarkMode();
+  }
+
+  subscribeToDarkMode(): void {
+    this.darkService.darkMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isDark: boolean) => {
+        this.isDarkMode = isDark;
+      }
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onLogout(): void {
