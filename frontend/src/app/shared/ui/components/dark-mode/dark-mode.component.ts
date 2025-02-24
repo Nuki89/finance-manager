@@ -10,7 +10,7 @@ import { heroSun, heroMoon } from '@ng-icons/heroicons/outline';
   providers: [provideIcons({ heroSun, heroMoon })],
   imports: [CommonModule, NgIcon],
   template: `
-    <button (click)="toggleTheme()" class="inline-flex items-center focus:outline-none">
+    <button (click)="toggleTheme()" class="flex items-center justify-center focus:outline-none">
       <ng-icon 
         [name]="(darkService.darkMode$ | async) ? 'heroMoon' : 'heroSun'"
         title="Toggle dark mode" 
