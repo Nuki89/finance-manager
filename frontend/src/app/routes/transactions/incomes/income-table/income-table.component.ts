@@ -36,11 +36,8 @@ export class IncomeTableComponent {
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
   @ViewChild('agGrid', { read: ElementRef }) gridElement!: ElementRef;
-
-  get themeClass() {
-    return this.darkService.isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
-  }
   
+  themeClass: string = 'ag-theme-alpine';
   isDarkMode: boolean = false;
   private destroy$ = new Subject<void>();
   rowData: any[] = [];
@@ -87,7 +84,7 @@ export class IncomeTableComponent {
     this.darkService.darkMode$
       .pipe(takeUntil(this.destroy$))
       .subscribe((isDark: boolean) => {
-        this.isDarkMode = isDark;
+        this.themeClass = isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
         this.updateColDefs(); 
         this.updateGridTheme();
         this.refreshGrid();
@@ -123,14 +120,14 @@ export class IncomeTableComponent {
             {
               type: 'edit',
               icon: 'heroPencilSquare',
-              class: this.getButtonClass('edit', this.isDarkMode),
+              class: this.getButtonClass('edit'),
               tooltip: 'Edit',
               handler: () => params.context.componentParent.handleEdit(params.data.id, params.data),
             },
             {
               type: 'delete',
               icon: 'heroTrash',
-              class: this.getButtonClass('delete', this.isDarkMode),
+              class: this.getButtonClass('delete'),
               tooltip: 'Delete',
               handler: () => params.context.componentParent.handleDelete(params.data.id),
             }
@@ -199,14 +196,15 @@ export class IncomeTableComponent {
     }
   }
 
-  getButtonClass(type: string, isDarkMode: boolean): string {
+  getButtonClass(type: string): string {
+    const isDark = this.themeClass === 'ag-theme-alpine-dark';
     if (type === 'edit') {
-      return isDarkMode
+      return isDark
         ? 'text-violet-400 border border-gray-500 bg-black hover:bg-gray-700 hover:text-white shadow-lg shadow-gray-500/50'
         : 'text-blue-500 border border-blue-500 bg-white hover:bg-blue-500 hover:text-white shadow-lg shadow-blue-500/50';
     } 
     if (type === 'delete') {
-      return isDarkMode
+      return isDark
         ? 'text-violet-400 border border-gray-500 bg-black hover:bg-gray-700 hover:text-white shadow-lg shadow-gray-500/50'
         : 'text-red-500 border border-red-500 bg-white hover:bg-red-500 hover:text-white shadow-lg shadow-red-500/50';
     }

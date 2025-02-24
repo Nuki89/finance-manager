@@ -12,9 +12,9 @@ import { heroSun, heroMoon } from '@ng-icons/heroicons/outline';
   template: `
     <button (click)="toggleTheme()" class="inline-flex items-center focus:outline-none">
       <ng-icon 
-        [name]="darkService.isDarkMode ? 'heroSun' : 'heroMoon'"
+        [name]="(darkService.darkMode$ | async) ? 'heroMoon' : 'heroSun'"
         title="Toggle dark mode" 
-        [ngClass]="{ 'text-fuchsia-600': darkService.isDarkMode }"
+        [ngClass]="{ 'text-fuchsia-600': darkService.darkMode$ | async }"
         class="mr-4 text-xl">
       </ng-icon>
     </button>
