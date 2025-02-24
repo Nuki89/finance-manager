@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, HostListener, ChangeDetectorRef, AfterViewInit } from '@angular/core';
+import { Component, inject, ViewChild, HostListener } from '@angular/core';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular'; 
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
@@ -8,18 +8,19 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 import { IncomeEditModalComponent } from '../income-edit-modal/income-edit-modal.component';
-import { NgIcon, provideIcons } from '@ng-icons/core';
+import { provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { TableActionCellComponent } from '../../../../shared/ui/components/table-action-cell/table-action-cell.component';
 import { CommonModule } from '@angular/common';
 import { DarkModeService } from '../../../../shared/services/shared/dark-mode.service';
+import { Subject, takeUntil } from 'rxjs';
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
   selector: 'app-income-table',
   standalone: true,
-  imports: [CommonModule, AgGridModule, NgIcon],
+  imports: [CommonModule, AgGridModule],
   templateUrl: './income-table.component.html',
   styleUrls: ['./income-table.component.css'],
   viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })],
@@ -30,60 +31,19 @@ export class IncomeTableComponent {
   private dialog = inject(MatDialog);
   private incomeService = inject(IncomeService); 
   private darkService = inject(DarkModeService);
-  private cdr = inject(ChangeDetectorRef);
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
 
   get themeClass() {
     return this.darkService.isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
   }
+  
+  isDarkMode: boolean = false;
+  private destroy$ = new Subject<void>();
 
   rowData: any[] = [];
   incomeList: any[] = [];
-  colDefs: ColDef[] = [
-    { field: 'date', headerName: 'Date', valueFormatter: this.dateFormatter , sort: 'desc'},
-    {
-      field: 'source',
-      headerName: 'Source',
-      valueGetter: (params) => params.data.source_data?.name || 'N/A', 
-    },
-    { field: 'amount', headerName: 'Amount', valueFormatter: this.currencyFormatter },
-    { field: 'description', headerName: 'Description' },
-    { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },  
-    {
-      headerName: 'Actions',
-      filter: false,
-      cellRenderer: TableActionCellComponent,
-      cellRendererParams: (params: any) => ({
-        actions: [
-          {
-            type: 'edit',
-            icon: 'heroPencilSquare',
-            class: 'text-blue-500 border border-blue-500 bg-white hover:bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 hover:text-white shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80',
-            tooltip: 'Edit',
-            handler: () => params.context.componentParent.handleEdit(params.data.id, params.data),
-          },
-          {
-            type: 'delete',
-            icon: 'heroTrash',
-            class: 'text-red-500 border border-red-500 bg-white hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600 hover:text-white shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80',
-            tooltip: 'Delete',
-            handler: () => params.context.componentParent.handleDelete(params.data.id),
-          }
-        ]
-      })
-    },
-    // {
-    //   headerName: 'Actions',
-    //   filter: false,
-    //   cellRenderer: TableActionCellComponent,
-    //   cellRendererParams: {
-    //     onEdit: (params: any) => this.handleEdit(params.data.id, params.data),
-    //     onDelete: (params: any) => this.handleDelete(params.data.id),
-    //   }
-    // },
-    
-  ];
+  colDefs: ColDef[] = [];
 
   gridOptions: GridOptions = {
     domLayout: 'normal',
@@ -114,40 +74,96 @@ export class IncomeTableComponent {
     }
   };
 
-  
   ngOnInit(): void {
     this.fetchIncomes();
+    this.subscribeToDarkMode();
+    this.subscribeToIncomeChages();
+  }
 
-    this.darkService.darkMode$.subscribe(() => {
-      setTimeout(() => {
+  updateColDefs(): void {
+    this.colDefs = [
+      { field: 'date', headerName: 'Date', valueFormatter: this.dateFormatter, sort: 'desc' },
+      {
+        field: 'source',
+        headerName: 'Source',
+        valueGetter: (params) => params.data.source_data?.name || 'N/A',
+      },
+      { field: 'amount', headerName: 'Amount', valueFormatter: this.currencyFormatter },
+      { field: 'description', headerName: 'Description' },
+      { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },
+      {
+        headerName: 'Actions',
+        filter: false,
+        cellRenderer: TableActionCellComponent,
+        cellRendererParams: (params: any) => ({
+          actions: [
+            {
+              type: 'edit',
+              icon: 'heroPencilSquare',
+              class: this.getButtonClass('edit', this.isDarkMode),
+              tooltip: 'Edit',
+              handler: () => params.context.componentParent.handleEdit(params.data.id, params.data),
+            },
+            {
+              type: 'delete',
+              icon: 'heroTrash',
+              class: this.getButtonClass('delete', this.isDarkMode),
+              tooltip: 'Delete',
+              handler: () => params.context.componentParent.handleDelete(params.data.id),
+            }
+          ]
+        })
+      }
+    ];
+  }
+
+  subscribeToDarkMode(): void {
+    this.darkService.darkMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isDark: boolean) => {
+        this.isDarkMode = isDark;
+        this.updateColDefs(); 
+  
+        if (this.agGrid && this.agGrid.api) {
+          this.agGrid.api.setGridOption('columnDefs', this.colDefs);  
+          this.agGrid.api.refreshCells({ force: true }); 
+          this.agGrid.api.redrawRows();
+        }
+  
         const gridElement = document.querySelector('ag-grid-angular');
         if (gridElement) {
+          gridElement.classList.remove('ag-theme-alpine', 'ag-theme-alpine-dark');
           gridElement.classList.add(this.themeClass);
         }
-      }, 0);
-    });
+      }
+    );
+  }
 
-    this.sharedDataService.incomeChanged$.subscribe(() => {
-      this.fetchIncomes(); 
+  subscribeToIncomeChages(): void {
+    this.sharedDataService.incomeChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.fetchIncomes();
     });
   }
-  
 
   fetchIncomes(): void {
-    this.incomeService.getIncome().subscribe({
-      next: (data: any) => {
-        this.rowData = data.map((income: any) => ({
-          ...income,
-          date: income.date, 
-          amount: +income.amount, 
-        }));
-      },
-      error: (error) => {
-        console.error('Error fetching incomes:', error);
-      },
-    });
+    this.incomeService.getIncome()
+    .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data: any) => {
+          this.rowData = data.map((income: any) => ({
+            ...income,
+            date: income.date, 
+            amount: +income.amount, 
+          }));
+        },
+        error: (error) => {
+          console.error('Error fetching incomes:', error);
+        },
+      }
+    );
   }
-
 
   dateFormatter(params: any): string {
     const date = new Date(params.value);
@@ -157,17 +173,14 @@ export class IncomeTableComponent {
     return `${day}.${month}.${year}`; 
   }
 
-
   currencyFormatter(params: any): string {
     return `${params.value} €`;
   }
-  
 
   @HostListener('window:resize', ['$event'])
   onResize(event: any) {
     this.sizeColumnsToFit();
   }
-
 
   sizeColumnsToFit() {
     if (this.agGrid && this.agGrid.api) {
@@ -175,6 +188,19 @@ export class IncomeTableComponent {
     }
   }
 
+  getButtonClass(type: string, isDarkMode: boolean): string {
+    if (type === 'edit') {
+      return isDarkMode
+        ? 'text-white border border-gray-500 bg-black hover:bg-gray-700 hover:text-white shadow-lg shadow-gray-500/50'
+        : 'text-blue-500 border border-blue-500 bg-white hover:bg-blue-500 hover:text-white shadow-lg shadow-blue-500/50';
+    } 
+    if (type === 'delete') {
+      return isDarkMode
+        ? 'text-white border border-gray-500 bg-black hover:bg-gray-700 hover:text-white shadow-lg shadow-gray-500/50'
+        : 'text-red-500 border border-red-500 bg-white hover:bg-red-500 hover:text-white shadow-lg shadow-red-500/50';
+    }
+    return '';
+  }  
 
   handleEdit(id: number, rowData: any) {
     const dialogRef = this.dialog.open(IncomeEditModalComponent, {
@@ -190,7 +216,6 @@ export class IncomeTableComponent {
     });
   }
 
-
   handleDelete(id: number) {
     const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
       width: '400px',
@@ -202,7 +227,9 @@ export class IncomeTableComponent {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.incomeService.deleteIncome(id).subscribe(
+        this.incomeService.deleteIncome(id)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(
           () => {
             this.toastr.success('Income deleted successfully!');
             this.fetchIncomes();
@@ -214,6 +241,11 @@ export class IncomeTableComponent {
         );
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
 }
