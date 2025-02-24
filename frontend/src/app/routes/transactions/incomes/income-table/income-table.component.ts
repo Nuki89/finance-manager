@@ -1,4 +1,4 @@
-import { Component, inject, ViewChild, HostListener } from '@angular/core';
+import { Component, inject, ViewChild, HostListener, ElementRef } from '@angular/core';
 import { AgGridAngular, AgGridModule } from 'ag-grid-angular'; 
 import type { ColDef, GridOptions } from 'ag-grid-community';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community'; 
@@ -26,13 +26,16 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })],
 })
 export class IncomeTableComponent {
-  private sharedDataService = inject(SharedDataService);
-  private toastr = inject(ToastrService);
-  private dialog = inject(MatDialog);
-  private incomeService = inject(IncomeService); 
-  private darkService = inject(DarkModeService);
+  constructor(
+    private sharedDataService: SharedDataService,
+    private toastr: ToastrService,
+    private dialog: MatDialog,
+    private incomeService: IncomeService,
+    private darkService: DarkModeService
+  ) {}
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
+  @ViewChild('agGrid', { read: ElementRef }) gridElement!: ElementRef;
 
   get themeClass() {
     return this.darkService.isDarkMode ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
@@ -40,7 +43,6 @@ export class IncomeTableComponent {
   
   isDarkMode: boolean = false;
   private destroy$ = new Subject<void>();
-
   rowData: any[] = [];
   incomeList: any[] = [];
   colDefs: ColDef[] = [];
@@ -48,13 +50,9 @@ export class IncomeTableComponent {
   gridOptions: GridOptions = {
     domLayout: 'normal',
     onGridReady: () => {
-      this.sizeColumnsToFit();
-
       setTimeout(() => {
-        const gridElement = document.querySelector('ag-grid-angular');
-        if (gridElement) {
-          gridElement.classList.add(this.themeClass);      
-        }
+        this.sizeColumnsToFit();
+        this.updateGridTheme();
       }, 0);
     },
     context: {
@@ -78,6 +76,31 @@ export class IncomeTableComponent {
     this.fetchIncomes();
     this.subscribeToDarkMode();
     this.subscribeToIncomeChages();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  subscribeToDarkMode(): void {
+    this.darkService.darkMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isDark: boolean) => {
+        this.isDarkMode = isDark;
+        this.updateColDefs(); 
+        this.updateGridTheme();
+        this.refreshGrid();
+      }
+    );
+  }
+
+  subscribeToIncomeChages(): void {
+    this.sharedDataService.incomeChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.fetchIncomes();
+    });
   }
 
   updateColDefs(): void {
@@ -115,36 +138,24 @@ export class IncomeTableComponent {
         })
       }
     ];
+    this.refreshGrid();
   }
 
-  subscribeToDarkMode(): void {
-    this.darkService.darkMode$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((isDark: boolean) => {
-        this.isDarkMode = isDark;
-        this.updateColDefs(); 
-  
-        if (this.agGrid && this.agGrid.api) {
-          this.agGrid.api.setGridOption('columnDefs', this.colDefs);  
-          this.agGrid.api.refreshCells({ force: true }); 
-          this.agGrid.api.redrawRows();
-        }
-  
-        const gridElement = document.querySelector('ag-grid-angular');
-        if (gridElement) {
-          gridElement.classList.remove('ag-theme-alpine', 'ag-theme-alpine-dark');
-          gridElement.classList.add(this.themeClass);
-        }
-      }
-    );
+  refreshGrid(): void {
+    if (this.agGrid && this.agGrid.api) {
+      this.colDefs = [...this.colDefs]; 
+      setTimeout(() => {
+        this.agGrid.api.refreshHeader();
+        this.agGrid.api.refreshCells({ force: true });
+      }, 0);
+    }
   }
 
-  subscribeToIncomeChages(): void {
-    this.sharedDataService.incomeChanged$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe(() => {
-        this.fetchIncomes();
-    });
+  updateGridTheme(): void {
+    if (this.gridElement) {
+      this.gridElement.nativeElement.classList.remove('ag-theme-alpine', 'ag-theme-alpine-dark');
+      this.gridElement.nativeElement.classList.add(this.themeClass);
+    }
   }
 
   fetchIncomes(): void {
@@ -191,12 +202,12 @@ export class IncomeTableComponent {
   getButtonClass(type: string, isDarkMode: boolean): string {
     if (type === 'edit') {
       return isDarkMode
-        ? 'text-white border border-gray-500 bg-black hover:bg-gray-700 hover:text-white shadow-lg shadow-gray-500/50'
+        ? 'text-violet-400 border border-gray-500 bg-black hover:bg-gray-700 hover:text-white shadow-lg shadow-gray-500/50'
         : 'text-blue-500 border border-blue-500 bg-white hover:bg-blue-500 hover:text-white shadow-lg shadow-blue-500/50';
     } 
     if (type === 'delete') {
       return isDarkMode
-        ? 'text-white border border-gray-500 bg-black hover:bg-gray-700 hover:text-white shadow-lg shadow-gray-500/50'
+        ? 'text-violet-400 border border-gray-500 bg-black hover:bg-gray-700 hover:text-white shadow-lg shadow-gray-500/50'
         : 'text-red-500 border border-red-500 bg-white hover:bg-red-500 hover:text-white shadow-lg shadow-red-500/50';
     }
     return '';
@@ -241,11 +252,6 @@ export class IncomeTableComponent {
         );
       }
     });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
   }
 
 }
