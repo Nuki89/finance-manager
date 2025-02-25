@@ -3,11 +3,12 @@ import { ExpenseFormComponent } from "./expense-form/expense-form.component";
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ExpenseService } from '../../../shared/services/api/expense.service';
+import { ExpenseTableComponent } from './expense-table/expense-table.component';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
-  imports: [CommonModule, RouterModule, ExpenseFormComponent],
+  imports: [CommonModule, RouterModule, ExpenseFormComponent, ExpenseTableComponent],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.css'
 })
