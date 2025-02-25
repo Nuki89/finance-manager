@@ -23,10 +23,6 @@ export class ExpenseService {
     };
   }
 
-  // getAllExpenses() {
-  //   return this.http.get(this.expenseUrl)
-  // }
-
   getAllExpenses() {
     const now = Date.now();
     if (this.expenseCache && now - this.lastFetchTime < this.CACHE_DURATION) { 
@@ -41,6 +37,10 @@ export class ExpenseService {
       }),
       catchError(this.handleError('getAllExpenses', []))
     );
+  }
+
+  getExpense() {
+    return this.http.get(this.expenseUrl)
   }
 
   addExpense(payload: any) {
