@@ -48,7 +48,7 @@ export class ExpenseService {
   }
 
   updateExpense(id: number, payload: any) {
-    return this.http.put(`${this.expenseUrl}/${id}`, payload)
+    return this.http.put(`${this.expenseUrl.replace(/\/$/,'')}/${id}/`, payload)
   }
 
   deleteExpense(id: number) {
