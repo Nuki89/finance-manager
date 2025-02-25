@@ -12,6 +12,7 @@ import { TableActionCellComponent } from '../../../../shared/ui/components/table
 import { provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
+import { ExpenseEditModalComponent } from '../expense-edit-modal/expense-edit-modal.component';
 
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -211,17 +212,17 @@ export class ExpenseTableComponent {
   } 
 
   handleEdit(id: number, rowData: any) {
-    // const dialogRef = this.dialog.open(ExpenseEditModalComponent, {
-    //   width: '600px',
-    //   data: {
-    //     id: rowData.id,
-    //     amount: rowData.amount,
-    //     date: rowData.date,
-    //     description: rowData.description,
-    //     source: rowData.source,
-    //     source_data: rowData.source_data 
-    //   }
-    // });
+    const dialogRef = this.dialog.open(ExpenseEditModalComponent, {
+      width: '600px',
+      data: {
+        id: rowData.id,
+        amount: rowData.amount,
+        date: rowData.date,
+        description: rowData.description,
+        category: rowData.category,
+        category_data: rowData.category_data 
+      }
+    });
   }
 
   handleDelete(id: number) {
