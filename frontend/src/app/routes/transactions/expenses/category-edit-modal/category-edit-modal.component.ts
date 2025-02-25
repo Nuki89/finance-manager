@@ -42,7 +42,7 @@ export class CategoryEditModalComponent {
   loadData() {
     forkJoin({
       categories: this.expenseService.getExpenseCategory(),
-      expenses: this.expenseService.getAllExpenses()
+      expenses: this.expenseService.getExpense()
     }).subscribe(
       ({ categories, expenses }) => {
         this.categories = categories as any[];

@@ -67,7 +67,7 @@ export class ExpenseFormComponent {
 
   loadData() {
     forkJoin({
-      expenses: this.expenseService.getAllExpenses(),
+      expenses: this.expenseService.getExpense(),
       categories: this.expenseService.getExpenseCategory()
     }).subscribe(
       ({ expenses, categories }) => {

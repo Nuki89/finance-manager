@@ -23,7 +23,7 @@ export class ExpenseService {
     };
   }
 
-  getAllExpenses() {
+  getCachedExpenses() {
     const now = Date.now();
     if (this.expenseCache && now - this.lastFetchTime < this.CACHE_DURATION) { 
       console.log('Returning cached expenses');
