@@ -42,7 +42,9 @@ export class IncomeSummaryComponent {
 
     totalIncomeFetcher.subscribe(
       (data: any) => {
-        this.totalIncome = data.reduce((sum: any, item: { total_amount: any }) => sum + item.total_amount, 0);
+        this.totalIncome = parseFloat(
+          data.reduce((sum: any, item: { total_amount: any }) => sum + item.total_amount, 0).toFixed(2)
+        );
         this.checkLoadingComplete();
       },
       (error) => {
