@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, Input, ViewChild } from '@angular/core';
+import { Component, DestroyRef, Input, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PieChartComponent } from '../../shared/ui/charts/pie-chart.component';
 import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
@@ -7,7 +7,7 @@ import { ReportService } from '../../shared/services/api/report.service';
 import { IncomeService } from '../../shared/services/api/income.service';
 import { ExpenseService } from '../../shared/services/api/expense.service';
 import { ToggleViewService } from '../../shared/services/shared/toggle-view.service';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeLoading03 } from '@ng-icons/huge-icons';
 import { IncomeSummaryComponent } from './components/income-summary/income-summary.component';
@@ -16,6 +16,7 @@ import { ActionButtonComponent } from '../../shared/ui/components/action-button/
 import { IncomeFormComponent } from '../transactions/incomes/income-form/income-form.component';
 import { MatDialog } from '@angular/material/dialog';
 import { ExpenseFormComponent } from '../transactions/expenses/expense-form/expense-form.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
@@ -26,9 +27,19 @@ import { ExpenseFormComponent } from '../transactions/expenses/expense-form/expe
   viewProviders : [provideIcons({ hugeLoading03 })]
 })
 export class HomeComponent {
+  constructor(
+    private reportService: ReportService,
+    private incomeService: IncomeService,
+    private expenseService: ExpenseService,
+    private toggleViewService: ToggleViewService,
+    private dialog: MatDialog,
+    private destroyRef: DestroyRef
+  ) {}
+
   @ViewChild(IncomeSummaryComponent) incomeSummaryComponent!: IncomeSummaryComponent;
   @ViewChild(ExpenseSummaryComponent) expenseSummaryComponent!: ExpenseSummaryComponent;
-  private viewSubscription!: Subscription;
+  @Input() sources: any[] = []; 
+
   loading: boolean = true;
   balance: any;
   currentBalance: number = 0;
@@ -43,25 +54,24 @@ export class HomeComponent {
 
   selectedSource: any = null; 
   incomes: any[] = [];
-  @Input() sources: any[] = []; 
   selectedSourceObj: any | null = null;
-
-  constructor(
-    private reportService: ReportService,
-    private incomeService: IncomeService,
-    private expenseService: ExpenseService,
-    private toggleViewService: ToggleViewService,
-    private dialog: MatDialog
-  ) {}
+  private destroy$ = new Subject<void>();
 
   ngOnInit() {
     this.balanceInfo();
 
-    this.viewSubscription = this.toggleViewService.viewMode$.subscribe(view => {
-      this.selectedView = view;
-      this.loadAllData();
-    });
+    this.toggleViewService.viewMode$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(view => {
+        this.selectedView = view;
+        this.loadAllData();
+      }
+    );
+  }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
   
   balanceInfo() {
@@ -70,7 +80,6 @@ export class HomeComponent {
       this.currentBalance = data.available_balance;    
       this.totalSaving = data.total_savings;
     });
-
   }
 
   loadAllData(): void {
@@ -159,7 +168,9 @@ export class HomeComponent {
   recentTransactions = [
     { name: 'Groceries', amount: -120 },
     { name: 'Salary', amount: 3000 },
+    { name: 'Test2', amount: -415 },
     { name: 'Subscription', amount: -15 },
+    { name: 'Grooms', amount: 15 },
   ];
 
   openAddIncomeModal() {
@@ -198,11 +209,23 @@ export class HomeComponent {
     });
   }
 
-  addExpense() {
-    console.log('Add Expense clicked');
+  openAddSavingModal() {
+    console.log('Add Saving clicked');
+    // const dialogRef = this.dialog.open(SavingFormComponent, {
+    //   width: '800px',
+    //   data: {
+    //     selectedSource: null,
+    //     title: 'Add New Saving',
+    //   },
+    // });
+
+    // dialogRef.afterClosed().subscribe((onAddSaving) => {
+    //   console.log('Dialog closed:', onAddSaving);
+    //   if (onAddSaving) {
+    //     this.loadAllData();
+    //     this.expenseSummaryComponent.fetchSavingData();
+    //   }
+    // });
   }
 
-  createSavingsGoal() {
-    console.log('Create Savings Goal clicked');
-  }
 }
