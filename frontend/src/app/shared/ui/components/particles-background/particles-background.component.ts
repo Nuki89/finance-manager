@@ -1,17 +1,38 @@
+import { CommonModule } from '@angular/common';
 import { Component, AfterViewInit, HostListener } from '@angular/core';
+import { DarkModeService } from '../../../services/shared/dark-mode.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-particles-background',
   standalone: true,
+  imports: [CommonModule],
   templateUrl: './particles-background.component.html',
   styleUrls: ['./particles-background.component.css']
 })
 export class ParticlesBackgroundComponent implements AfterViewInit {
+  constructor(
+    private darkService: DarkModeService,
+  ) {}
+
+  themeClass: string = 'light-background';
+  private destroy$ = new Subject<void>();
+
   private canvas!: HTMLCanvasElement;
   private ctx!: CanvasRenderingContext2D;
   private particlesArray: Particle[] = [];
 
+  subscribeToDarkMode(): void {
+    this.darkService.darkMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isDark: boolean) => {
+        this.themeClass = isDark ? 'dark-background' : 'light-background';
+      }
+    );
+  }
+
   ngAfterViewInit() {
+    this.subscribeToDarkMode();
     this.canvas = document.getElementById('canvas1') as HTMLCanvasElement;
     this.ctx = this.canvas.getContext('2d')!;
     this.canvas.width = window.innerWidth;
