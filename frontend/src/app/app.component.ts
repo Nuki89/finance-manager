@@ -3,6 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule, RouterOutlet } from '@angular/router';
 import { AuthService } from './shared/services/auth/auth.service';
 import { ParticlesBackgroundComponent } from "./shared/ui/components/particles-background/particles-background.component";
+import { DarkModeService } from './shared/services/shared/dark-mode.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -19,9 +21,12 @@ import { ParticlesBackgroundComponent } from "./shared/ui/components/particles-b
 export class AppComponent implements OnInit {
   title = 'finance-manager';
   showParticles = false;
+  themeClass: string = 'light-background';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private authService: AuthService,
+    private darkService: DarkModeService,
     private router: Router) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationEnd) {
@@ -31,6 +36,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.subscribeToDarkMode();
     // REMOVED SO NOW STAYS ON THE SAME PAGE WHEN RELOADED
     // this.loading = true;
     // if (this.authService.isLoggedIn()) {
@@ -52,5 +58,13 @@ export class AppComponent implements OnInit {
     this.showParticles = !this.showParticles;
   }
   
+  subscribeToDarkMode(): void {
+    this.darkService.darkMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isDark: boolean) => {
+        this.themeClass = isDark ? 'dark-background' : 'light-background';
+      }
+    );
+  }
   
 }
