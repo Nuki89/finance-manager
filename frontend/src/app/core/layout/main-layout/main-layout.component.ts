@@ -10,12 +10,14 @@ import { ToggleParticlesService } from '../../../shared/services/shared/toggle-p
   standalone: true,
   imports: [CommonModule, RouterModule, HeaderComponent, ParticlesBackgroundComponent],
   templateUrl: './main-layout.component.html',
-  styleUrl: './main-layout.component.css'
+  styleUrls: ['./main-layout.component.css']
 })
 export class MainLayoutComponent {
-  showParticles = false;
+  constructor(
+    private toggleParticlesService: ToggleParticlesService,
+  ) {}
 
-  constructor(private toggleParticlesService: ToggleParticlesService) {}
+  showParticles = false;
 
   ngOnInit(): void {
     if (typeof window !== 'undefined') {
