@@ -5,6 +5,14 @@
     padding: 1rem;
 } */
 
+/* .button-card {
+  background: rgba(173, 216, 230, 0.2);
+  border: 1px solid rgba(173, 216, 230, 0.5);
+  box-shadow: 0 4px 10px rgba(173, 216, 230, 0.3);
+  backdrop-filter: blur(10px); 
+  -webkit-backdrop-filter: blur(15px); 
+} */
+
 .card {
     background: rgba(255, 255, 255, 0.1); 
     backdrop-filter: blur(15px); 
