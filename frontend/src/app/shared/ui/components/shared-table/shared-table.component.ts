@@ -1,14 +1,15 @@
-import { Component, ElementRef, HostListener, Input, SimpleChanges, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, HostListener, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridOptions } from 'ag-grid-community';
 import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { SharedDataService } from '../../../services/shared/shared-data.service';
 import { provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { TableActionCellComponent } from '../table-action-cell/table-action-cell.component';
+import { DarkModeService } from '../../../services/shared/dark-mode.service';
 
 @Component({
   selector: 'app-shared-table',
@@ -23,10 +24,13 @@ export class SharedTableComponent {
     private toastr: ToastrService,
     private dialog: MatDialog,
     private sharedDataService: SharedDataService,
+    private darkService: DarkModeService
   ) {}
 
   @Input() data: any[] = [];
   @Input() type!: 'income' | 'expense' | 'saving'; 
+  @Output() edit = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<number>();
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
   @ViewChild('agGrid', { read: ElementRef }) gridElement!: ElementRef;
@@ -63,11 +67,32 @@ export class SharedTableComponent {
     }
   };
 
+  ngOnInit(): void {
+    this.subscribeToDarkMode();
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['data']) {
       this.rowData = this.data;
       this.setColDefs();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  subscribeToDarkMode(): void {
+    this.darkService.darkMode$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((isDark: boolean) => {
+        this.themeClass = isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
+        this.setColDefs(); 
+        this.updateGridTheme();
+        this.refreshGrid();
+      }
+    );
   }
 
   setColDefs(): void {
@@ -201,5 +226,13 @@ export class SharedTableComponent {
     }
     return '';
   } 
+
+  handleEdit(id: number, data: any): void {    
+    this.edit.emit(data);
+  }
+
+  handleDelete(id: number): void {    
+    this.delete.emit(id);
+  }
 
 }
