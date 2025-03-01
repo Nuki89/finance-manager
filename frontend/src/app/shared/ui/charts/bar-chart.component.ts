@@ -47,8 +47,8 @@ export class BarChartComponent implements OnInit, OnChanges {
           },
         },
         scales: {
-          x: { beginAtZero: true },
-          y: { beginAtZero: true },
+          x: { beginAtZero: true, title: { display: true, text: 'Month' } },
+          y: { beginAtZero: true, title: { display: true, text: 'Amount €' } }, 
         },
       },
     };
