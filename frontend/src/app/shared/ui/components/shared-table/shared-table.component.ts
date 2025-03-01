@@ -81,7 +81,7 @@ export class SharedTableComponent {
     const changes$ = {
       income: this.sharedDataService.incomeChanged$,
       expense: this.sharedDataService.expenseChanged$,
-      saving: this.sharedDataService.expenseChanged$ //savingsChanged
+      saving: this.sharedDataService.savingChanged$
     } [this.type];
 
     if (changes$) {
