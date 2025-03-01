@@ -31,6 +31,7 @@ export class SharedTableComponent {
   @Input() type!: 'income' | 'expense' | 'saving'; 
   @Output() edit = new EventEmitter<any>();
   @Output() delete = new EventEmitter<number>();
+  @Output() dataChange = new EventEmitter<void>();
 
   @ViewChild('agGrid') agGrid!: AgGridAngular;
   @ViewChild('agGrid', { read: ElementRef }) gridElement!: ElementRef;
@@ -68,6 +69,7 @@ export class SharedTableComponent {
   };
 
   ngOnInit(): void {
+    this.subscribeToChanges();
     this.subscribeToDarkMode();
   }
 
@@ -81,6 +83,34 @@ export class SharedTableComponent {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  subscribeToChanges(): void {
+    this.destroy$.next();
+  
+    if (this.type === 'income') {
+      this.sharedDataService.incomeChanged$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.refreshData();  
+      });
+    } else if (this.type === 'expense') {
+      this.sharedDataService.expenseChanged$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.refreshData();
+      });
+    } else if (this.type === 'saving') {
+      // this.sharedDataService.savingsChanged$
+      //   .pipe(takeUntil(this.destroy$))
+      //   .subscribe(() => {
+      //     this.refreshData();
+      // });
+    }
+  }
+
+  refreshData(): void {
+    this.dataChange.emit();
   }
 
   subscribeToDarkMode(): void {
