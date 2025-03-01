@@ -43,4 +43,28 @@ export class SavingService {
     return this.http.delete(`${this.categoriesUrl.replace(/\/$/, '')}/${id}/`);
   }
 
+  getMonthlySaving() {
+    return this.http.get(`${this.savingUrl}monthly_summary`)
+  }
+
+  getLastMonthSaving() {
+    return this.http.get(`${this.savingUrl}last_month_summary`)
+  }
+
+  getLastYearSaving() {
+    return this.http.get(`${this.savingUrl}last_year_summary`)
+  }
+
+  getSavingMonthlySource() {
+    return this.http.get(`${this.savingUrl}monthly_source_summary`)
+  }
+
+  getLastMonthSourceSummary() {
+    return this.http.get(`${this.savingUrl}last_month_source_summary`)
+  }
+
+  getYearlySourceSummary() {
+    return this.http.get(`${this.savingUrl}last_year_source_summary`)
+  }
+
 }
