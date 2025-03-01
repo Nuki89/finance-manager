@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { IncomeService } from '../../../shared/services/api/income.service';
-import { IncomeTableComponent } from "./income-table/income-table.component";
 import { IncomeFormComponent } from './income-form/income-form.component';
 import { SharedTableComponent } from '../../../shared/ui/components/shared-table/shared-table.component';
 import { Subject, takeUntil } from 'rxjs';
@@ -16,14 +15,13 @@ import { Income } from '../../../shared/models/income.model';
 @Component({
   selector: 'app-incomes',
   standalone: true,
-  imports: [CommonModule, RouterModule, IncomeTableComponent, IncomeFormComponent, SharedTableComponent],
+  imports: [CommonModule, RouterModule, IncomeFormComponent, SharedTableComponent],
   templateUrl: './incomes.component.html',
   styleUrls: ['./incomes.component.css']
 })
 export class IncomesComponent {
   public incomes: Income[] = [];
 
-  // private income_sources: any = []
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -44,10 +42,6 @@ export class IncomesComponent {
   public handleDataChange(): void {
     this.fetchIncomes();  
   }
-  
-  // public getIncomeSources() {
-  //   return this.income_sources || [];
-  // }
 
   public handleEdit(incomeData: any): void {
     console.log('Editing Income:', incomeData);
