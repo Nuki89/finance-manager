@@ -1,8 +1,6 @@
 import { Component, ElementRef, EventEmitter, HostListener, Input, Output, SimpleChanges, ViewChild } from '@angular/core';
 import { AgGridAngular } from 'ag-grid-angular';
 import { ColDef, GridOptions } from 'ag-grid-community';
-import { MatDialog } from '@angular/material/dialog';
-import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { SharedDataService } from '../../../services/shared/shared-data.service';
@@ -20,13 +18,6 @@ import { DarkModeService } from '../../../services/shared/dark-mode.service';
   viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })],
 })
 export class SharedTableComponent {
-  constructor(
-    private toastr: ToastrService,
-    private dialog: MatDialog,
-    private sharedDataService: SharedDataService,
-    private darkService: DarkModeService
-  ) {}
-
   @Input() data: any[] = [];
   @Input() type!: 'income' | 'expense' | 'saving'; 
   @Output() edit = new EventEmitter<any>();
@@ -36,39 +27,21 @@ export class SharedTableComponent {
   @ViewChild('agGrid') agGrid!: AgGridAngular;
   @ViewChild('agGrid', { read: ElementRef }) gridElement!: ElementRef;
 
-  themeClass: string = 'ag-theme-alpine';
-  isDarkMode: boolean = false;
-  private destroy$ = new Subject<void>();
-  rowData: any[] = [];
-  incomeList: any[] = [];
-  colDefs: ColDef[] = [];
+  public themeClass: string = 'ag-theme-alpine';
+  public isDarkMode: boolean = false;
+  public colDefs: ColDef[] = [];
+  public rowData: any[] = [];
+  public gridOptions!: GridOptions;
 
-  gridOptions: GridOptions = {
-    domLayout: 'normal',
-    onGridReady: () => {
-      setTimeout(() => {
-        this.sizeColumnsToFit();
-        this.updateGridTheme();
-      }, 0);
-    },
-    context: {
-      componentParent: this 
-    },
-    components: { tableActionCell: TableActionCellComponent },
-    defaultColDef: {
-      flex: 1,
-      editable: false,
-      autoHeight: true,
-      floatingFilter: false,
-      resizable: true,
-      suppressMovable: true,
-      sortable: true,
-      filter: false,
-      unSortIcon: true,
-    }
-  };
+  private destroy$ = new Subject<void>();
+
+  constructor(
+    private sharedDataService: SharedDataService,
+    private darkService: DarkModeService
+  ) {}
 
   ngOnInit(): void {
+    this.gridOptions = this.setGridOptions();
     this.subscribeToChanges();
     this.subscribeToDarkMode();
   }
@@ -85,47 +58,53 @@ export class SharedTableComponent {
     this.destroy$.complete();
   }
 
-  subscribeToChanges(): void {
-    this.destroy$.next();
-  
-    if (this.type === 'income') {
-      this.sharedDataService.incomeChanged$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.refreshData();  
-      });
-    } else if (this.type === 'expense') {
-      this.sharedDataService.expenseChanged$
-        .pipe(takeUntil(this.destroy$))
-        .subscribe(() => {
-          this.refreshData();
-      });
-    } else if (this.type === 'saving') {
-      // this.sharedDataService.savingsChanged$
-      //   .pipe(takeUntil(this.destroy$))
-      //   .subscribe(() => {
-      //     this.refreshData();
-      // });
+  @HostListener('window:resize', ['$event'])
+  public onResize(event: any) {
+    this.sizeColumnsToFit();
+  }
+
+  public sizeColumnsToFit() {
+    if (this.agGrid && this.agGrid.api) {
+      this.agGrid.api.sizeColumnsToFit();
     }
   }
 
-  refreshData(): void {
-    this.dataChange.emit();
+  public handleEdit(id: number, data: any): void {    
+    this.edit.emit(data);
   }
 
-  subscribeToDarkMode(): void {
+  public handleDelete(id: number): void {    
+    this.delete.emit(id);
+  }
+
+  private subscribeToChanges(): void {
+    const changes$ = {
+      income: this.sharedDataService.incomeChanged$,
+      expense: this.sharedDataService.expenseChanged$,
+      saving: this.sharedDataService.expenseChanged$ //savingsChanged
+    } [this.type];
+
+    if (changes$) {
+      changes$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => {
+          this.dataChange.emit();
+      });
+    }
+  } 
+
+  private subscribeToDarkMode(): void {
     this.darkService.darkMode$
       .pipe(takeUntil(this.destroy$))
       .subscribe((isDark: boolean) => {
         this.themeClass = isDark ? 'ag-theme-alpine-dark' : 'ag-theme-alpine';
         this.setColDefs(); 
-        this.updateGridTheme();
         this.refreshGrid();
       }
     );
   }
 
-  setColDefs(): void {
+  private setColDefs(): void {
     this.colDefs = [
       { field: 'date', headerName: 'Date', valueFormatter: this.dateFormatter, sort: 'desc' },
       { 
@@ -160,10 +139,37 @@ export class SharedTableComponent {
         })
       }
     ];
-    this.refreshGrid();
+    this.updateGridTheme();
   }
 
-  getFieldName(): string {
+  private setGridOptions(): GridOptions {
+    return {
+      domLayout: 'normal',
+      onGridReady: () => {
+        setTimeout(() => {
+          this.sizeColumnsToFit();
+          this.updateGridTheme();
+        }, 0);
+      },
+      context: {
+        componentParent: this 
+      },
+      components: { tableActionCell: TableActionCellComponent },
+      defaultColDef: {
+        flex: 1,
+        editable: false,
+        autoHeight: true,
+        floatingFilter: false,
+        resizable: true,
+        suppressMovable: true,
+        sortable: true,
+        filter: false,
+        unSortIcon: true,
+      }
+    };
+  }
+
+  private getFieldName(): string {
     switch (this.type) {
       case 'income':
         return 'source';
@@ -176,7 +182,7 @@ export class SharedTableComponent {
     }
   }
 
-  getHeaderName(): string {
+  private getHeaderName(): string {
     switch (this.type) {
       case 'income':
         return 'Source';
@@ -189,7 +195,7 @@ export class SharedTableComponent {
     }
   }
 
-  getValueBasedOnType(params: any): string {
+  private getValueBasedOnType(params: any): string {
     switch (this.type) {
       case 'income':
         return params.data.source_data ? params.data.source_data.name : 'N/A';
@@ -202,7 +208,7 @@ export class SharedTableComponent {
     }
   }
 
-  refreshGrid(): void {
+  private refreshGrid(): void {
     if (this.agGrid && this.agGrid.api) {
       this.colDefs = [...this.colDefs]; 
       setTimeout(() => {
@@ -212,14 +218,14 @@ export class SharedTableComponent {
     }
   }
 
-  updateGridTheme(): void {
+  private updateGridTheme(): void {
     if (this.gridElement) {
       this.gridElement.nativeElement.classList.remove('ag-theme-alpine', 'ag-theme-alpine-dark');
       this.gridElement.nativeElement.classList.add(this.themeClass);
     }
   }
 
-  dateFormatter(params: any): string {
+  private dateFormatter(params: any): string {
     const date = new Date(params.value);
     const day = date.getDate();
     const month = date.getMonth() + 1; 
@@ -227,22 +233,11 @@ export class SharedTableComponent {
     return `${day}.${month}.${year}`; 
   }
 
-  currencyFormatter(params: any): string {
+  private currencyFormatter(params: any): string {
     return `${params.value} €`;
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(event: any) {
-    this.sizeColumnsToFit();
-  }
-
-  sizeColumnsToFit() {
-    if (this.agGrid && this.agGrid.api) {
-      this.agGrid.api.sizeColumnsToFit();
-    }
-  }
-
-  getButtonClass(type: string): string {
+  private getButtonClass(type: string): string {
     const isDark = this.themeClass === 'ag-theme-alpine-dark';
     if (type === 'edit') {
       return isDark
@@ -256,13 +251,5 @@ export class SharedTableComponent {
     }
     return '';
   } 
-
-  handleEdit(id: number, data: any): void {    
-    this.edit.emit(data);
-  }
-
-  handleDelete(id: number): void {    
-    this.delete.emit(id);
-  }
 
 }
