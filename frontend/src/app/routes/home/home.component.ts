@@ -33,6 +33,7 @@ export class HomeComponent {
   @ViewChild(IncomeSummaryComponent) incomeSummaryComponent!: IncomeSummaryComponent;
   @ViewChild(ExpenseSummaryComponent) expenseSummaryComponent!: ExpenseSummaryComponent;
   @ViewChild(SavingSummaryComponent) savingSummaryComponent!: SavingSummaryComponent;
+  @ViewChild(BarChartComponent) barChart!: BarChartComponent;
 
   public loading: boolean = true;
   public selectedView: string = 'month';
@@ -49,25 +50,10 @@ export class HomeComponent {
   private selectedSourceObj: any | null = null;
   private currentBalance: number = 0;
   private destroy$ = new Subject<void>();
+  private lastYearIncome: any[] = [];
+  private lastYearExpense: any[] = [];
 
-  public incomeVsExpense = {
-    labels: [
-      'January', 'February', 'March', 'April', 
-      'May', 'June', 'July', 'August', 
-      'September', 'October', 'November', 'December'],
-    datasets: [
-      {
-        label: 'Income',
-        data: [5000, 4500, 5200, 4800],
-        backgroundColor: '#3b82f6',
-      },
-      {
-        label: 'Expense',
-        data: [3200, 3000, 3500, 3300],
-        backgroundColor: '#ef4444',
-      },
-    ],
-  };
+  public incomeVsExpense: { labels: string[]; datasets: { label: string; data: number[]; backgroundColor: string }[] } = this.initializeIncomeVsExpense();
 
   public recentTransactions = [
     { name: 'Groceries', amount: -120 },
@@ -83,7 +69,7 @@ export class HomeComponent {
     private expenseService: ExpenseService,
     private toggleViewService: ToggleViewService,
     private dialog: MatDialog,
-    private destroyRef: DestroyRef
+    private destroyRef: DestroyRef,
   ) {}
 
   ngOnInit() {
@@ -158,11 +144,35 @@ export class HomeComponent {
     // });
   }
 
+  private initializeIncomeVsExpense(): { labels: string[]; datasets: { label: string; data: number[]; backgroundColor: string }[] } {
+    return {
+        labels: [
+            'January', 'February', 'March', 'April', 
+            'May', 'June', 'July', 'August', 
+            'September', 'October', 'November', 'December'
+        ],
+        datasets: [
+            {
+                label: 'Income',
+                data: [...this.lastYearIncome], 
+                backgroundColor: '#3b82f6',
+            },
+            {
+                label: 'Expense',
+                data: [...this.lastYearExpense], 
+                backgroundColor: '#ef4444',
+            },
+        ],
+    };
+  }
+
   private async loadAllData(): Promise<void> {
     this.loading = true;
     try {
       await this.fetchIncomeData();
       await this.fetchExpenseData();
+      await this.fetchLastYearIncome();
+      await this.fetchLastYearExpense();
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -225,6 +235,38 @@ export class HomeComponent {
           this.balance = { available_balance: 0, total_savings: 0 };  
         }
       });
+  }
+
+  private async fetchLastYearIncome() {
+    try {
+      const data: any = await lastValueFrom(this.incomeService.getLastYearIncome());
+      this.lastYearIncome = data.map((item: any) => item.total_amount);
+
+      this.incomeVsExpense.datasets[0].data = [...this.lastYearIncome];
+
+      if (this.barChart) {
+          this.barChart.updateChart();
+      }
+
+    } catch (error) {
+        console.error('Error fetching last year income:', error);
+    }
+  }
+
+  private async fetchLastYearExpense() {
+    try {
+      const data: any = await lastValueFrom(this.expenseService.getLastYearExpense());
+      this.lastYearExpense = data.map((item: any) => item.total_amount);
+
+      this.incomeVsExpense.datasets[1].data = [...this.lastYearExpense];
+
+      if (this.barChart) {
+        this.barChart.updateChart();
+    }
+
+    } catch (error) {
+      console.error('Error fetching last year expense:', error);
+    }
   }
 
 }
