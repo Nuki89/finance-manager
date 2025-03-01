@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { apiEndpoints } from '../../../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { Income } from '../../models/income.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +13,13 @@ export class IncomeService {
 
   constructor(private http: HttpClient) { }
 
-  getIncome() {
-    return this.http.get(this.incomeUrl)
+  getIncome(): Observable<Income[]> {
+    return this.http.get<Income[]>(this.incomeUrl);
   }
+
+  // getIncome() {
+  //   return this.http.get(this.incomeUrl)
+  // }
 
   addIncome(payload: any) {
     return this.http.post(this.incomeUrl, payload)
