@@ -7,7 +7,7 @@ import { ReportService } from '../../shared/services/api/report.service';
 import { IncomeService } from '../../shared/services/api/income.service';
 import { ExpenseService } from '../../shared/services/api/expense.service';
 import { ToggleViewService } from '../../shared/services/shared/toggle-view.service';
-import { Subject } from 'rxjs';
+import { lastValueFrom, Subject } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { hugeLoading03 } from '@ng-icons/huge-icons';
 import { IncomeSummaryComponent } from './components/income-summary/income-summary.component';
@@ -17,136 +17,40 @@ import { IncomeFormComponent } from '../transactions/incomes/income-form/income-
 import { MatDialog } from '@angular/material/dialog';
 import { ExpenseFormComponent } from '../transactions/expenses/expense-form/expense-form.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SavingSummaryComponent } from './components/saving-summary/saving-summary.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent, ActionButtonComponent, IncomeFormComponent, ExpenseFormComponent],
+  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent, ActionButtonComponent, SavingSummaryComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   viewProviders : [provideIcons({ hugeLoading03 })]
 })
 export class HomeComponent {
-  constructor(
-    private reportService: ReportService,
-    private incomeService: IncomeService,
-    private expenseService: ExpenseService,
-    private toggleViewService: ToggleViewService,
-    private dialog: MatDialog,
-    private destroyRef: DestroyRef
-  ) {}
+  @Input() sources: any[] = []; 
 
   @ViewChild(IncomeSummaryComponent) incomeSummaryComponent!: IncomeSummaryComponent;
   @ViewChild(ExpenseSummaryComponent) expenseSummaryComponent!: ExpenseSummaryComponent;
-  @Input() sources: any[] = []; 
+  @ViewChild(SavingSummaryComponent) savingSummaryComponent!: SavingSummaryComponent;
 
-  loading: boolean = true;
-  balance: any;
-  currentBalance: number = 0;
-  totalIncome: number = 0;
-  totalExpense: number = 0;
-  totalSaving: number = 0;
-
-  selectedView: string = 'month';
-
-  spendingCategories: { name: string; value: number }[] = [];
-  incomeSources: { name: string; value: number }[] = [];
-
-  selectedSource: any = null; 
-  incomes: any[] = [];
-  selectedSourceObj: any | null = null;
+  public loading: boolean = true;
+  public selectedView: string = 'month';
+  public balance: any;
+  public totalIncome: number = 0;
+  public totalExpense: number = 0;
+  public totalSaving: number = 0;
+  
+  public spendingCategories: { name: string; value: number }[] = [];
+  public incomeSources: { name: string; value: number }[] = [];
+  
+  private selectedSource: any = null; 
+  private incomes: any[] = [];
+  private selectedSourceObj: any | null = null;
+  private currentBalance: number = 0;
   private destroy$ = new Subject<void>();
 
-  ngOnInit() {
-    this.balanceInfo();
-
-    this.toggleViewService.viewMode$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(view => {
-        this.selectedView = view;
-        this.loadAllData();
-      }
-    );
-  }
-
-  ngOnDestroy() {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-  
-  balanceInfo() {
-    this.reportService.getBalance().subscribe((data: any) => {
-      this.balance = data;  
-      this.currentBalance = data.available_balance;    
-      this.totalSaving = data.total_savings;
-    });
-  }
-
-  loadAllData(): void {
-    this.loading = true;
-  
-    Promise.all([this.fetchIncomeData(), this.fetchExpenseData()])
-      .then(() => {
-        this.loading = false;
-      })
-      .catch(() => {
-        this.loading = false;
-      });
-  }
-
-  fetchIncomeData(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const sourceDataFetcher =
-        this.selectedView === 'Yearly'
-          ? this.incomeService.getYearlySourceSummary()
-          : this.incomeService.getLastMonthSourceSummary();
-  
-      sourceDataFetcher.subscribe(
-        (data: any) => {
-          this.incomeSources = [...data.map((item: any) => ({
-            name: item.source__name,
-            value: item.total_amount
-          }))];
-  
-          console.log("Updated Income Sources:", this.incomeSources);
-          resolve(); 
-        },
-        (error) => {
-          console.error(`Error fetching ${this.selectedView} income sources:`, error);
-          this.incomeSources = [];
-          reject();
-        }
-      );
-    });
-  }
-  
-  fetchExpenseData(): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const categoryDataFetcher =
-        this.selectedView === 'Yearly'
-          ? this.expenseService.getYearlyCategorySummary()
-          : this.expenseService.getLastMonthCategorySummary();
-  
-      categoryDataFetcher.subscribe(
-        (data: any) => {
-          this.spendingCategories = [...data.map((item: any) => ({
-            name: item.category__name,
-            value: item.total_amount
-          }))];
-  
-          console.log("Updated Spending Categories:", this.spendingCategories);
-          resolve(); 
-        },
-        (error) => {
-          console.error(`Error fetching ${this.selectedView} spending categories:`, error);
-          this.spendingCategories = [];
-          reject();
-        }
-      );
-    });
-  }
-
-  incomeVsExpense = {
+  public incomeVsExpense = {
     labels: [
       'January', 'February', 'March', 'April', 
       'May', 'June', 'July', 'August', 
@@ -165,7 +69,7 @@ export class HomeComponent {
     ],
   };
 
-  recentTransactions = [
+  public recentTransactions = [
     { name: 'Groceries', amount: -120 },
     { name: 'Salary', amount: 3000 },
     { name: 'Test2', amount: -415 },
@@ -173,7 +77,33 @@ export class HomeComponent {
     { name: 'Grooms', amount: 15 },
   ];
 
-  openAddIncomeModal() {
+  constructor(
+    private reportService: ReportService,
+    private incomeService: IncomeService,
+    private expenseService: ExpenseService,
+    private toggleViewService: ToggleViewService,
+    private dialog: MatDialog,
+    private destroyRef: DestroyRef
+  ) {}
+
+  ngOnInit() {
+    this.balanceInfo();
+
+    this.toggleViewService.viewMode$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(view => {
+        this.selectedView = view;
+        this.loadAllData();
+      }
+    );
+  }
+
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  public openAddIncomeModal() {
     const dialogRef = this.dialog.open(IncomeFormComponent, {
       width: '800px',
       data: {
@@ -191,7 +121,7 @@ export class HomeComponent {
     });
   }
 
-  openAddExpenseModal() {
+  public openAddExpenseModal() {
     const dialogRef = this.dialog.open(ExpenseFormComponent, {
       width: '800px',
       data: {
@@ -209,7 +139,7 @@ export class HomeComponent {
     });
   }
 
-  openAddSavingModal() {
+  public openAddSavingModal() {
     console.log('Add Saving clicked');
     // const dialogRef = this.dialog.open(SavingFormComponent, {
     //   width: '800px',
@@ -223,9 +153,78 @@ export class HomeComponent {
     //   console.log('Dialog closed:', onAddSaving);
     //   if (onAddSaving) {
     //     this.loadAllData();
-    //     this.expenseSummaryComponent.fetchSavingData();
+    //     this.savingSummaryComponent.fetchSavingData();
     //   }
     // });
+  }
+
+  private async loadAllData(): Promise<void> {
+    this.loading = true;
+    try {
+      await this.fetchIncomeData();
+      await this.fetchExpenseData();
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      this.loading = false;
+    }
+  }  
+
+  private async fetchIncomeData(): Promise<void> {
+    try {
+      const sourceDataFetcher =
+        this.selectedView === 'Yearly'
+          ? this.incomeService.getYearlySourceSummary()
+          : this.incomeService.getLastMonthSourceSummary();
+
+      const data: any = await lastValueFrom(sourceDataFetcher);
+
+      this.incomeSources = data.map((item: any) => ({
+        name: item.source__name,
+        value: item.total_amount
+      }));
+
+      console.log("Updated Income Sources:", this.incomeSources);
+    } catch (error) {
+      console.error(`Error fetching ${this.selectedView} income sources:`, error);
+      this.incomeSources = [];
+    }
+  }
+  
+  private async fetchExpenseData(): Promise<void> {
+    try {
+      const categoryDataFetcher =
+        this.selectedView === 'Yearly'
+          ? this.expenseService.getYearlyCategorySummary()
+          : this.expenseService.getLastMonthCategorySummary();
+  
+      const data: any = await lastValueFrom(categoryDataFetcher);
+  
+      this.spendingCategories = data.map((item: any) => ({
+        name: item.category__name,
+        value: item.total_amount
+      }));
+  
+      console.log("Updated Spending Categories:", this.spendingCategories);
+    } catch (error) {
+      console.error(`Error fetching ${this.selectedView} spending categories:`, error);
+      this.spendingCategories = [];
+    }
+  }
+
+  private balanceInfo() {
+    this.reportService.getBalance()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: (data: any) => {
+          this.balance = data;  
+          this.currentBalance = data.available_balance;    
+        },
+        error: (err) => {
+          console.error('Failed to fetch balance:', err);
+          this.balance = { available_balance: 0, total_savings: 0 };  
+        }
+      });
   }
 
 }
