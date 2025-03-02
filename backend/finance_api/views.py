@@ -409,10 +409,10 @@ class HistoryViewSet(viewsets.ViewSet):
         
         data = [
             {
-                'id': obj.id,
+                'type': 'income' if isinstance(obj, Income) else 'expense',
+                'name': obj.source.name if isinstance(obj, Income) else obj.category.name,
                 'amount': obj.amount,
                 'date': obj.date,
-                'type': 'income' if isinstance(obj, Income) else 'expense'
             } for obj in combined
         ]
 
