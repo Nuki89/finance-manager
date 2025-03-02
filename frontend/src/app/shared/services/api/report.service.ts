@@ -15,8 +15,8 @@ export class ReportService {
     return this.http.get(this.balanceUrl)
   }
 
-  exportPdf(payload: any) {
-    return this.http.post(this.exportPdfUrl, payload)
-  }
+  exportPdf() {
+    return this.http.get(`${this.exportPdfUrl}download_summary_pdf`, { responseType: 'blob' });
+  }  
 
 }
