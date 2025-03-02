@@ -303,6 +303,7 @@ export class HomeComponent {
         type: item.type,
         name: item.name,
         amount: item.amount,
+        date: item.date ? this.dateFormatter({ value: item.date }) : '',
       }));
 
       console.log('Recent transactions:', this.recentTransactions);
@@ -310,6 +311,14 @@ export class HomeComponent {
     } catch (error) {
       console.error('Error fetching history:', error);
     }
+  }
+
+  private dateFormatter(params: any): string {
+    const date = new Date(params.value);
+    const day = date.getDate();
+    const month = date.getMonth() + 1; 
+    const year = date.getFullYear();
+    return `${day}.${month}.${year}`; 
   }
 
 }
