@@ -37,8 +37,8 @@
                 </div>
         
                 <ng-template #incomeChart>
-                    <div *ngIf="incomeSources.length > 0; else noData">
-                        <app-pie-chart [data]="incomeSources"></app-pie-chart>
+                    <div *ngIf="incomeChartCategory?.labels?.length && incomeChartCategory?.datasets?.length; else noData">
+                        <app-pie-chart [data]="incomeChartCategory"></app-pie-chart>
                     </div>
                 </ng-template>
         
@@ -51,7 +51,12 @@
         <div class="card lg:col-span-2">
             <div class="card-content">
                 <h2 class="text-lg font-bold mb-4">Income vs Expense</h2>
+
                 <app-bar-chart [data]="incomeVsExpense"></app-bar-chart>
+
+                <ng-template #noData>
+                    <p class="text-gray-500">No data avalaible for {{ selectedView }}</p>
+                </ng-template>
             </div>
         </div>
 
@@ -65,8 +70,8 @@
                 </div>
         
                 <ng-template #expenseChart>
-                    <div *ngIf="spendingCategories.length > 0; else noData">
-                        <app-pie-chart [data]="spendingCategories"></app-pie-chart>
+                    <div *ngIf="expenseChartCategory?.datasets?.length; else noData">
+                        <app-pie-chart [data]="expenseChartCategory"></app-pie-chart>
                     </div>
                 </ng-template>
         

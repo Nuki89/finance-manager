@@ -1,9 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, Input, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { PieChartComponent } from '../../shared/ui/charts/pie-chart.component';
-// import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
-import { BarChartComponent } from '../../shared/ui/charts';
+import { BarChartComponent, PieChartComponent } from '../../shared/ui/charts';
 import { ReportService } from '../../shared/services/api/report.service';
 import { IncomeService } from '../../shared/services/api/income.service';
 import { ExpenseService } from '../../shared/services/api/expense.service';
@@ -35,6 +33,7 @@ export class HomeComponent {
   @ViewChild(ExpenseSummaryComponent) expenseSummaryComponent!: ExpenseSummaryComponent;
   @ViewChild(SavingSummaryComponent) savingSummaryComponent!: SavingSummaryComponent;
   @ViewChild(BarChartComponent) barChart!: BarChartComponent;
+  @ViewChild(PieChartComponent) pieChart!: PieChartComponent;
 
   public loading: boolean = true;
   public selectedView: string = 'month';
@@ -46,6 +45,8 @@ export class HomeComponent {
   public spendingCategories: { name: string; value: number }[] = [];
   public incomeSources: { name: string; value: number }[] = [];
   public incomeVsExpense = this.initializeIncomeVsExpense();
+  public incomeChartCategory = this.initializeChartData();
+  public expenseChartCategory = this.initializeChartData();
   
   private selectedSource: any = null; 
   private incomes: any[] = [];
@@ -144,6 +145,22 @@ export class HomeComponent {
     // });
   }
 
+  private initializeChartData(): { labels: string[], datasets: { data: number[], backgroundColor: string[] }[] } {
+    return {
+        labels: [],
+        datasets: [
+            {
+                data: [],
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                    '#9966FF', '#FF9F40', '#8D99AE', '#00A878', 
+                    '#F72585', '#06D6A0'
+                ]
+            }
+        ]
+    };
+  }
+
   private initializeIncomeVsExpense(): { labels: string[]; datasets: { label: string; data: number[]; backgroundColor: string }[] } {
     return {
         labels: [
@@ -194,7 +211,13 @@ export class HomeComponent {
         value: item.total_amount
       }));
 
-      console.log("Updated Income Sources:", this.incomeSources);
+      this.incomeChartCategory.labels = this.incomeSources.map(i => i.name);
+      this.incomeChartCategory.datasets[0].data = this.incomeSources.map(i => i.value);
+
+      if (this.pieChart) {
+          this.pieChart.updateChart();
+      }
+
     } catch (error) {
       console.error(`Error fetching ${this.selectedView} income sources:`, error);
       this.incomeSources = [];
@@ -214,8 +237,14 @@ export class HomeComponent {
         name: item.category__name,
         value: item.total_amount
       }));
+
+      this.expenseChartCategory.labels = this.spendingCategories.map(i => i.name);
+      this.expenseChartCategory.datasets[0].data = this.spendingCategories.map(i => i.value);
+
+      if (this.pieChart) {
+          this.pieChart.updateChart();
+      }
   
-      console.log("Updated Spending Categories:", this.spendingCategories);
     } catch (error) {
       console.error(`Error fetching ${this.selectedView} spending categories:`, error);
       this.spendingCategories = [];
