@@ -89,11 +89,9 @@
             <h2 class="text-lg font-bold mb-4">Recent Transactions</h2>
             <ul class="space-y-2">
             <li class="flex justify-between" *ngFor="let transaction of recentTransactions">
+                <span> {{ transaction.type | titlecase }} </span>
                 <span>{{ transaction.name }}</span>
-                <span [class.text-red-500]="transaction.amount < 0" [class.text-green-500]="transaction.amount > 0">
-                
-                1000
-                </span>
+                <span>{{ transaction.amount | currency:'EUR'  }}</span>
             </li>
             </ul>
         </div>

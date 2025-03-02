@@ -17,6 +17,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ExpenseFormComponent } from '../transactions/expenses/expense-form/expense-form.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SavingSummaryComponent } from './components/saving-summary/saving-summary.component';
+import { HistoryService } from '../../shared/services/api/history.service';
 
 @Component({
   selector: 'app-home',
@@ -41,6 +42,7 @@ export class HomeComponent {
   public totalIncome: number = 0;
   public totalExpense: number = 0;
   public totalSaving: number = 0;
+  public recentTransactions: any[] = [];
   
   public spendingCategories: { name: string; value: number }[] = [];
   public incomeSources: { name: string; value: number }[] = [];
@@ -56,18 +58,11 @@ export class HomeComponent {
   private lastYearIncome: any[] = [];
   private lastYearExpense: any[] = [];
 
-  public recentTransactions = [
-    { name: 'Groceries', amount: -120 },
-    { name: 'Salary', amount: 3000 },
-    { name: 'Test2', amount: -415 },
-    { name: 'Subscription', amount: -15 },
-    { name: 'Grooms', amount: 15 },
-  ];
-
   constructor(
     private reportService: ReportService,
     private incomeService: IncomeService,
     private expenseService: ExpenseService,
+    private historyService: HistoryService,
     private toggleViewService: ToggleViewService,
     private dialog: MatDialog,
     private destroyRef: DestroyRef,
@@ -190,6 +185,7 @@ export class HomeComponent {
       await this.fetchExpenseData();
       await this.fetchLastYearIncome();
       await this.fetchLastYearExpense();
+      await this.fetchHistory();
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -298,5 +294,22 @@ export class HomeComponent {
     }
   }
 
+  private async fetchHistory() {
+    try {
+      const data: any = await lastValueFrom(this.historyService.getHistoryLast5());
+      console.log('History:', data);
+      
+      this.recentTransactions = data.map((item: any) => ({
+        type: item.type,
+        name: item.name,
+        amount: item.amount,
+      }));
+
+      console.log('Recent transactions:', this.recentTransactions);
+
+    } catch (error) {
+      console.error('Error fetching history:', error);
+    }
+  }
 
 }
