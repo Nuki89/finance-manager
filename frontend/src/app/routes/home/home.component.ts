@@ -2,7 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, Input, ViewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { PieChartComponent } from '../../shared/ui/charts/pie-chart.component';
-import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
+// import { BarChartComponent } from '../../shared/ui/charts/bar-chart.component';
+import { BarChartComponent } from '../../shared/ui/charts';
 import { ReportService } from '../../shared/services/api/report.service';
 import { IncomeService } from '../../shared/services/api/income.service';
 import { ExpenseService } from '../../shared/services/api/expense.service';
@@ -44,6 +45,7 @@ export class HomeComponent {
   
   public spendingCategories: { name: string; value: number }[] = [];
   public incomeSources: { name: string; value: number }[] = [];
+  public incomeVsExpense = this.initializeIncomeVsExpense();
   
   private selectedSource: any = null; 
   private incomes: any[] = [];
@@ -52,8 +54,6 @@ export class HomeComponent {
   private destroy$ = new Subject<void>();
   private lastYearIncome: any[] = [];
   private lastYearExpense: any[] = [];
-
-  public incomeVsExpense: { labels: string[]; datasets: { label: string; data: number[]; backgroundColor: string }[] } = this.initializeIncomeVsExpense();
 
   public recentTransactions = [
     { name: 'Groceries', amount: -120 },
@@ -154,12 +154,12 @@ export class HomeComponent {
         datasets: [
             {
                 label: 'Income',
-                data: [...this.lastYearIncome], 
+                data: [], 
                 backgroundColor: '#3b82f6',
             },
             {
                 label: 'Expense',
-                data: [...this.lastYearExpense], 
+                data: [], 
                 backgroundColor: '#ef4444',
             },
         ],
@@ -249,7 +249,7 @@ export class HomeComponent {
       }
 
     } catch (error) {
-        console.error('Error fetching last year income:', error);
+      console.error('Error fetching last year income:', error);
     }
   }
 
@@ -261,12 +261,13 @@ export class HomeComponent {
       this.incomeVsExpense.datasets[1].data = [...this.lastYearExpense];
 
       if (this.barChart) {
-        this.barChart.updateChart();
-    }
+          this.barChart.updateChart();
+      }
 
     } catch (error) {
       console.error('Error fetching last year expense:', error);
     }
   }
+
 
 }
