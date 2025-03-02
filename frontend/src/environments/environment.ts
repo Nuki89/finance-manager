@@ -11,6 +11,7 @@ export const apiEndpoints = {
     savingCategoriesUrl: `${BASE_URL}/saving-categories/`,
     exportPdfUrl: `${BASE_URL}/exporting-pdf/`,
     balanceUrl: `${BASE_URL}/balance/`,
+    historyUrl: `${BASE_URL}/history/`,
     // loginUrl: `${BASE_URL}/api/login/`,
     // logoutUrl: `${BASE_URL}/api/logout/`,
     // isLoggedInUrl: `${BASE_URL}/api/is-logged-in/`
