@@ -22,6 +22,7 @@ router.register(r'saving-categories', SavingCategoryViewSet)
 router.register(r'savings', SavingViewSet)
 router.register(r'exporting-pdf', views.ExportingViewSet, basename='exporting')
 router.register(r'balance', BalanceViewSet, basename='balance')
+router.register(r'history', HistoryViewSet, basename='history')
 # router.register(r'dashboard', DashboardView, basename='dashboard')
 
 

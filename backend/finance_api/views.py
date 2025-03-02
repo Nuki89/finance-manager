@@ -391,6 +391,38 @@ class DashboardView(viewsets.ViewSet):
             #     'export-incomes-pdf': '/dashboard/export_incomes_pdf/',
             # }
         })
+
+class HistoryViewSet(viewsets.ViewSet):
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
+
+    @action(detail=False, methods=['get'])
+    def filterLast5(self, request):
+        """
+        Get the last 5 incomes and expenses
+        """
+        incomes = Income.objects.all().order_by('-date')[:5]
+        expenses = Expense.objects.all().order_by('-date')[:5]
+        combined = list(incomes) + list(expenses)
+
+        combined = sorted(combined, key=lambda x: x.date, reverse=True)[:5]
+        
+        data = [
+            {
+                'id': obj.id,
+                'amount': obj.amount,
+                'date': obj.date,
+                'type': 'income' if isinstance(obj, Income) else 'expense'
+            } for obj in combined
+        ]
+
+        return Response(data)
+ 
+
+    def list(self, request):
+        return Response({
+            'message': 'Welcome to the Finance API history dashboard!',
+        })
     
 
 class BalanceViewSet(viewsets.ViewSet):
