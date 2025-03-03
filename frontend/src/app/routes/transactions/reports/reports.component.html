@@ -1,6 +1,22 @@
 <div class="max-w-screen-xl flex flex-col mx-auto p-4">
     
-    <button (click)="loadPdf()">Load PDF</button>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4">
+        <div class="card">
+            <div class="card-content text-center border rounded-lg hover:shadow-lg">
+                <button (click)="loadVSsummaryPdf()" class="w-full p-4">Summary expenseVSincomes</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content text-center border rounded-lg hover:shadow-lg">
+                <button (click)="loadIncomeSummaryPdf()" class="w-full p-4">Summary incomes</button>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-content text-center border rounded-lg hover:shadow-lg">
+                <button (click)="loadExpenseSummaryPdf()" class="w-full p-4">Summary expense</button>
+            </div>
+        </div>
+    </div>
 
     <iframe *ngIf="pdfUrl" [src]="pdfUrl" width="100%" height="600px"></iframe>
 
