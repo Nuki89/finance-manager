@@ -15,8 +15,16 @@ export class ReportService {
     return this.http.get(this.balanceUrl)
   }
 
-  exportPdf() {
+  exportVsPdf() {
     return this.http.get(`${this.exportPdfUrl}download_summary_pdf`, { responseType: 'blob' });
   }  
+
+  exportIncomePdf() {
+    return this.http.get(`${this.exportPdfUrl}download_income_summary_pdf`, { responseType: 'blob' });
+  }
+
+  exportExpensePdf() {
+    return this.http.get(`${this.exportPdfUrl}download_expense_summary_pdf`, { responseType: 'blob' });
+  }
 
 }
