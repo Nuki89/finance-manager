@@ -12,7 +12,7 @@ import { blob } from 'stream/consumers';
   styleUrls: ['./reports.component.css']
 })
 export class ReportsComponent {
-  pdfUrl: SafeResourceUrl | null = null;
+  public pdfUrl: SafeResourceUrl | null = null;
 
   constructor(
     private reportService: ReportService,
