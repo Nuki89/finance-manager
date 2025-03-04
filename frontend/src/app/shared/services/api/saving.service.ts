@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { apiEndpoints } from '../../../../environments/environment';
+import { Observable } from 'rxjs';
+import { Saving } from '../../models/saving.model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,9 +13,13 @@ export class SavingService {
   
   constructor(private http: HttpClient) { }
 
-  getSaving() {
-    return this.http.get(this.savingUrl)
-  }
+  // getSaving() {
+  //   return this.http.get(this.savingUrl)
+  // }
+
+  getSaving(): Observable<Saving[]> {
+      return this.http.get<Saving[]>(this.savingUrl);
+    }
 
   addSaving(payload: any) {
     return this.http.post(this.savingUrl, payload)
