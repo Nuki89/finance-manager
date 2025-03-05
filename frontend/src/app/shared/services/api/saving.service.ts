@@ -13,10 +13,6 @@ export class SavingService {
   
   constructor(private http: HttpClient) { }
 
-  // getSaving() {
-  //   return this.http.get(this.savingUrl)
-  // }
-
   getSaving(): Observable<Saving[]> {
       return this.http.get<Saving[]>(this.savingUrl);
     }
@@ -33,19 +29,19 @@ export class SavingService {
     return this.http.delete(`${this.savingUrl.replace(/\/$/, '')}/${id}/`);
   }
 
-  getSavingSource() {
+  getSavingCategory() {
     return this.http.get(this.categoriesUrl)
   }
 
-  addSavingSource(payload: any) {
+  addSavingCategory(payload: any) {
     return this.http.post(this.categoriesUrl, payload)
   }
 
-  updateSavingSource(id: number, payload: any) {
+  updateSavingCategory(id: number, payload: any) {
     return this.http.put(`${this.categoriesUrl.replace(/\/$/, '')}/${id}/`, payload);
   }
 
-  deleteSavingSource(id: number) {
+  deleteSavingCategory(id: number) {
     return this.http.delete(`${this.categoriesUrl.replace(/\/$/, '')}/${id}/`);
   }
 
@@ -61,16 +57,20 @@ export class SavingService {
     return this.http.get(`${this.savingUrl}last_year_summary`)
   }
 
-  getSavingMonthlySource() {
-    return this.http.get(`${this.savingUrl}monthly_source_summary`)
+  getSavingMonthlyCategory() {
+    return this.http.get(`${this.savingUrl}monthly_category_summary`)
   }
 
-  getLastMonthSourceSummary() {
-    return this.http.get(`${this.savingUrl}last_month_source_summary`)
+  getLastMonthCategorySummary() {
+    return this.http.get(`${this.savingUrl}last_month_category_summary`)
   }
 
-  getYearlySourceSummary() {
-    return this.http.get(`${this.savingUrl}last_year_source_summary`)
+  getYearlyCategorySummary() {
+    return this.http.get(`${this.savingUrl}last_year_category_summary`)
+  }
+
+  getSummaryByCategory() {
+    return this.http.get(`${this.savingUrl}summary_by_category`)
   }
 
 }
