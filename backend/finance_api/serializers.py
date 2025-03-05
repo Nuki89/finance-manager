@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import *
+from django.db.models import Sum
 
 class IncomeSourceSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
@@ -60,6 +61,29 @@ class SavingSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Saving
         fields = '__all__'
+
+    def validate(self, data):
+        amount = data.get('amount')
+        category = data.get('category')
+
+        existing_savings = Saving.objects.filter(category=category)
+
+        if self.instance:
+            existing_savings = existing_savings.exclude(pk=self.instance.pk)
+
+        existing_total = existing_savings.aggregate(total=Sum('amount'))['total'] or 0
+
+        if category.goal_amount is not None:
+            if existing_total + amount > category.goal_amount:
+                available_amount = category.goal_amount - existing_total
+                raise serializers.ValidationError({
+                    'amount': (
+                        f"This saving exceeds the goal amount for {category.name}. "
+                        f"You can only add up to {available_amount:.2f} more."
+                    )
+                })
+
+        return data
 
 
 class BalanceSerializer(serializers.HyperlinkedModelSerializer):

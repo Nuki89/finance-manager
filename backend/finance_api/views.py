@@ -279,11 +279,25 @@ class SavingViewSet(viewsets.ModelViewSet):
             elif self.action == 'retrieve':
                 return "Detail of Saving"
         return super(SavingViewSet, self).get_view_name()
-
+    
     @action(detail=False, methods=['get'])
     def summary_by_category(self, request):
-        saving_list = Saving.objects.values('category__name').annotate(total_amount=models.Sum('amount')).order_by('category')
-        return Response(saving_list)
+        categories = SavingCategory.objects.all()
+        saving_summary = []
+
+        for category in categories:
+            total_saved = Saving.objects.filter(category=category).aggregate(total=Sum('amount'))['total'] or 0
+            goal_amount = category.goal_amount or 0
+            remaining_amount = goal_amount - total_saved if category.goal_amount else None
+
+            data = {
+                'category_name': category.name,
+                'goal_amount': goal_amount,
+                'total_saved': total_saved,
+                'remaining_amount': remaining_amount
+            }
+            saving_summary.append(data)
+        return Response(saving_summary)
 
     @action(detail=False, methods=['get'])
     def monthly_summary(self, request):
@@ -391,6 +405,7 @@ class DashboardView(viewsets.ViewSet):
             #     'export-incomes-pdf': '/dashboard/export_incomes_pdf/',
             # }
         })
+
 
 class HistoryViewSet(viewsets.ViewSet):
     # permission_classes = [IsAuthenticated]
