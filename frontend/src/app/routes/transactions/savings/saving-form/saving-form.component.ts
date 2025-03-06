@@ -12,6 +12,7 @@ import { ConfirmationModuleComponent } from '../../../../shared/ui/components/co
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 import { provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
+import { CategoryAddModalComponent } from '../category-add-modal/category-add-modal.component';
 
 @Component({
   selector: 'app-saving-form',
@@ -66,18 +67,18 @@ export class SavingFormComponent {
   }
 
   public openAddCategoryModal() {
-    // const dialogRef = this.dialog.open(CategoryAddModalComponent, {
-    //   width: '400px',
-    //   data: {
-    //     selectedCategory: null,
-    //   },
-    // });
+    const dialogRef = this.dialog.open(CategoryAddModalComponent, {
+      width: '400px',
+      data: {
+        selectedCategory: null,
+      },
+    });
 
-    // dialogRef.afterClosed().subscribe((updatedCategory) => {
-    //   if (updatedCategory) {
-    //     this.loadData();
-    //   }
-    // });
+    dialogRef.afterClosed().subscribe((updatedCategory) => {
+      if (updatedCategory) {
+        this.loadData();
+      }
+    });
   }
 
   public openUpdateCategoryModal(selectedCategory: any) {
