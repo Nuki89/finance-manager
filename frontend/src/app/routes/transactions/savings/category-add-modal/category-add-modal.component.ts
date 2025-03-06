@@ -8,6 +8,7 @@ import { SavingService } from '../../../../shared/services/api/saving.service';
 import { ToastrService } from 'ngx-toastr';
 import { MatDialogRef } from '@angular/material/dialog';
 import { forkJoin } from 'rxjs';
+import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 
 @Component({
   selector: 'app-category-add-modal',
@@ -25,6 +26,7 @@ export class CategoryAddModalComponent {
   constructor(
     private savingService: SavingService,
     private toastr: ToastrService,
+    private sharedDataService: SharedDataService,
     public dialogRef: MatDialogRef<CategoryAddModalComponent>,
   ) { }
 
@@ -59,6 +61,7 @@ export class CategoryAddModalComponent {
         this.newCategoryName = '';
         this.goal = null;
         this.loadData();
+        this.sharedDataService.notifySavingChanged();
       },
       (error) => {
         console.error('Error adding saving category:', error);

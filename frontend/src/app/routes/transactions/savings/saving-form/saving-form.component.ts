@@ -98,6 +98,7 @@ export class SavingFormComponent {
     // dialogRef.afterClosed().subscribe((updatedCategory) => {
     //   if (updatedCategory) {
     //     this.loadData(); 
+    //     this.sharedDataService.notifySavingChanged();
     //   }
     // });
   }
@@ -119,6 +120,7 @@ export class SavingFormComponent {
           () => {
             this.toastr.success(`Saving category "${categoryToDelete?.name}" deleted successfully!`);
             this.loadData();
+            this.sharedDataService.notifySavingChanged();
           },
           (error) => {
             const specificErrorMessage = "Cannot delete this category because it has associated saving. Please delete all related savings first.";

@@ -4,15 +4,14 @@ import { Component } from '@angular/core';
 import { Saving } from '../../../shared/models/saving.model';
 import { Subject, takeUntil } from 'rxjs';
 import { SavingService } from '../../../shared/services/api/saving.service';
-import { MatDialog } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
 import { SavingFormComponent } from './saving-form/saving-form.component';
-import { SharedTableComponent } from '../../../shared/ui/components/shared-table/shared-table.component';
+import { SharedDataService } from '../../../shared/services/shared/shared-data.service';
 
 @Component({
   selector: 'app-savings',
   standalone: true,
-  imports: [CommonModule, SavingFormComponent, SharedTableComponent],
+  imports: [CommonModule, SavingFormComponent],
   templateUrl: './savings.component.html',
   styleUrls: ['./savings.component.css']
 })
@@ -24,13 +23,14 @@ export class SavingsComponent {
 
   constructor(
     private savingService: SavingService,
-    private dialog: MatDialog,
+    private sharedDataService: SharedDataService,
     private toastr: ToastrService,
   ) {}
 
   ngOnInit(): void {
     this.fetchSavings();
     this.fetchSummary();
+    this.subscribeToSavingChanges();
   }
 
   ngOnDestroy(): void {
@@ -66,6 +66,15 @@ export class SavingsComponent {
         console.error('Error fetching savings:', error);
       }
     })
+  }
+
+  subscribeToSavingChanges(): void {
+    this.sharedDataService.savingChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.fetchSummary();
+        this.fetchSavings();
+    });
   }
 
 }
