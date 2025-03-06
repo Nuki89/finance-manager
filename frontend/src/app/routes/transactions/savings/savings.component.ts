@@ -28,8 +28,6 @@ export class SavingsComponent {
   ) {}
 
   ngOnInit(): void {
-    this.fetchSavings();
-    this.fetchSummary();
     this.subscribeToSavingChanges();
   }
 

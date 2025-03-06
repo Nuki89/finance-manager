@@ -30,19 +30,6 @@ export class CategoryAddModalComponent {
     public dialogRef: MatDialogRef<CategoryAddModalComponent>,
   ) { }
 
-  private loadData() {
-    forkJoin({
-      categories: this.savingService.getSavingCategory()
-    }).subscribe(
-      ({ categories }) => {
-        this.categories = categories as any[];
-      },
-      (error) => {
-        console.error('Error fetching data:', error);
-      }
-    )
-  }
-
   public addNewCategory() {
     if (!this.newCategoryName) {
       this.toastr.error('Please enter a category name.','Error adding saving category');
@@ -69,8 +56,21 @@ export class CategoryAddModalComponent {
     )
   }
 
-  closeModal() {
+  public closeModal() {
     this.dialogRef.close();
+  }
+
+  private loadData() {
+    forkJoin({
+      categories: this.savingService.getSavingCategory()
+    }).subscribe(
+      ({ categories }) => {
+        this.categories = categories as any[];
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    )
   }
 
 }

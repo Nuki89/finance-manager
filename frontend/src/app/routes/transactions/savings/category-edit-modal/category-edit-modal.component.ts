@@ -40,18 +40,19 @@ export class CategoryEditModalComponent {
     this.categories = data.categories || [];
   }
 
-  public updateSavingCategory(id: number, name: string) {
+  public updateSavingCategory(id: number, name: string, goal_amount: number) {
     if (!name) {
       this.toastr.error('Please enter a category name.','Error updating saving category');
       return;
     }
     const payload = {
       name: name,
+      goal_amount: goal_amount
     };
     this.savingService.updateSavingCategory(id, payload).subscribe(
       (data: any) => {
         this.toastr.success('Category updated successfully');
-        this.dialogRef.close({ id, name });
+        this.dialogRef.close({ id, name, goal_amount });
         this.loadData();
         this.sharedDataService.notifySavingChanged();
       },
@@ -63,38 +64,39 @@ export class CategoryEditModalComponent {
   }
 
   public handleDeleteCategory(id: number) {
-      const categoryToDelete = this.categories.find((category) => category.id === id);
-  
-      const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
-        width: '400px',
-        data: {
-          title: 'Delete Saving Category',
-          message: `Are you sure you want to delete the category "${categoryToDelete.name}"?`,
-        }
-      })
-  
-      dialogRef.afterClosed().subscribe((result: any) => {
-        if (result) {
-          this.savingService.deleteSavingCategory(id).subscribe(
-            () => {
-              this.toastr.success(`Category "${categoryToDelete?.name}" deleted successfully!`);
-              this.dialogRef.close({ id });
-              this.loadData();
-            },
-            (error) => {
-              const specificErrorMessage = "Cannot delete this category because it has associated saving. Please delete all related saving first.";
-              
-              if (error.status === 400 && error.error?.detail === specificErrorMessage) {
-                this.toastr.warning(specificErrorMessage);
-              } else {
-                this.toastr.error(`Failed to delete "${categoryToDelete?.name}". Please try again.`);
-              }
-              console.error('Error deleting saving categories:', error);
+    const categoryToDelete = this.categories.find((category) => category.id === id);
+
+    const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete Saving Category',
+        message: `Are you sure you want to delete the category "${categoryToDelete.name}"?`,
+      }
+    })
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.savingService.deleteSavingCategory(id).subscribe(
+          () => {
+            this.toastr.success(`Category "${categoryToDelete?.name}" deleted successfully!`);
+            this.dialogRef.close({ id });
+            this.loadData();
+            this.sharedDataService.notifySavingChanged();
+          },
+          (error) => {
+            const specificErrorMessage = "Cannot delete this category because it has associated saving. Please delete all related saving first.";
+            
+            if (error.status === 400 && error.error?.detail === specificErrorMessage) {
+              this.toastr.warning(specificErrorMessage);
+            } else {
+              this.toastr.error(`Failed to delete "${categoryToDelete?.name}". Please try again.`);
             }
-          );
-        }
-      })
-    }
+            console.error('Error deleting saving categories:', error);
+          }
+        );
+      }
+    })
+  }
 
   public closeModal() {
     this.dialogRef.close();
@@ -124,5 +126,5 @@ export class CategoryEditModalComponent {
       (category) => category.id === Number(this.selectedCategory)  
     ) || null;
   }
-  
+
 }
