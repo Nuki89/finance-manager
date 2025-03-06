@@ -8,29 +8,39 @@
             </button>
         </div>
 
-        <div class="card p-6">
-            <div class="flex items-center gap-2">
-                <input
-                type="text"
-                class="p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
-                [(ngModel)]="newCategoryName"
-                name="newCategoryName"
-                placeholder="New Category"/>
+        <div class="car pl-6 pr-8 mt-4 rounded-lg">
+            <div class="flex flex-row items-center gap-4 mb-4">
+                <div>
+                    <label for="editCategoryName" class="block text-sm font-medium text-gray-700">Category Name</label>
+                    <input
+                    type="text"
+                    class="p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+                    [(ngModel)]="newCategoryName"
+                    name="newCategoryName"
+                    placeholder="New Category"/>
+                </div>
                 
-                <app-action-button 
+                <div>
+                    <label for="editCategoryName" class="block text-sm font-medium text-gray-700">Goal</label>
+                    <input
+                    type="text"
+                    class="w-full p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
+                    [(ngModel)]="goal"
+                    name="goal"
+                    placeholder="Value (€)"/>
+                </div>
+                
+            </div>
+
+            <app-action-button 
                 text="Save"
                 tooltip="Save"
                 type="button"
                 buttonClass="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium"
                 (click)="addNewCategory()"
-                ></app-action-button>
-            </div>
-            <input
-                type="text"
-                class="mt-4 p-2 border border-gray-300 rounded-lg focus:ring-green-500 focus:border-green-500"
-                [(ngModel)]="goal"
-                name="goal"
-                placeholder="Goal"/>
+                >
+            </app-action-button>
+            
         </div>
     </div>
 </div>

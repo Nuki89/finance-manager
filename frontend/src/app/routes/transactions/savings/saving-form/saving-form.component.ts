@@ -13,6 +13,7 @@ import { SharedDataService } from '../../../../shared/services/shared/shared-dat
 import { provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { CategoryAddModalComponent } from '../category-add-modal/category-add-modal.component';
+import { CategoryEditModalComponent } from '../category-edit-modal/category-edit-modal.component';
 
 @Component({
   selector: 'app-saving-form',
@@ -87,20 +88,20 @@ export class SavingFormComponent {
       return;
     }
   
-    // const dialogRef = this.dialog.open(CategoryEditModalComponent, {
-    //   width: '400px',
-    //   data: {
-    //     selectedCategory: { ...this.selectedCategorieObj },
-    //     categories: this.categories,
-    //   },
-    // });
+    const dialogRef = this.dialog.open(CategoryEditModalComponent, {
+      width: '400px',
+      data: {
+        selectedCategory: { ...this.selectedCategorieObj },
+        categories: this.categories,
+      },
+    });
   
-    // dialogRef.afterClosed().subscribe((updatedCategory) => {
-    //   if (updatedCategory) {
-    //     this.loadData(); 
-    //     this.sharedDataService.notifySavingChanged();
-    //   }
-    // });
+    dialogRef.afterClosed().subscribe((updatedCategory) => {
+      if (updatedCategory) {
+        this.loadData(); 
+        this.sharedDataService.notifySavingChanged();
+      }
+    });
   }
 
   public handleDeleteCategory(id: number) {

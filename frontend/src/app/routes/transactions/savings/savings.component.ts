@@ -68,7 +68,7 @@ export class SavingsComponent {
     })
   }
 
-  subscribeToSavingChanges(): void {
+  private subscribeToSavingChanges(): void {
     this.sharedDataService.savingChanged$
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => {
