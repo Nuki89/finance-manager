@@ -83,20 +83,69 @@
 
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div class="card">
-        <div class="card-content">
-            <h2 class="text-lg font-bold mb-4">Recent Transactions</h2>
-            <ul class="space-y-2">
-            <li class="flex justify-between" *ngFor="let transaction of recentTransactions">
-                <span> {{ transaction.type | titlecase }} </span>
-                <span>{{ transaction.name }}</span>
-                <span>{{ transaction.amount | currency:'EUR'  }}</span>
-                <span> {{ transaction.date }} </span>
-            </li>
-            </ul>
+            <div class="card-content">
+                <h2 class="text-lg font-bold mb-4">Recent Transactions</h2>
+                <ul class="space-y-2">
+                    <li 
+                        class="grid grid-cols-4 gap-4 text-left" 
+                        *ngFor="let transaction of recentTransactions">
+                        <span> {{ transaction.type | titlecase }} </span>
+                        <span class="truncate"> {{ transaction.name }} </span>
+                        <span>{{ transaction.amount | currency:'EUR' }}</span>
+                        <span> {{ transaction.date }} </span>
+                    </li>
+                </ul>
+            </div>
         </div>
-        </div>
+
+        <!-- <div class="card">
+            <div class="card-content">
+                <h2 class="text-lg font-bold mb-4">Savings</h2>
+                <ul class="space-y-2">
+                    <li 
+                        class="grid grid-cols-3 gap-4 justify-between" 
+                        *ngFor="let saving of savings">
+                        <span> {{ saving.category_name }} </span>
+                        <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
+                            <div
+                                class="bg-green-500 h-3 rounded-full w-full"
+                                [style.width.%]="(saving.total_saved / saving.goal_amount) * 100"
+                            ></div>
+                        </div>
+            
+                        <div class="text-sm font-semibold">
+                        {{ ((saving.total_saved / saving.goal_amount) * 100) | number:'1.0-2' }}%
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div> -->
+
+        <div class="card">
+            <div class="card-content">
+                <h2 class="text-lg font-bold mb-4">Saving %</h2>
+                <ul class="space-y-3">
+                    <li class="flex items-center justify-between space-x-4" *ngFor="let saving of savings">
+                                                
+                        <span class="w-1/3 text-left"> {{ saving.category_name }} </span>
+                                
+                        <div class="w-2/3 bg-gray-200 rounded-full h-3 relative">
+                            <div
+                                class="bg-green-500 h-3 rounded-full"
+                                [style.width.%]="(saving.total_saved / saving.goal_amount) * 100"
+                            ></div>
+                        </div>
+                                
+                        <span class="w-12 text-right text-sm font-semibold">
+                            {{ ((saving.total_saved / saving.goal_amount) * 100) | number:'1.0-2' }}%
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>   
+
         <div class="card">
             <div class="card-content space-y-4">
                 <h2 class="text-lg font-bold mb-2">Quick Actions</h2>
@@ -123,7 +172,7 @@
                     type="button"
                     buttonClass="w-full text-amber-500 border border-amber-500 bg-white hover:bg-gradient-to-br from-amber-400 via-amber-500 to-amber-600 hover:text-white shadow-lg shadow-amber-500/50 dark:shadow-lg dark:shadow-amber-800/80"
                     (click)="openAddSavingModal()"
-                    text="Create Savings Goal"
+                    text="Add Saving"
                     tooltip="Create Savings Goal"
                     >
                 </app-action-button>

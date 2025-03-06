@@ -18,6 +18,8 @@ import { ExpenseFormComponent } from '../transactions/expenses/expense-form/expe
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SavingSummaryComponent } from './components/saving-summary/saving-summary.component';
 import { HistoryService } from '../../shared/services/api/history.service';
+import { SavingFormComponent } from '../transactions/savings/saving-form/saving-form.component';
+import { SavingService } from '../../shared/services/api/saving.service';
 
 @Component({
   selector: 'app-home',
@@ -43,6 +45,7 @@ export class HomeComponent {
   public totalExpense: number = 0;
   public totalSaving: number = 0;
   public recentTransactions: any[] = [];
+  public savings: any[] = [];
   
   public spendingCategories: { name: string; value: number }[] = [];
   public incomeSources: { name: string; value: number }[] = [];
@@ -63,6 +66,7 @@ export class HomeComponent {
     private incomeService: IncomeService,
     private expenseService: ExpenseService,
     private historyService: HistoryService,
+    private savingService: SavingService,
     private toggleViewService: ToggleViewService,
     private dialog: MatDialog,
     private destroyRef: DestroyRef,
@@ -122,22 +126,21 @@ export class HomeComponent {
   }
 
   public openAddSavingModal() {
-    console.log('Add Saving clicked');
-    // const dialogRef = this.dialog.open(SavingFormComponent, {
-    //   width: '800px',
-    //   data: {
-    //     selectedSource: null,
-    //     title: 'Add New Saving',
-    //   },
-    // });
+    const dialogRef = this.dialog.open(SavingFormComponent, {
+      width: '800px',
+      data: {
+        selectedSource: null,
+        title: 'Add New Saving',
+      },
+    });
 
-    // dialogRef.afterClosed().subscribe((onAddSaving) => {
-    //   console.log('Dialog closed:', onAddSaving);
-    //   if (onAddSaving) {
-    //     this.loadAllData();
-    //     this.savingSummaryComponent.fetchSavingData();
-    //   }
-    // });
+    dialogRef.afterClosed().subscribe((onAddSaving) => {
+      console.log('Dialog closed:', onAddSaving);
+      if (onAddSaving) {
+        this.loadAllData();
+        this.savingSummaryComponent.fetchSavingData();
+      }
+    });
   }
 
   private initializeChartData(): { labels: string[], datasets: { data: number[], backgroundColor: string[] }[] } {
@@ -186,6 +189,7 @@ export class HomeComponent {
       await this.fetchLastYearIncome();
       await this.fetchLastYearExpense();
       await this.fetchHistory();
+      await this.fetchSaving();
     } catch (error) {
       console.error('Error loading data:', error);
     } finally {
@@ -297,7 +301,6 @@ export class HomeComponent {
   private async fetchHistory() {
     try {
       const data: any = await lastValueFrom(this.historyService.getHistoryLast5());
-      console.log('History:', data);
       
       this.recentTransactions = data.map((item: any) => ({
         type: item.type,
@@ -305,8 +308,6 @@ export class HomeComponent {
         amount: item.amount,
         date: item.date ? this.dateFormatter({ value: item.date }) : '',
       }));
-
-      console.log('Recent transactions:', this.recentTransactions);
 
     } catch (error) {
       console.error('Error fetching history:', error);
@@ -319,6 +320,16 @@ export class HomeComponent {
     const month = date.getMonth() + 1; 
     const year = date.getFullYear();
     return `${day}.${month}.${year}`; 
+  }
+
+  private async fetchSaving() {
+    try {
+      const data: any = await lastValueFrom(this.savingService.getSummaryByCategory());
+      this.savings = data;
+    } catch (error) {
+      console.error('Error fetching saving:', error);
+      this.totalSaving = 0;
+    }
   }
 
 }
