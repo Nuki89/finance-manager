@@ -12,11 +12,12 @@ import { DatepickerComponent } from '../../../../shared/ui/components/datepicker
 import { ConfirmationModuleComponent } from '../../../../shared/ui/components/confirmation-module/confirmation-module.component';
 import { forkJoin } from 'rxjs';
 import moment from 'moment';
+import { SharedTableComponent } from '../../../../shared/ui/components/shared-table/shared-table.component';
 
 @Component({
   selector: 'app-saving-details-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgIcon, ActionButtonComponent, DatepickerComponent],
+  imports: [CommonModule, FormsModule, NgIcon, ActionButtonComponent, DatepickerComponent, SharedTableComponent],
   templateUrl: './saving-details-modal.component.html',
   styleUrls: ['./saving-details-modal.component.css'],
   viewProviders : [provideIcons({ heroXMark, heroCheck, heroTrash })],
@@ -28,7 +29,8 @@ export class SavingDetailsModalComponent {
   public amount: number | null = null;
   public description: string = '';
   public selectedDate: Date | null = null;
-
+  public filteredSavings: any[] = [];
+  
   private savings: any[] = [];
 
   constructor(
@@ -167,6 +169,33 @@ export class SavingDetailsModalComponent {
     );
   }
 
+  public handleDataChange(): void {
+    this.loadData();  
+  }
+
+  public handleDelete(expenseId: number): void {
+    console.log('Deleting Expense ID:', expenseId);  
+    const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
+      width: '400px',
+      data: {
+        title: 'Confirm Delete',
+        message: 'Are you sure you want to delete this expense?'
+      }
+    });
+  
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.savingService.deleteSaving(expenseId).subscribe(() => {
+          this.toastr.success('Expense deleted successfully!');
+          this.loadData();  
+        }, error => {
+          this.toastr.error('Failed to delete expense. Please try again.');
+          console.error('Error deleting expense:', error);
+        });
+      }
+    });
+  }
+
   private loadData() {
       forkJoin({
         savings: this.savingService.getSaving(),
@@ -175,6 +204,10 @@ export class SavingDetailsModalComponent {
         ({ savings, categories }) => {
           this.savings = savings as any[];
           this.categories = categories as any[];
+
+          this.filteredSavings = this.savings.filter(
+            (saving) => saving.category === this.selectedCategoryObj.id
+          );
         },
         (error) => {
           console.error('Error fetching data:', error);

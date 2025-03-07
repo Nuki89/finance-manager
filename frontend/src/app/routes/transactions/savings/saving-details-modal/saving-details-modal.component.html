@@ -11,7 +11,7 @@
 
         <div *ngIf="selectedCategoryObj" class="card pl-6 pr-8 mt-4 rounded-lg">
 
-            <div class="flex flex-row gap-2">
+            <div class="flex flex-row gap-4 w-full">
                 <div class="mb-4 flex flex-col">    
                     <label for="editCategoryName" class="block text-sm font-medium text-gray-700">Category Name</label>                
                     <input
@@ -35,41 +35,43 @@
                     </div>
                 </div>
 
-                <div class="mt-6">
-                    <app-action-button 
-                    tooltip="Save"
-                    icon="heroCheck"
-                    size="icon"
-                    buttonClass="text-green-500 border border-green-500 bg-white 
-                                hover:bg-gradient-to-br from-green-400 via-green-500 to-green-600
-                                hover:text-white shadow-lg shadow-green-500/50 
-                                dark:shadow-lg dark:shadow-green-800/80"
-                    (click)="updateSavingCategory(selectedCategoryObj.id, selectedCategoryObj.name, selectedCategoryObj.goal_amount)"
-                    ></app-action-button>
-                </div>
-                
-                <div class="mt-6">
-                    <app-action-button 
-                    tooltip="Delete"
-                    icon="heroTrash"
-                    size="icon"
-                    type="button"
-                    buttonClass="text-red-500 border border-red-500 bg-white 
-                    hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600
-                    hover:text-white shadow-lg shadow-red-500/50 
-                    dark:shadow-lg dark:shadow-red-800/80"
-                    (click)="handleDeleteCategory(selectedCategoryObj.id)"
-                    ></app-action-button>
+                <div class="flex gap-2 ml-auto mt-6">
+                    <!-- <div class="mt-6"> -->
+                        <app-action-button 
+                        tooltip="Save"
+                        icon="heroCheck"
+                        size="icon"
+                        buttonClass="text-green-500 border border-green-500 bg-white 
+                                    hover:bg-gradient-to-br from-green-400 via-green-500 to-green-600
+                                    hover:text-white shadow-lg shadow-green-500/50 
+                                    dark:shadow-lg dark:shadow-green-800/80"
+                        (click)="updateSavingCategory(selectedCategoryObj.id, selectedCategoryObj.name, selectedCategoryObj.goal_amount)"
+                        ></app-action-button>
+                    <!-- </div> -->
+                    
+                    <!-- <div class="mt-6"> -->
+                        <app-action-button 
+                        tooltip="Delete"
+                        icon="heroTrash"
+                        size="icon"
+                        type="button"
+                        buttonClass="text-red-500 border border-red-500 bg-white 
+                        hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600
+                        hover:text-white shadow-lg shadow-red-500/50 
+                        dark:shadow-lg dark:shadow-red-800/80"
+                        (click)="handleDeleteCategory(selectedCategoryObj.id)"
+                        ></app-action-button>
+                    <!-- </div> -->
                 </div>
 
             </div>
 
             <form (ngSubmit)="onAddSaving()"> 
-                <div class="flex items-center gap-2 mt-1">
+                <div class="flex items-center gap-4 mt-1 w-full">
 
                     <div class="mb-6">
                         <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-                        <div class="flex items-center gap-2 mt-1">
+                        <div class="flex items-center gap-4 mt-1">
                             <input
                             type="number"
                             id="amount"
@@ -82,15 +84,27 @@
                         </div>
                     </div>                      
             
-                    <app-action-button 
-                    text="Add Saving"
-                    type="submit"
-                    buttonClass="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium"
-                    tooltip="Add Saving"
-                    ></app-action-button>
+                    <div class="flex ml-auto">
+                        <app-action-button 
+                        text="Add Saving"
+                        type="submit"
+                        buttonClass="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium"
+                        tooltip="Add Saving"
+                        ></app-action-button>
+                    </div>
                     
                 </div>
             </form>
+
+            <div class="space-y-2 overflow-x-auto">
+                <app-shared-table 
+                [data]="filteredSavings" 
+                type="saving"
+                (delete)="handleDelete($event)"
+                (dataChange)="handleDataChange()"
+                >
+                </app-shared-table>
+            </div>
         
         </div>
     </div>
