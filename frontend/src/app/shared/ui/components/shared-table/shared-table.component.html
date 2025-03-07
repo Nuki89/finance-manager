@@ -1,10 +1,11 @@
 <div class="tw-mb-4">
     <ag-grid-angular
-    #agGrid
-    [ngClass]="themeClass"
-    style="width: 100%; height: 350px"
-    [gridOptions]="gridOptions" 
-    [rowData]="rowData"
-    [columnDefs]="colDefs">
+        #agGrid
+        [ngClass]="themeClass"
+        [ngStyle]="{ height: type === 'saving' ? '180px' : '350px' }"
+        style="width: 100%"
+        [gridOptions]="gridOptions" 
+        [rowData]="rowData"
+        [columnDefs]="colDefs">
     </ag-grid-angular>
 </div>

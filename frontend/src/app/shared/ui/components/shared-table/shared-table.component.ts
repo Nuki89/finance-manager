@@ -65,10 +65,12 @@ export class SharedTableComponent {
 
   public sizeColumnsToFit() {
     if (this.agGrid && this.agGrid.api) {
-      this.agGrid.api.sizeColumnsToFit();
+      setTimeout(() => {
+        this.agGrid.api.sizeColumnsToFit();
+      }, 50);
     }
   }
-
+  
   public handleEdit(id: number, data: any): void {    
     this.edit.emit(data);
   }
@@ -113,8 +115,10 @@ export class SharedTableComponent {
         valueGetter: this.getValueBasedOnType.bind(this),
       },
       { field: 'amount', headerName: 'Amount', valueFormatter: this.currencyFormatter },
-      { field: 'description', headerName: 'Description' },
-      { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },
+      ...(this.type !== 'saving'
+        ? [{ field: 'description', headerName: 'Description' }]
+        : []),
+      // { field: 'balance_after', headerName: 'Balance After', valueFormatter: this.currencyFormatter },
       {
         headerName: 'Actions',
         filter: false,
@@ -202,7 +206,7 @@ export class SharedTableComponent {
       case 'expense':
         return params.data.category_data ? params.data.category_data.name : 'N/A';
       case 'saving':
-        return params.data.saving_data ? params.data.saving_data.name : 'N/A';
+        return params.data.saving_data?.name || params.data.category_data.name || 'N/A';
       default:
         return 'N/A'; 
     }
