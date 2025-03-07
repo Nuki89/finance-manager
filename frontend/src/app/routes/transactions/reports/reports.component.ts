@@ -19,34 +19,63 @@ export class ReportsComponent {
     private sanitizer: DomSanitizer
   ) { }
 
-  loadVSsummaryPdf() {
+  public onMouseDown(event: MouseEvent, type: 'vs' | 'income' | 'expense') {
+    const openInNewTab = event.button === 1;
+
+    event.preventDefault();
+
+    switch (type) {
+      case 'vs':
+        this.loadVSsummaryPdf(openInNewTab);
+        break;
+      case 'income':
+        this.loadIncomeSummaryPdf(openInNewTab);
+        break;
+      case 'expense':
+        this.loadExpenseSummaryPdf(openInNewTab);
+        break;
+    }
+  }
+
+  loadVSsummaryPdf(openInNewTab: boolean) {
     this.reportService.exportVsPdf().subscribe(blob => {
       const pdfBlob = new Blob([blob], { type: 'application/pdf' });
       const pdfObjectUrl = URL.createObjectURL(pdfBlob);
-      window.open(pdfObjectUrl, '_blank');
 
-      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfObjectUrl);
+      if(openInNewTab) {
+        window.open(pdfObjectUrl, '_blank');
+      } else {
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfObjectUrl);
+      }
 
     });
   }
 
-  loadIncomeSummaryPdf() {
+  loadIncomeSummaryPdf(openInNewTab: boolean) {
     this.reportService.exportIncomePdf().subscribe(blob => {
       const pdfBlob = new Blob([blob], { type: 'application/pdf'});
       const pdfObjectUrl = URL.createObjectURL(pdfBlob);
-      window.open(pdfObjectUrl, '_blank');
 
-      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfObjectUrl);
+      if(openInNewTab) {
+        window.open(pdfObjectUrl, '_blank');
+      } else {
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfObjectUrl);
+      }
+
     });
   }
 
-  loadExpenseSummaryPdf() {
+  loadExpenseSummaryPdf(openInNewTab: boolean) {
     this.reportService.exportExpensePdf().subscribe(blob => {
       const pdfBlob = new Blob([blob], { type: 'application/pdf'});
       const pdfObjectUrl = URL.createObjectURL(pdfBlob);
-      window.open(pdfObjectUrl, '_blank');
+      
+      if(openInNewTab) {
+        window.open(pdfObjectUrl, '_blank');
+      } else {
+        this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfObjectUrl);
+      }
 
-      this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(pdfObjectUrl);
     });
   }
 

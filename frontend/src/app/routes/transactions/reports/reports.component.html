@@ -3,21 +3,21 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-4">
         <div class="card">
             <div class="card-content text-center border rounded-lg hover:shadow-lg">
-                <button (click)="loadVSsummaryPdf()" class="w-full p-4">Summary expenseVSincomes</button>
+                <button (mousedown)="onMouseDown($event, 'vs')" class="w-full p-4">Summary expenseVSincomes</button>
             </div>
         </div>
         <div class="card">
             <div class="card-content text-center border rounded-lg hover:shadow-lg">
-                <button (click)="loadIncomeSummaryPdf()" class="w-full p-4">Summary incomes</button>
+                <button (mousedown)="onMouseDown($event, 'income')" class="w-full p-4">Summary incomes</button>
             </div>
         </div>
         <div class="card">
             <div class="card-content text-center border rounded-lg hover:shadow-lg">
-                <button (click)="loadExpenseSummaryPdf()" class="w-full p-4">Summary expense</button>
+                <button (mousedown)="onMouseDown($event, 'expense')" class="w-full p-4">Summary expense</button>
             </div>
         </div>
     </div>
 
-    <iframe *ngIf="pdfUrl" [src]="pdfUrl" width="100%" height="600px"></iframe>
+    <iframe *ngIf="pdfUrl" [src]="pdfUrl" width="100%" height="600px" class="rounded-lg"></iframe>
 
 </div>
