@@ -2,7 +2,6 @@
     <h1 class="text-xl font-bold pl-6 py-4">{{ data.title }}</h1>
 </div> 
 
-
 <div class="card grid grid-cols-2 gap-6">
 
     <form (ngSubmit)="onAddSaving()" class="p-6"> 
@@ -25,10 +24,7 @@
 
                 <app-action-button 
                     type="button"
-                    buttonClass="text-green-500 border border-green-500 bg-white 
-                                hover:bg-gradient-to-br from-green-400 via-green-500 to-green-600
-                                hover:text-white shadow-lg shadow-green-500/50 
-                                dark:shadow-lg dark:shadow-green-800/80"
+                    buttonClass="text-green-500 border border-green-500 bg-white hover:bg-gradient-to-br from-green-400 via-green-500 to-green-600 hover:text-white shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80"
                     (click)="openAddCategoryModal()"
                     icon="heroPlusSmall"
                     size="icon"
@@ -38,10 +34,7 @@
 
                 <app-action-button 
                     type="button"
-                    buttonClass="text-blue-500 border border-blue-500 bg-white 
-                                hover:bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600
-                                hover:text-white shadow-lg shadow-blue-500/50 
-                                dark:shadow-lg dark:shadow-blue-800/80"                  
+                    buttonClass="text-blue-500 border border-blue-500 bg-white hover:bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 hover:text-white shadow-lg shadow-blue-500/50 dark:shadow-lg dark:shadow-blue-800/80"                  
                     (click)="openUpdateCategoryModal(selectedCategory)"
                     icon="heroPencilSquare"
                     size="icon"
@@ -51,10 +44,7 @@
 
                 <app-action-button 
                     type="button"
-                    buttonClass="text-red-500 border border-red-500 bg-white 
-                                hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600
-                                hover:text-white shadow-lg shadow-red-500/50 
-                                dark:shadow-lg dark:shadow-red-800/80"                
+                    buttonClass="text-red-500 border border-red-500 bg-white hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600 hover:text-white shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80"                
                     (click)="handleDeleteCategory(selectedCategorieObj.id)"
                     icon="heroTrash"
                     size="icon"
