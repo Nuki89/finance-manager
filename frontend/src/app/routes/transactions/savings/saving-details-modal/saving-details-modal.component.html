@@ -2,108 +2,174 @@
   class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" aria-hidden="true" (click)="closeModal()">
     <div class="bg-white rounded-lg shadow-lg p-6 max-w-2xl w-full" (click)="$event.stopPropagation()">
 
-        <div class="flex justify-between items-center">
-            <h4 class="p-2 pl-6 text-xl font-semibold">Saving details</h4>
-            <button (click)="closeModal()" class="p-2 rounded-full ">
+        <div class="flex justify-between items-center border-b">
+            <h4 class="pb-2 text-xl font-semibold">{{ selectedCategoryObj.name }} - saving details </h4>
+            <button (click)="closeModal()" class="rounded-full ">
                 <ng-icon name="heroXMark" class="text-2xl"/>
             </button>
         </div>
 
-        <div *ngIf="selectedCategoryObj" class="card pl-6 pr-8 mt-4 rounded-lg">
+        <div *ngIf="selectedCategoryObj" class="card mt-4 rounded-lg">
 
-            <div class="flex flex-row gap-4 w-full">
-                <div class="mb-4 flex flex-col">    
-                    <label for="editCategoryName" class="block text-sm font-medium text-gray-700">Category Name</label>                
-                    <input
-                        type="text"
-                        id="editCategoryName"
-                        class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                        [(ngModel)]="selectedCategoryObj.name"
-                        name="editCategoryName"/>
-                </div>
-
-                <div class="mb-4 flex flex-col">
-                    <label for="editCategoryGoal" class="block text-sm font-medium text-gray-700">Goal</label>
-                    <div class="mb-4">
-                        
+            <!-- <div class="mt-2 mb-2">
+                <h5 class="text-md font-semibold mb-3 border-b pb-2">Edit Category</h5>
+                <div class="flex flex-row gap-4 w-full">
+                    <div class="mb-4 flex flex-col">    
+                        <label for="editCategoryName" class="block text-sm font-medium text-gray-700">Category Name</label>                
                         <input
-                            type="number"
-                            id="editCategoryGoal"
+                            type="text"
+                            id="editCategoryName"
                             class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            [(ngModel)]="selectedCategoryObj.goal_amount"
-                            name="editCategoryGoal"/>
+                            [(ngModel)]="selectedCategoryObj.name"
+                            name="editCategoryName"/>
                     </div>
+
+                    <div class="mb-4 flex flex-col">
+                        <label for="editCategoryGoal" class="block text-sm font-medium text-gray-700">Goal</label>
+                        <div>
+                            <input
+                                type="number"
+                                id="editCategoryGoal"
+                                class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                [(ngModel)]="selectedCategoryObj.goal_amount"
+                                name="editCategoryGoal"/>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 ml-auto mt-6">
+                        
+                            <app-action-button 
+                            tooltip="Save"
+                            icon="heroCheck"
+                            size="icon"
+                            buttonClass="text-green-500 border border-green-500 bg-white 
+                                        hover:bg-gradient-to-br from-green-400 via-green-500 to-green-600
+                                        hover:text-white shadow-lg shadow-green-500/50 
+                                        dark:shadow-lg dark:shadow-green-800/80"
+                            (click)="updateSavingCategory(selectedCategoryObj.id, selectedCategoryObj.name, selectedCategoryObj.goal_amount)"
+                            ></app-action-button>
+                        
+                            <app-action-button 
+                            tooltip="Delete"
+                            icon="heroTrash"
+                            size="icon"
+                            type="button"
+                            buttonClass="text-red-500 border border-red-500 bg-white 
+                            hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600
+                            hover:text-white shadow-lg shadow-red-500/50 
+                            dark:shadow-lg dark:shadow-red-800/80"
+                            (click)="handleDeleteCategory(selectedCategoryObj.id)"
+                            ></app-action-button>
+                        
+                    </div>
+
+                </div>
+            </div> -->
+
+            <div class="mb-2">
+                <h4 class="text-lg font-semibold mb-3 border-b pb-2">Add Saving</h4>
+                <form (ngSubmit)="onAddSaving()"> 
+                    <div class="flex items-center gap-4 w-full">
+
+                        <div class="mb-4">
+                            <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                            <div class="flex items-center gap-4 mt-1">
+                                <input
+                                type="number"
+                                id="amount"
+                                class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                [(ngModel)]="amount"
+                                name="amount"
+                                placeholder="Enter amount"
+                                required/>
+                                <app-datepicker (dateChange)="onDatePicked($event)" [initialDate]="selectedDate"></app-datepicker>
+                            </div>
+                        </div>                      
+                
+                        <div class="flex ml-auto">
+                            <app-action-button 
+                            text="Add Saving"
+                            type="submit"
+                            buttonClass="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium"
+                            tooltip="Add Saving"
+                            ></app-action-button>
+                        </div>
+                        
+                    </div>
+                </form>
+            </div>
+
+            <div class="mt-2 mb-2">
+                <div class="flex justify-between items-center cursor-pointer border-b pb-2" (click)="toggleEditCategory()">
+                    <h5 class="text-md font-semibold">
+                        Edit Category
+                    </h5>
+                    <ng-icon 
+                        [name]="showEditCategory ? 'heroChevronDown' : 'heroChevronLeft'" 
+                        class="text-gray-500"/>
                 </div>
 
-                <div class="flex gap-2 ml-auto mt-6">
-                    <!-- <div class="mt-6"> -->
-                        <app-action-button 
-                        tooltip="Save"
-                        icon="heroCheck"
-                        size="icon"
-                        buttonClass="text-green-500 border border-green-500 bg-white 
-                                    hover:bg-gradient-to-br from-green-400 via-green-500 to-green-600
-                                    hover:text-white shadow-lg shadow-green-500/50 
-                                    dark:shadow-lg dark:shadow-green-800/80"
-                        (click)="updateSavingCategory(selectedCategoryObj.id, selectedCategoryObj.name, selectedCategoryObj.goal_amount)"
-                        ></app-action-button>
-                    <!-- </div> -->
-                    
-                    <!-- <div class="mt-6"> -->
-                        <app-action-button 
-                        tooltip="Delete"
-                        icon="heroTrash"
-                        size="icon"
-                        type="button"
-                        buttonClass="text-red-500 border border-red-500 bg-white 
-                        hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600
-                        hover:text-white shadow-lg shadow-red-500/50 
-                        dark:shadow-lg dark:shadow-red-800/80"
-                        (click)="handleDeleteCategory(selectedCategoryObj.id)"
-                        ></app-action-button>
-                    <!-- </div> -->
+                <div 
+                *ngIf="showEditCategory" 
+                class="transition-all duration-300 ease-in-out mt-2">
+                    <div class="flex flex-row gap-4 w-full">
+                        <div class="mb-4 flex flex-col">    
+                            <label for="editCategoryName" class="block text-sm font-medium text-gray-700">Category Name</label>                
+                            <input
+                                type="text"
+                                id="editCategoryName"
+                                class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                [(ngModel)]="selectedCategoryObj.name"
+                                name="editCategoryName"/>
+                        </div>
+
+                        <div class="mb-4 flex flex-col">
+                            <label for="editCategoryGoal" class="block text-sm font-medium text-gray-700">Goal</label>
+                            <input
+                                type="number"
+                                id="editCategoryGoal"
+                                class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                                [(ngModel)]="selectedCategoryObj.goal_amount"
+                                name="editCategoryGoal"/>
+                        </div>
+
+                        <div class="flex gap-2 ml-auto mt-6">
+                            <app-action-button 
+                                tooltip="Save"
+                                icon="heroCheck"
+                                size="icon"
+                                buttonClass="text-green-500 border border-green-500 bg-white 
+                                            hover:bg-green-600 hover:text-white"
+                                (click)="updateSavingCategory(selectedCategoryObj.id, selectedCategoryObj.name, selectedCategoryObj.goal_amount)"
+                            ></app-action-button>
+                                                    
+                            <app-action-button 
+                                tooltip="Delete"
+                                icon="heroTrash"
+                                size="icon"
+                                type="button"
+                                buttonClass="text-red-500 border border-red-500 bg-white 
+                                            hover:bg-red-600 hover:text-white"
+                                (click)="handleDeleteCategory(selectedCategoryObj.id)"
+                            ></app-action-button>
+                        </div>
+                    </div>
+
                 </div>
 
             </div>
 
-            <form (ngSubmit)="onAddSaving()"> 
-                <div class="flex items-center gap-4 mt-1 w-full">
-
-                    <div class="mb-6">
-                        <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-                        <div class="flex items-center gap-4 mt-1">
-                            <input
-                            type="number"
-                            id="amount"
-                            class="w-full mt-1 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                            [(ngModel)]="amount"
-                            name="amount"
-                            placeholder="Enter amount"
-                            required/>
-                            <app-datepicker (dateChange)="onDatePicked($event)" [initialDate]="selectedDate"></app-datepicker>
-                        </div>
-                    </div>                      
-            
-                    <div class="flex ml-auto">
-                        <app-action-button 
-                        text="Add Saving"
-                        type="submit"
-                        buttonClass="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium"
-                        tooltip="Add Saving"
-                        ></app-action-button>
-                    </div>
-                    
+            <div>
+                <h5 class="text-md font-semibold mb-3 border-b pb-2">Savings Overview</h5>
+                <div class="space-y-2 overflow-x-auto">
+                    <app-shared-table 
+                    [data]="filteredSavings" 
+                    type="saving"
+                    (delete)="handleDelete($event)"
+                    (dataChange)="handleDataChange()"
+                    >
+                    </app-shared-table>
                 </div>
-            </form>
-
-            <div class="space-y-2 overflow-x-auto">
-                <app-shared-table 
-                [data]="filteredSavings" 
-                type="saving"
-                (delete)="handleDelete($event)"
-                (dataChange)="handleDataChange()"
-                >
-                </app-shared-table>
             </div>
         
         </div>

@@ -3,7 +3,7 @@ import { Component, Inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { provideIcons, NgIcon } from '@ng-icons/core';
-import { heroXMark, heroCheck, heroTrash } from '@ng-icons/heroicons/outline';
+import { heroXMark, heroCheck, heroTrash, heroChevronLeft, heroChevronDown } from '@ng-icons/heroicons/outline';
 import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 import { ToastrService } from 'ngx-toastr';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
@@ -20,7 +20,7 @@ import { SharedTableComponent } from '../../../../shared/ui/components/shared-ta
   imports: [CommonModule, FormsModule, NgIcon, ActionButtonComponent, DatepickerComponent, SharedTableComponent],
   templateUrl: './saving-details-modal.component.html',
   styleUrls: ['./saving-details-modal.component.css'],
-  viewProviders : [provideIcons({ heroXMark, heroCheck, heroTrash })],
+  viewProviders : [provideIcons({ heroXMark, heroCheck, heroTrash, heroChevronLeft, heroChevronDown })],
 })
 export class SavingDetailsModalComponent {
   @Input() categories: any[] = [];
@@ -30,6 +30,7 @@ export class SavingDetailsModalComponent {
   public description: string = '';
   public selectedDate: Date | null = null;
   public filteredSavings: any[] = [];
+  public showEditCategory: boolean = false;
   
   private savings: any[] = [];
 
@@ -150,16 +151,23 @@ export class SavingDetailsModalComponent {
     this.savingService.addSaving(payload).subscribe(
       (data: any) => {
         this.toastr.success('Saving added successfully!','Saving added');
-        this.selectedCategoryObj.id = null;
-        this.amount = null;
-        this.selectedDate = null;
-        this.description = '';
-        this.loadData();
+
+        this.resetForm();
+
+        this.filteredSavings.push({
+          category: this.selectedCategoryObj.id,
+          amount: this.amount,
+          date: formattedDate,
+          description: this.description || '',
+        });
+
         this.sharedDataService.notifySavingChanged();
 
-        if (this.dialogRef) {
-          this.dialogRef.close(true);
-        }
+        this.loadData();
+
+        // if (this.dialogRef) {
+        //   this.dialogRef.close(true);
+        // }
 
       },
       (error) => {
@@ -169,50 +177,67 @@ export class SavingDetailsModalComponent {
     );
   }
 
+  
+
   public handleDataChange(): void {
     this.loadData();  
   }
 
-  public handleDelete(expenseId: number): void {
-    console.log('Deleting Expense ID:', expenseId);  
+  public handleDelete(savingId: number): void {
     const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
       width: '400px',
       data: {
         title: 'Confirm Delete',
-        message: 'Are you sure you want to delete this expense?'
+        message: 'Are you sure you want to delete this saving?'
       }
     });
   
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.savingService.deleteSaving(expenseId).subscribe(() => {
-          this.toastr.success('Expense deleted successfully!');
+        this.savingService.deleteSaving(savingId).subscribe(() => {
+          this.toastr.success('Saving deleted successfully!');
           this.loadData();  
+          this.sharedDataService.notifySavingChanged();
+
+          // if (this.dialogRef) {
+          //   this.dialogRef.close(true);
+          // }
+
         }, error => {
-          this.toastr.error('Failed to delete expense. Please try again.');
-          console.error('Error deleting expense:', error);
+          this.toastr.error('Failed to delete saving. Please try again.');
+          console.error('Error deleting saving:', error);
         });
       }
     });
   }
 
-  private loadData() {
-      forkJoin({
-        savings: this.savingService.getSaving(),
-        categories: this.savingService.getSavingCategory()
-      }).subscribe(
-        ({ savings, categories }) => {
-          this.savings = savings as any[];
-          this.categories = categories as any[];
+  toggleEditCategory() {
+    this.showEditCategory = !this.showEditCategory;
+  }
 
-          this.filteredSavings = this.savings.filter(
-            (saving) => saving.category === this.selectedCategoryObj.id
-          );
-        },
-        (error) => {
-          console.error('Error fetching data:', error);
-        }
-      );
-    }
+  private resetForm() {
+    this.amount = null;
+    this.selectedDate = null;
+    this.description = '';
+  }
+
+  private loadData() {
+    forkJoin({
+      savings: this.savingService.getSaving(),
+      categories: this.savingService.getSavingCategory()
+    }).subscribe(
+      ({ savings, categories }) => {
+        this.savings = savings as any[];
+        this.categories = categories as any[];
+
+        this.filteredSavings = this.savings.filter(
+          (saving) => saving.category === this.selectedCategoryObj.id
+        );
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
+      }
+    );
+  }
 
 }
