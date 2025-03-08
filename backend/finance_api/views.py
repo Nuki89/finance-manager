@@ -441,6 +441,7 @@ class HistoryViewSet(viewsets.ViewSet):
         })
     
 
+from decimal import Decimal
 class BalanceViewSet(viewsets.ViewSet):
     queryset = Balance.objects.all()
     serializer_class = BalanceSerializer
@@ -450,19 +451,19 @@ class BalanceViewSet(viewsets.ViewSet):
     def list(self, request):
         balance_record = get_or_create_balance()
 
-        total_income = Income.objects.aggregate(total=Sum('amount'))['total'] or 0.0
-        total_expense = Expense.objects.aggregate(total=Sum('amount'))['total'] or 0.0
-        total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
+        total_income = Decimal(Income.objects.aggregate(total=Sum('amount'))['total'] or 0.0)
+        total_expense = Decimal(Expense.objects.aggregate(total=Sum('amount'))['total'] or 0.0)
+        total_savings = Decimal(Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0)
 
         balance_record.balance = total_income - total_expense
         balance_record.total_savings = total_savings
         balance_record.save()
 
-        available_balance = balance_record.balance - total_savings
+        available_balance = balance_record.balance - balance_record.total_savings
 
         return Response({
             'total_balance': balance_record.balance,
-            'total_savings': total_savings,
+            'total_savings': balance_record.total_savings,
             'available_balance': available_balance,
             'last_updated': balance_record.last_updated
         })
