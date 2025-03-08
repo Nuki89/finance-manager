@@ -7,6 +7,7 @@ from rest_framework.exceptions import ValidationError
 from .models import *
 from .serializers import *
 from .pdf_utils import *
+from .signals import get_or_create_balance
 
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
@@ -447,29 +448,51 @@ class BalanceViewSet(viewsets.ViewSet):
     permission_classes = [AllowAny]
 
     def list(self, request):
-        balance_record = Balance.objects.first()
+        balance_record = get_or_create_balance()
 
-        if balance_record:
-            if balance_record.total_savings == 0.0:
-                total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
-                balance_record.total_savings = total_savings
-                balance_record.save()
-            else:
-                total_savings = balance_record.total_savings
+        total_income = Income.objects.aggregate(total=Sum('amount'))['total'] or 0.0
+        total_expense = Expense.objects.aggregate(total=Sum('amount'))['total'] or 0.0
+        total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
 
-            available_balance = balance_record.balance - total_savings
-            return Response({
-                'total_balance': balance_record.balance,
-                'total_savings': total_savings,
-                'available_balance': available_balance,
-                'last_updated': balance_record.last_updated
-            })
-        else:
-            balance_record = Balance.objects.create(balance=0.00)
-            total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
-            return Response({
-                'total_balance': balance_record.balance,
-                'total_savings': total_savings,
-                'available_balance': balance_record.balance,
-                'last_updated': balance_record.last_updated
-            })
+        balance_record.balance = total_income - total_expense
+        balance_record.total_savings = total_savings
+        balance_record.save()
+
+        available_balance = balance_record.balance - total_savings
+
+        return Response({
+            'total_balance': balance_record.balance,
+            'total_savings': total_savings,
+            'available_balance': available_balance,
+            'last_updated': balance_record.last_updated
+        })
+
+
+    # def list(self, request):
+    #     balance_record = Balance.objects.first()
+
+    #     if balance_record:
+    #         if balance_record.total_savings == 0.0:
+    #             total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
+    #             balance_record.total_savings = total_savings
+    #             balance_record.save()
+    #         else:
+    #             total_savings = balance_record.total_savings
+
+    #         available_balance = balance_record.balance - total_savings
+    #         return Response({
+    #             'total_balance': balance_record.balance,
+    #             'total_savings': total_savings,
+    #             'available_balance': available_balance,
+    #             'last_updated': balance_record.last_updated
+    #         })
+    #     else:
+    #         balance_record = Balance.objects.create(balance=0.00)
+    #         total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
+    #         return Response({
+    #             'total_balance': balance_record.balance,
+    #             'total_savings': total_savings,
+    #             'available_balance': balance_record.balance,
+    #             'last_updated': balance_record.last_updated
+    #         })
+
