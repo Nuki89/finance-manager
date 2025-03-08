@@ -9,6 +9,8 @@ from .serializers import *
 from .pdf_utils import *
 from .signals import get_or_create_balance
 
+from decimal import Decimal
+
 from django.db.models.functions import TruncMonth
 from django.db.models import Sum
 
@@ -441,7 +443,6 @@ class HistoryViewSet(viewsets.ViewSet):
         })
     
 
-from decimal import Decimal
 class BalanceViewSet(viewsets.ViewSet):
     queryset = Balance.objects.all()
     serializer_class = BalanceSerializer
@@ -467,33 +468,3 @@ class BalanceViewSet(viewsets.ViewSet):
             'available_balance': available_balance,
             'last_updated': balance_record.last_updated
         })
-
-
-    # def list(self, request):
-    #     balance_record = Balance.objects.first()
-
-    #     if balance_record:
-    #         if balance_record.total_savings == 0.0:
-    #             total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
-    #             balance_record.total_savings = total_savings
-    #             balance_record.save()
-    #         else:
-    #             total_savings = balance_record.total_savings
-
-    #         available_balance = balance_record.balance - total_savings
-    #         return Response({
-    #             'total_balance': balance_record.balance,
-    #             'total_savings': total_savings,
-    #             'available_balance': available_balance,
-    #             'last_updated': balance_record.last_updated
-    #         })
-    #     else:
-    #         balance_record = Balance.objects.create(balance=0.00)
-    #         total_savings = Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0
-    #         return Response({
-    #             'total_balance': balance_record.balance,
-    #             'total_savings': total_savings,
-    #             'available_balance': balance_record.balance,
-    #             'last_updated': balance_record.last_updated
-    #         })
-
