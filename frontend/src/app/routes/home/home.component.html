@@ -52,7 +52,16 @@
             <div class="card-content">
                 <h2 class="text-lg font-bold mb-4">Income vs Expense</h2>
 
-                <app-bar-chart [data]="incomeVsExpense"></app-bar-chart>
+                <div *ngIf="loading; else barChart" class="flex flex-col justify-center items-center h-52 space-y-2">
+                    <ng-icon name="hugeLoading03" class="animate-spin text-gray-500" style="width: 50px; height: 50px;"></ng-icon>
+                    <p class="text-gray-500 text-sm">Loading data<span class="dots"></span></p>
+                </div>
+
+                <ng-template #barChart>
+                    <div *ngIf="incomeVsExpense?.labels?.length && incomeVsExpense?.datasets?.length; else noData">
+                        <app-bar-chart [data]="incomeVsExpense"></app-bar-chart>
+                    </div>
+                </ng-template>
 
                 <ng-template #noData>
                     <p class="text-gray-500">No data avalaible for {{ selectedView }}</p>
@@ -70,7 +79,7 @@
                 </div>
         
                 <ng-template #expenseChart>
-                    <div *ngIf="expenseChartCategory?.datasets?.length; else noData">
+                    <div *ngIf="expenseChartCategory?.labels?.length && expenseChartCategory?.datasets?.length; else noData">
                         <app-pie-chart [data]="expenseChartCategory"></app-pie-chart>
                     </div>
                 </ng-template>
@@ -93,35 +102,12 @@
                         *ngFor="let transaction of recentTransactions">
                         <span> {{ transaction.type | titlecase }} </span>
                         <span class="truncate"> {{ transaction.name }} </span>
-                        <span>{{ transaction.amount | currency:'EUR' }}</span>
+                        <span>{{ transaction.amount | number }} €</span>
                         <span> {{ transaction.date }} </span>
                     </li>
                 </ul>
             </div>
         </div>
-
-        <!-- <div class="card">
-            <div class="card-content">
-                <h2 class="text-lg font-bold mb-4">Savings</h2>
-                <ul class="space-y-2">
-                    <li 
-                        class="grid grid-cols-3 gap-4 justify-between" 
-                        *ngFor="let saving of savings">
-                        <span> {{ saving.category_name }} </span>
-                        <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
-                            <div
-                                class="bg-green-500 h-3 rounded-full w-full"
-                                [style.width.%]="(saving.total_saved / saving.goal_amount) * 100"
-                            ></div>
-                        </div>
-            
-                        <div class="text-sm font-semibold">
-                        {{ ((saving.total_saved / saving.goal_amount) * 100) | number:'1.0-2' }}%
-                        </div>
-                    </li>
-                </ul>
-            </div>
-        </div> -->
 
         <div class="card">
             <div class="card-content">
