@@ -3,9 +3,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <div class="card lg:col-span-1">
             <div class="card-content text-center">
-                <h2 class="text-xl font-bold">Balance Overview</h2>
-                <p class="text-3xl font-semibold text-green-500">{{ balance?.available_balance }} €</p>
-                <p class="text-sm text-gray-500">Last Updated: {{ balance?.last_updated | date:'d.M.yyyy' }}</p>
+                <app-balance-summary></app-balance-summary>
             </div>
         </div>
         <div class="card">
@@ -37,12 +35,12 @@
                 </div>
         
                 <ng-template #incomeChart>
-                    <div *ngIf="incomeChartCategory?.labels?.length && incomeChartCategory?.datasets?.length; else noData">
+                    <div *ngIf="incomeChartCategory?.labels?.length && incomeChartCategory?.datasets?.length; else noIncomeData">
                         <app-pie-chart [data]="incomeChartCategory"></app-pie-chart>
                     </div>
                 </ng-template>
         
-                <ng-template #noData>
+                <ng-template #noIncomeData>
                     <p class="text-gray-500">No income data available for {{ selectedView }}.</p>
                 </ng-template>
             </div>
@@ -58,12 +56,12 @@
                 </div>
 
                 <ng-template #barChart>
-                    <div *ngIf="incomeVsExpense?.labels?.length && incomeVsExpense?.datasets?.length; else noData">
+                    <div *ngIf="incomeVsExpense?.labels?.length && incomeVsExpense?.datasets?.length; else noBarData">
                         <app-bar-chart [data]="incomeVsExpense"></app-bar-chart>
                     </div>
                 </ng-template>
 
-                <ng-template #noData>
+                <ng-template #noBarData>
                     <p class="text-gray-500">No data avalaible for {{ selectedView }}</p>
                 </ng-template>
             </div>
@@ -79,12 +77,12 @@
                 </div>
         
                 <ng-template #expenseChart>
-                    <div *ngIf="expenseChartCategory?.labels?.length && expenseChartCategory?.datasets?.length; else noData">
+                    <div *ngIf="expenseChartCategory?.labels?.length && expenseChartCategory?.datasets?.length; else noExpenseData">
                         <app-pie-chart [data]="expenseChartCategory"></app-pie-chart>
                     </div>
                 </ng-template>
         
-                <ng-template #noData>
+                <ng-template #noExpenseData>
                     <p class="text-gray-500">No expense data available for {{ selectedView }}.</p>
                 </ng-template>
             </div>

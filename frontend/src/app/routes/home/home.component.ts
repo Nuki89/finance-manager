@@ -20,11 +20,12 @@ import { SavingSummaryComponent } from './components/saving-summary/saving-summa
 import { HistoryService } from '../../shared/services/api/history.service';
 import { SavingFormComponent } from '../transactions/savings/saving-form/saving-form.component';
 import { SavingService } from '../../shared/services/api/saving.service';
+import { BalanceSummaryComponent } from './components/balance-summary/balance-summary.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent, ActionButtonComponent, SavingSummaryComponent],
+  imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent, ActionButtonComponent, SavingSummaryComponent, BalanceSummaryComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
   viewProviders : [provideIcons({ hugeLoading03 })]
@@ -35,6 +36,7 @@ export class HomeComponent {
   @ViewChild(IncomeSummaryComponent) incomeSummaryComponent!: IncomeSummaryComponent;
   @ViewChild(ExpenseSummaryComponent) expenseSummaryComponent!: ExpenseSummaryComponent;
   @ViewChild(SavingSummaryComponent) savingSummaryComponent!: SavingSummaryComponent;
+  @ViewChild(BalanceSummaryComponent) balanceSummaryComponent!: BalanceSummaryComponent
   @ViewChild(BarChartComponent) barChart!: BarChartComponent;
   @ViewChild(PieChartComponent) pieChart!: PieChartComponent;
 
