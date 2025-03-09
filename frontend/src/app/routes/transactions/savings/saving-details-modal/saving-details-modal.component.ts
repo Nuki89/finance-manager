@@ -175,9 +175,7 @@ export class SavingDetailsModalComponent {
         this.toastr.error('Failed to add saving. Please try again.','Error adding saving');
       }
     );
-  }
-
-  
+  }  
 
   public handleDataChange(): void {
     this.loadData();  
@@ -211,7 +209,7 @@ export class SavingDetailsModalComponent {
     });
   }
 
-  toggleEditCategory() {
+  public toggleEditCategory() {
     this.showEditCategory = !this.showEditCategory;
   }
 

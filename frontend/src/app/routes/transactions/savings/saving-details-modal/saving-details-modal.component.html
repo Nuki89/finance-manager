@@ -11,61 +11,6 @@
 
         <div *ngIf="selectedCategoryObj" class="card mt-4 rounded-lg">
 
-            <!-- <div class="mt-2 mb-2">
-                <h5 class="text-md font-semibold mb-3 border-b pb-2">Edit Category</h5>
-                <div class="flex flex-row gap-4 w-full">
-                    <div class="mb-4 flex flex-col">    
-                        <label for="editCategoryName" class="block text-sm font-medium text-gray-700">Category Name</label>                
-                        <input
-                            type="text"
-                            id="editCategoryName"
-                            class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                            [(ngModel)]="selectedCategoryObj.name"
-                            name="editCategoryName"/>
-                    </div>
-
-                    <div class="mb-4 flex flex-col">
-                        <label for="editCategoryGoal" class="block text-sm font-medium text-gray-700">Goal</label>
-                        <div>
-                            <input
-                                type="number"
-                                id="editCategoryGoal"
-                                class="w-full mt-1 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-                                [(ngModel)]="selectedCategoryObj.goal_amount"
-                                name="editCategoryGoal"/>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-2 ml-auto mt-6">
-                        
-                            <app-action-button 
-                            tooltip="Save"
-                            icon="heroCheck"
-                            size="icon"
-                            buttonClass="text-green-500 border border-green-500 bg-white 
-                                        hover:bg-gradient-to-br from-green-400 via-green-500 to-green-600
-                                        hover:text-white shadow-lg shadow-green-500/50 
-                                        dark:shadow-lg dark:shadow-green-800/80"
-                            (click)="updateSavingCategory(selectedCategoryObj.id, selectedCategoryObj.name, selectedCategoryObj.goal_amount)"
-                            ></app-action-button>
-                        
-                            <app-action-button 
-                            tooltip="Delete"
-                            icon="heroTrash"
-                            size="icon"
-                            type="button"
-                            buttonClass="text-red-500 border border-red-500 bg-white 
-                            hover:bg-gradient-to-br from-red-400 via-red-500 to-red-600
-                            hover:text-white shadow-lg shadow-red-500/50 
-                            dark:shadow-lg dark:shadow-red-800/80"
-                            (click)="handleDeleteCategory(selectedCategoryObj.id)"
-                            ></app-action-button>
-                        
-                    </div>
-
-                </div>
-            </div> -->
-
             <div class="mb-2">
                 <h4 class="text-lg font-semibold mb-3 border-b pb-2">Add Saving</h4>
                 <form (ngSubmit)="onAddSaving()"> 

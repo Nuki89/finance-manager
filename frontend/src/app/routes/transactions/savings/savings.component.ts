@@ -1,11 +1,9 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, Input, Optional } from '@angular/core';
-
 import { Saving } from '../../../shared/models/saving.model';
 import { forkJoin, Subject, takeUntil } from 'rxjs';
 import { SavingService } from '../../../shared/services/api/saving.service';
 import { ToastrService } from 'ngx-toastr';
-import { SavingFormComponent } from './saving-form/saving-form.component';
 import { SharedDataService } from '../../../shared/services/shared/shared-data.service';
 import { CategoryAddModalComponent } from './category-add-modal/category-add-modal.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
@@ -15,7 +13,7 @@ import { SavingDetailsModalComponent } from './saving-details-modal/saving-detai
 @Component({
   selector: 'app-savings',
   standalone: true,
-  imports: [CommonModule, SavingFormComponent, ActionButtonComponent],
+  imports: [CommonModule, ActionButtonComponent],
   templateUrl: './savings.component.html',
   styleUrls: ['./savings.component.css']
 })
@@ -126,8 +124,7 @@ export class SavingsComponent {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data) => {
-        this.savings = data;
-        // console.log('Savings:', this.savings);
+        this.savings = data;      
       },
       error: (error) => {
         this.toastr.error('Failed to load savings. Please try again.');
@@ -142,7 +139,6 @@ export class SavingsComponent {
     .subscribe({
       next: (data) => {
         this.savingsCategorySummary = data as any[];
-        // console.log('Summary:', this.savingsCategorySummary);
       },
       error: (error) => {
         this.toastr.error('Failed to load savings. Please try again.');
