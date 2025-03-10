@@ -5,7 +5,14 @@
     </div>
 
     <div class="space-y-2 overflow-x-auto">
-        <app-expense-table/>        
+        <app-shared-table 
+        [data]="expenses" 
+        type="expense"
+        (edit)="handleEdit($event)"
+        (delete)="handleDelete($event)"
+        (dataChange)="handleDataChange()"
+        >
+        </app-shared-table>
     </div>
 
 </div>
