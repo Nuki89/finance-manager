@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAdminUser, AllowAny, IsAuthenticated
 from rest_framework.decorators import action, api_view, permission_classes
@@ -162,7 +162,26 @@ class IncomeViewSet(viewsets.ModelViewSet):
             total_amount=Sum('amount')
         ).order_by('source__name')
         return Response(last_year_data)
+    
+    @action(detail=False, methods=['delete'])
+    def delete_by_source(self, request):
+        """
+        /incomes/delete_by_source?income_name=source_name
+        """
+        income_name = request.query_params.get('income_name')
+        source = get_object_or_404(IncomeSource, name=income_name)
 
+        if Income.objects.filter(source=source).exists():
+            deleted_count, _ = Income.objects.filter(source=source).delete()
+            return Response(
+                {'message': f'{deleted_count} incomes from {income_name} have been deleted'},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'message': f'No incomes found for {income_name}'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     queryset = ExpenseCategory.objects.all()
@@ -252,6 +271,26 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             total_amount=Sum('amount')
         ).order_by('category__name')
         return Response(last_year_data)
+    
+    @action(detail=False, methods=['delete'])
+    def delete_by_category(self, request):
+        """
+        /expenses/delete_by_category?category_name=category_name
+        """
+        category_name = request.query_params.get('category_name')
+        category = get_object_or_404(ExpenseCategory, name=category_name)
+
+        if Expense.objects.filter(category=category).exists():
+            deleted_count, _ = Expense.objects.filter(category=category).delete()
+            return Response(
+                {'message': f'{deleted_count} expenses from {category_name} have been deleted'},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'message': f'No expenses found for {category_name}'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 
 class SavingCategoryViewSet(viewsets.ModelViewSet):
@@ -345,7 +384,26 @@ class SavingViewSet(viewsets.ModelViewSet):
             total_amount=Sum('amount')
         ).order_by('category__name')
         return Response(last_year_data)
+    
+    @action(detail=False, methods=['delete'])
+    def delete_by_category(self, request):
+        """
+        /savings/delete_by_category?category_name=category_name
+        """
+        category_name = request.query_params.get('category_name')
+        category = get_object_or_404(SavingCategory, name=category_name)
 
+        if Saving.objects.filter(category=category).exists():
+            deleted_count, _ = Saving.objects.filter(category=category).delete()
+            return Response(
+                {'message': f'{deleted_count} savings from {category_name} have been deleted'},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'message': f'No savings found for {category_name}'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
 class ExportingViewSet(viewsets.ViewSet):
     # permission_classes = [IsAuthenticated]
