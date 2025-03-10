@@ -55,6 +55,10 @@ export class ExpenseService {
     return this.http.delete(`${this.expenseUrl.replace(/\/$/, '')}/${id}/`);
   }
 
+  deleteExpensesByCategory(categoryName: string) {
+    return this.http.delete(`${this.expenseUrl}delete_by_category/?category_name=${categoryName}`);
+  }
+
   getExpenseCategory() {
     return this.http.get(this.categoriesUrl)
   }

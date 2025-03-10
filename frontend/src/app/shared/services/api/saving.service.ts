@@ -29,6 +29,10 @@ export class SavingService {
     return this.http.delete(`${this.savingUrl.replace(/\/$/, '')}/${id}/`);
   }
 
+  deleteSavingsByCategory(category_name: string) {
+    return this.http.delete(`${this.savingUrl}delete_by_category/?category_name=${category_name}`);
+  }
+
   getSavingCategory() {
     return this.http.get(this.categoriesUrl)
   }
