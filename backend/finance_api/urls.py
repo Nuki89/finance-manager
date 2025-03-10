@@ -31,6 +31,8 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('register/', RegisterViewSet.as_view({'post': 'create'}), name='register'),
+    path('profile/', UserProfileViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'}), name='profile'),
     # path('api/login/', login_view, name='login'),
     # path('api/logout/', logout_view, name='logout'),
     # path('api/protected/', protected_view, name='protected'),
