@@ -105,7 +105,19 @@
             </div>
 
             <div>
-                <h5 class="text-md font-semibold mb-3 border-b pb-2">Savings Overview</h5>
+                
+                <div class="flex justify-between items-center border-b my-3 pb-2">
+                    <h5 class="text-md font-semibold ">Savings Overview</h5>
+
+                    <app-action-button 
+                    text="Delete Savings"
+                    type="submit"
+                    buttonClass="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium"
+                    tooltip="Delete Savings"
+                    (click)="handleDeleteAllSavings( selectedCategoryObj.id )"
+                    ></app-action-button>
+                </div>
+
                 <div class="space-y-2 overflow-x-auto">
                     <app-shared-table 
                     [data]="filteredSavings" 

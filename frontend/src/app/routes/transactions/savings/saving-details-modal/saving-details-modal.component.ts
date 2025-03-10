@@ -213,6 +213,35 @@ export class SavingDetailsModalComponent {
     this.showEditCategory = !this.showEditCategory;
   }
 
+  public handleDeleteAllSavings(selectedCategoryObjId: number) {
+    const categoryToDelete = this.categories.find(category => category.id === selectedCategoryObjId);
+
+    const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
+      width: '400px',
+      data: {
+        title: 'Delete All Savings',
+        message: `Are you sure you want to delete all savings for "${categoryToDelete?.name}"?`,
+      },
+    });
+
+    dialogRef.afterClosed().subscribe((result: any) => {
+      if (result) {
+        this.savingService.deleteSavingsByCategory(categoryToDelete?.name).subscribe(
+          () => {
+            this.toastr.success(`All savings for "${categoryToDelete?.name}" deleted successfully!`);
+            this.dialogRef.close({ id: selectedCategoryObjId });
+            this.loadData();
+            this.sharedDataService.notifySavingChanged();
+          },
+          (error) => {
+            this.toastr.error(`Failed to delete all savings for "${categoryToDelete?.name}". Please try again.`);
+            console.error('Error deleting savings:', error);
+          }
+        );
+      }
+    });
+  }
+
   private resetForm() {
     this.amount = null;
     this.selectedDate = null;
