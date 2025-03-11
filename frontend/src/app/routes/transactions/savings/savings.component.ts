@@ -9,17 +9,22 @@ import { CategoryAddModalComponent } from './category-add-modal/category-add-mod
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ActionButtonComponent } from '../../../shared/ui/components/action-button/action-button.component';
 import { SavingDetailsModalComponent } from './saving-details-modal/saving-details-modal.component';
+import { NgIcon, provideIcons } from '@ng-icons/core';
+import { hugeLoading03 } from '@ng-icons/huge-icons';
+
 
 @Component({
   selector: 'app-savings',
   standalone: true,
-  imports: [CommonModule, ActionButtonComponent],
+  imports: [CommonModule, ActionButtonComponent, NgIcon],
   templateUrl: './savings.component.html',
-  styleUrls: ['./savings.component.css']
+  styleUrls: ['./savings.component.css'],
+  viewProviders : [provideIcons({ hugeLoading03 })]
 })
 export class SavingsComponent {
   @Input() categories: any[] = [];
 
+  public loading: boolean = true;
   public savings: Saving[] = [];
   public savingsCategorySummary: any[] = [];
   public selectedCategory: any = null;
@@ -39,6 +44,7 @@ export class SavingsComponent {
 
   ngOnInit(): void {
     this.loadData();
+    this.loadAllData();
     this.subscribeToSavingChanges();
   }
 
@@ -98,6 +104,17 @@ export class SavingsComponent {
       }
     });
   }
+
+  private async loadAllData(): Promise<void> {
+    this.loading = true;
+    try {
+      await this.loadData();
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      this.loading = false;
+    }
+  }  
 
   private loadData() {
     forkJoin({

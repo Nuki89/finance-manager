@@ -1,6 +1,6 @@
 <div class="max-w-screen-xl mx-auto p-4">
 
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between items-center border-b pb-4">
         <h1 class="text-2xl font-semibold">Savings</h1>
 
         <app-action-button 
@@ -12,39 +12,53 @@
         ></app-action-button>
     </div>
 
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        <button 
-        (click)="openCategoryDetailModal(category)"
-        *ngFor="let category of savingsCategorySummary" 
-        class="text-left border p-4 rounded-lg shadow-md space-y-3 hover:shadow-lg hover:shadow-purple-400">
-            <h2 
-            class="text-lg font-semibold">{{ category.category_name }}</h2>
-            
-            <div class="space-y-1">
-                <div class="flex justify-between text-sm">
-                    <span>Total Saved:</span>
-                    <span>{{ category.total_saved }} €</span>
-                </div>
-
-                <div class="text-sm">
-                Goal: <span class="font-medium">{{ category.goal_amount }} €</span>
-                </div>
-
-                <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
-                    <div
-                        class="bg-green-500 h-3 rounded-full"
-                        [style.width.%]="(category.total_saved / category.goal_amount) * 100"
-                    ></div>
-                </div>
-
-                <div class="text-sm font-semibold">
-                {{ ((category.total_saved / category.goal_amount) * 100) | number:'1.0-2' }}%
-                </div>
-
-                <div class="text-sm text-gray-600">
-                Remaining: <span class="font-medium">{{ category.remaining_amount }} €</span>
-                </div>
-            </div>
-        </button>
+    <div *ngIf="loading; else savingData" class="flex flex-col justify-center items-center h-52 space-y-2">
+        <ng-icon name="hugeLoading03" class="animate-spin text-gray-500" style="width: 50px; height: 50px;"></ng-icon>
+        <p class="text-gray-500 text-sm">Loading data<span class="dots"></span></p>
     </div>
+
+    <ng-template #savingData>
+        <div *ngIf="savings?.length; else noSavingsData" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <button 
+            (click)="openCategoryDetailModal(category)"
+            *ngFor="let category of savingsCategorySummary" 
+            class="text-left border p-4 rounded-lg shadow-md space-y-3 hover:shadow-lg hover:shadow-purple-400">
+                <h2 
+                class="text-lg font-semibold">{{ category.category_name }}</h2>
+                
+                <div class="space-y-1">
+                    <div class="flex justify-between text-sm">
+                        <span>Total Saved:</span>
+                        <span>{{ category.total_saved }} €</span>
+                    </div>
+
+                    <div class="text-sm">
+                    Goal: <span class="font-medium">{{ category.goal_amount }} €</span>
+                    </div>
+
+                    <div class="w-full bg-gray-200 rounded-full h-3 mt-2">
+                        <div
+                            class="bg-green-500 h-3 rounded-full"
+                            [style.width.%]="(category.total_saved / category.goal_amount) * 100"
+                        ></div>
+                    </div>
+
+                    <div class="text-sm font-semibold">
+                    {{ ((category.total_saved / category.goal_amount) * 100) | number:'1.0-2' }}%
+                    </div>
+
+                    <div class="text-sm text-gray-600">
+                    Remaining: <span class="font-medium">{{ category.remaining_amount }} €</span>
+                    </div>
+                </div>
+            </button>
+        </div>
+    </ng-template>
+
+    <ng-template #noSavingsData>
+        <div class="flex flex-col justify-center items-center h-52 space-y-2">
+            <p class="text-gray-500 text-xl">No savings data.</p>
+        </div>
+    </ng-template>
+
 </div>

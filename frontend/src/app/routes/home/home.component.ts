@@ -271,7 +271,12 @@ export class HomeComponent {
   private async fetchLastYearIncome() {
     try {
       const data: any = await lastValueFrom(this.incomeService.getLastYearIncome());
-      this.lastYearIncome = data.map((item: any) => item.total_amount);
+      this.lastYearIncome = Array(12).fill(0);
+
+        data.forEach((item: any) => {
+            const monthIndex = new Date(item.month).getMonth(); 
+            this.lastYearIncome[monthIndex] = item.total_amount; 
+        });
 
       this.incomeVsExpense.datasets[0].data = [...this.lastYearIncome];
 
@@ -287,7 +292,12 @@ export class HomeComponent {
   private async fetchLastYearExpense() {
     try {
       const data: any = await lastValueFrom(this.expenseService.getLastYearExpense());
-      this.lastYearExpense = data.map((item: any) => item.total_amount);
+      this.lastYearExpense = Array(12).fill(0);
+
+        data.forEach((item: any) => {
+            const monthIndex = new Date(item.month).getMonth(); 
+            this.lastYearExpense[monthIndex] = item.total_amount;
+        });
 
       this.incomeVsExpense.datasets[1].data = [...this.lastYearExpense];
 
