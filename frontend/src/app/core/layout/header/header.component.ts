@@ -10,6 +10,7 @@ import { ToggleParticlesService } from '../../../shared/services/shared/toggle-p
 import { DarkModeComponent } from "../../../shared/ui/components/dark-mode/dark-mode.component";
 import { DarkModeService } from '../../../shared/services/shared/dark-mode.service';
 import { Subject, takeUntil } from 'rxjs';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-header',
@@ -20,25 +21,27 @@ import { Subject, takeUntil } from 'rxjs';
   viewProviders : [provideIcons({ hugeSettings01 })]
 })
 export class HeaderComponent {
-  title: string = "Coiny";
-  firstName: string = 'Nuki';
-  lastName: string = 'Pipika';
-  email: string = 'nuki@gmail.com';
-  currentView: 'Monthly' | 'Yearly';
-  showParticles = false;
+  public title: string = "Coiny";
+  public username: string = '';
+  public email: string = '';
+  public currentView: 'Monthly' | 'Yearly';
+  public showParticles = false;
+  public isDarkMode: boolean = false;
+  
   private destroy$ = new Subject<void>();
-  isDarkMode: boolean = false;
+  private profile: any;
 
   constructor(
     private authService: AuthService,
     private darkService: DarkModeService,
     private toggleParticlesService: ToggleParticlesService,
-    private toggleViewService: ToggleViewService) {
+    private toggleViewService: ToggleViewService,
+    private toastr: ToastrService
+  ) {
       this.currentView = this.toggleViewService.getCurrentView();
       this.toggleViewService.viewMode$.subscribe(view => {
       this.currentView = view;
     });
-    
   }
 
   ngOnInit(): void {
@@ -46,9 +49,27 @@ export class HeaderComponent {
       this.showParticles = state;
     });
     this.subscribeToDarkMode();
+    this.getFetchProfie();
   }
 
-  subscribeToDarkMode(): void {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  public toggleView(): void {
+    this.toggleViewService.toggleView();
+  }
+
+  public toggleParticles() {
+    this.toggleParticlesService.toggleParticles();
+  }
+
+  public onLogout(): void {
+    this.authService.logout()
+  }
+
+  private subscribeToDarkMode(): void {
     this.darkService.darkMode$
       .pipe(takeUntil(this.destroy$))
       .subscribe((isDark: boolean) => {
@@ -57,22 +78,20 @@ export class HeaderComponent {
     );
   }
 
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
-  }
-
-  onLogout(): void {
-    this.authService.logout()
-    console.log('Logout successful');
-  }
-
-  toggleView(): void {
-    this.toggleViewService.toggleView();
-  }
-
-  toggleParticles() {
-    this.toggleParticlesService.toggleParticles();
+  private getFetchProfie(): void {
+    this.authService.getProfile()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe({
+      next: (data) => {
+        this.profile = data;
+        this.email = this.profile.email;
+        this.username = this.profile.username;
+      },
+      error: (error) => {
+        this.toastr.error('Failed to load savings. Please try again.');
+        console.error('Error fetching savings:', error);
+      }
+    })
   }
 
 }
