@@ -49,6 +49,21 @@ class RegisterViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save()
 
+    # def perform_create(self, serializer):
+    #     user = serializer.save()
+
+    #     context = {'user': user}
+    #     html_content = render_to_string('emails/welcome_email.html', context)
+    #     text_content = strip_tags(html_content)
+
+    #     email = EmailMultiAlternatives(
+    #         subject='Welcome to Our Site',
+    #         body=text_content,
+    #         from_email='topshoprpo@gmail.com',
+    #         to=[user.email]
+    #     )
+    #     email.attach_alternative(html_content, "text/html")
+    #     email.send()
     
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
