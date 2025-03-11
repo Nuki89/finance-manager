@@ -105,6 +105,27 @@ export class AuthService {
       );
     });
   }
+
+  register(email: string, username: string, password: string, password2: string): Observable<any> {
+    return new Observable(observer => {
+      this.http.post(apiEndpoints.registerUrl, { email, username, password, password2 }).subscribe(
+        (response: any) => {
+          this.toastr.success(response.message);
+          observer.next(response);
+          observer.complete();
+        },
+        error => {
+          console.error('Register failed:', error);
+          observer.error(error);
+        }
+      );
+    });
+  }
+
+  getProfile(): Observable<any> {
+    return this.http.get(apiEndpoints.profileUrl);
+  }
+
 }
 
 
