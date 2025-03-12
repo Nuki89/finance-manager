@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { ReportService } from '../../../shared/services/api/report.service';
 import { CommonModule } from '@angular/common';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
-import { blob } from 'stream/consumers';
 
 @Component({
   selector: 'app-reports',
@@ -37,7 +36,7 @@ export class ReportsComponent {
     }
   }
 
-  loadVSsummaryPdf(openInNewTab: boolean) {
+  private loadVSsummaryPdf(openInNewTab: boolean) {
     this.reportService.exportVsPdf().subscribe(blob => {
       const pdfBlob = new Blob([blob], { type: 'application/pdf' });
       const pdfObjectUrl = URL.createObjectURL(pdfBlob);
@@ -51,7 +50,7 @@ export class ReportsComponent {
     });
   }
 
-  loadIncomeSummaryPdf(openInNewTab: boolean) {
+  private loadIncomeSummaryPdf(openInNewTab: boolean) {
     this.reportService.exportIncomePdf().subscribe(blob => {
       const pdfBlob = new Blob([blob], { type: 'application/pdf'});
       const pdfObjectUrl = URL.createObjectURL(pdfBlob);
@@ -65,7 +64,7 @@ export class ReportsComponent {
     });
   }
 
-  loadExpenseSummaryPdf(openInNewTab: boolean) {
+  private loadExpenseSummaryPdf(openInNewTab: boolean) {
     this.reportService.exportExpensePdf().subscribe(blob => {
       const pdfBlob = new Blob([blob], { type: 'application/pdf'});
       const pdfObjectUrl = URL.createObjectURL(pdfBlob);
