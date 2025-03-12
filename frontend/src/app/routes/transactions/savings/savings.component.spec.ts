@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SavingsComponent } from './savings.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ToastrModule } from 'ngx-toastr';
 
 describe('SavingsComponent', () => {
   let component: SavingsComponent;
@@ -8,7 +10,7 @@ describe('SavingsComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SavingsComponent]
+      imports: [SavingsComponent,  HttpClientTestingModule, ToastrModule.forRoot()]
     })
     .compileComponents();
 

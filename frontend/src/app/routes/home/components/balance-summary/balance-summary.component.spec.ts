@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { BalanceSummaryComponent } from './balance-summary.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('BalanceSummaryComponent', () => {
   let component: BalanceSummaryComponent;
@@ -8,7 +9,7 @@ describe('BalanceSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BalanceSummaryComponent]
+      imports: [BalanceSummaryComponent, HttpClientTestingModule]
     })
     .compileComponents();
 

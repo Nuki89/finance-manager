@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ExpenseFormComponent } from './expense-form.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ToastrModule } from 'ngx-toastr';
 
 describe('ExpenseFormComponent', () => {
   let component: ExpenseFormComponent;
@@ -8,7 +10,7 @@ describe('ExpenseFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ExpenseFormComponent]
+      imports: [ExpenseFormComponent,  HttpClientTestingModule, ToastrModule.forRoot()]
     })
     .compileComponents();
 

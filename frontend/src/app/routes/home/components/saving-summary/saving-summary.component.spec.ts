@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { SavingSummaryComponent } from './saving-summary.component';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 describe('SavingSummaryComponent', () => {
   let component: SavingSummaryComponent;
@@ -8,7 +9,7 @@ describe('SavingSummaryComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [SavingSummaryComponent]
+      imports: [SavingSummaryComponent, HttpClientTestingModule]
     })
     .compileComponents();
 

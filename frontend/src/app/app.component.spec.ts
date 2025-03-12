@@ -3,6 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { AuthService } from './shared/services/auth/auth.service';
+import { ToastrModule } from 'ngx-toastr';
 
 
 describe('AppComponent', () => {
@@ -10,7 +11,7 @@ describe('AppComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule, RouterTestingModule, AppComponent],
+      imports: [HttpClientTestingModule, RouterTestingModule, AppComponent, ToastrModule.forRoot()],
       providers: [AuthService], 
     }).compileComponents();
 
