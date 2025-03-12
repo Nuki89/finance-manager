@@ -36,7 +36,7 @@ export class DatepickerComponent implements OnChanges {
   @Input() initialDate: Date | null = null;
   @Output() dateChange = new EventEmitter<Date>();
 
-  date = new FormControl();
+  public date = new FormControl();
 
   ngOnInit() {
     this.setDateValue();
@@ -48,14 +48,15 @@ export class DatepickerComponent implements OnChanges {
     }
   }
 
+  public onDateSelected(event: any) {
+    const selectedDate = event.value;
+    this.dateChange.emit(selectedDate);
+  }
+
   private setDateValue() {
     if (this.initialDate) {
       this.date.setValue(moment(this.initialDate).toDate()); 
     }
   }
-
-  onDateSelected(event: any) {
-    const selectedDate = event.value;
-    this.dateChange.emit(selectedDate);
-  }
+  
 }
