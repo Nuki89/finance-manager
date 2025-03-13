@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Inject, Input, Optional, SimpleChanges } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import { ExpenseService } from '../../../../shared/services/api/expense.service';
 import { FormControl, FormsModule } from '@angular/forms';
 import { DatepickerComponent } from '../../../../shared/ui/components/datepicker/datepicker.component';
-import { provideIcons } from '@ng-icons/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
+import { hugeLoading03 } from '@ng-icons/huge-icons';
 import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ToastrService } from 'ngx-toastr';
@@ -18,24 +19,25 @@ import { CategoryEditModalComponent } from '../category-edit-modal/category-edit
 @Component({
   selector: 'app-expense-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatepickerComponent, ActionButtonComponent],
+  imports: [CommonModule, FormsModule, DatepickerComponent, ActionButtonComponent, NgIcon],
   templateUrl: './expense-form.component.html',
   styleUrls: ['./expense-form.component.css'],
-  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]
+  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare, hugeLoading03 })]
 })
 export class ExpenseFormComponent {
   @Input() categories: any[] = []; 
-  expenses: any[] = [];
-  selectedCategory: any = null;
-  newCategoryName: string = '';
 
-  amount: number | null = null;
-  description: string = '';
-  selectedDate: Date | null = null;
-  initialDate: Date | null = null;
-  selectedCategorieObj: any | null = null;
-
-  date = new FormControl();
+  public loading: boolean = true;
+  public expenses: any[] = [];
+  public selectedCategory: any = null;
+  public newCategoryName: string = '';
+  public amount: number | null = null;
+  public description: string = '';
+  public selectedDate: Date | null = null;
+  public selectedCategorieObj: any | null = null;
+  
+  private initialDate: Date | null = null;
+  private date = new FormControl();
 
   constructor(
     private expenseService: ExpenseService,
@@ -57,45 +59,17 @@ export class ExpenseFormComponent {
     }
   }
 
-  private setDateValue() {
-    if (this.initialDate) {
-      this.date.setValue(moment(this.initialDate).toDate()); 
-    } else {
-      this.date.setValue(moment().toDate());
-    }
-  }
-
-  loadData() {
-    forkJoin({
-      expenses: this.expenseService.getExpense(),
-      categories: this.expenseService.getExpenseCategory()
-    }).subscribe(
-      ({ expenses, categories }) => {
-        this.expenses = expenses as any[];
-        this.categories = categories as any[];
-
-        if (this.categories.length > 0) {
-          this.selectedCategory = this.categories[0].id;
-          this.onCategorySelect();
-        }
-      },
-      (error) => {
-        console.error('Error fetching data:', error);
-      }
-    );
-  }
-
-  onCategorySelect() {
+  public onCategorySelect() {
     this.selectedCategorieObj = this.categories.find(
       (categorie) => categorie.id === Number(this.selectedCategory)  
     ) || null;
   }
 
-  onDatePicked(date: Date) {
+  public onDatePicked(date: Date) {
     this.selectedDate = date;
   }
 
-  openAddCategoryModal() {
+  public openAddCategoryModal() {
     const dialogRef = this.dialog.open(CategoryAddModalComponent, {
       width: '400px',
       data: {
@@ -110,7 +84,7 @@ export class ExpenseFormComponent {
     });
   }
   
-  openUpdateCategoryModal(selectedCategory: any) {
+  public openUpdateCategoryModal(selectedCategory: any) {
     if (!selectedCategory) {
       this.toastr.error('No category selected.', 'Error');
       return;
@@ -131,7 +105,7 @@ export class ExpenseFormComponent {
     });
   }
 
-  handleDeleteCategory(id: number) {
+  public handleDeleteCategory(id: number) {
     const categoryToDelete = this.categories.find(category => category.id === id);
 
     const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
@@ -164,7 +138,7 @@ export class ExpenseFormComponent {
     });
   }
 
-  onAddExpense() {
+  public onAddExpense() {
     if (!this.selectedCategory || !this.amount) {
       this.toastr.error('Please fill in all required fields.','Error adding expense');
       return;
@@ -201,6 +175,38 @@ export class ExpenseFormComponent {
         this.toastr.error('Failed to add expense. Please try again.','Error adding expense');
       }
     );
+  }
+
+  private setDateValue() {
+    if (this.initialDate) {
+      this.date.setValue(moment(this.initialDate).toDate()); 
+    } else {
+      this.date.setValue(moment().toDate());
+    }
+  }
+
+  private async loadData(): Promise<void> {
+    this.loading = true;
+    try {
+      const { expenses, categories } = await firstValueFrom(
+        forkJoin({
+          expenses: this.expenseService.getExpense(),
+          categories: this.expenseService.getExpenseCategory()
+        })
+      );
+
+      this.expenses = expenses as any[];
+      this.categories = categories as any[];
+
+      if (this.categories.length > 0) {
+        this.selectedCategory = this.categories[0].id;
+        this.onCategorySelect();
+      }
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      this.loading = false;
+    }
   }
 
 }
