@@ -20,22 +20,12 @@
 
     <div class="space-y-4">
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">First name</label>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Username</label>
             <input 
                 type="text" 
-                class="w-full h-10 px-4 text-sm border border-gray-300 rounded-lg focus:ring-violet-400 focus:border-violet-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-violet-500 dark:focus:border-violet-500"
-                [(ngModel)]="profile.name"
-                placeholder="Name"
-            />
-        </div>
-
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Last name</label>
-            <input 
-                type="text" 
-                class="w-full h-10 px-4 text-sm border border-gray-300 rounded-lg focus:ring-violet-400 focus:border-violet-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-violet-500 dark:focus:border-violet-500"
-                [(ngModel)]="profile.surname"
-                placeholder="Surname"
+                class="w-1/2 h-10 px-4 text-sm border border-gray-300 rounded-lg focus:ring-violet-400 focus:border-violet-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-violet-500 dark:focus:border-violet-500"
+                [(ngModel)]="profile.username"
+                placeholder="Username"
             />
         </div>
 
@@ -43,7 +33,7 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
             <input 
                 type="email" 
-                class="w-full h-10 px-4 text-sm border border-gray-300 rounded-lg focus:ring-violet-400 focus:border-violet-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-violet-500 dark:focus:border-violet-500"
+                class="w-1/2 h-10 px-4 text-sm border border-gray-300 rounded-lg focus:ring-violet-400 focus:border-violet-400 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-violet-500 dark:focus:border-violet-500"
                 [(ngModel)]="profile.email"
                 placeholder="Email"
             />
