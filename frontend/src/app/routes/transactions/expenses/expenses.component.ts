@@ -38,6 +38,25 @@ export class ExpensesComponent {
     this.destroy$.complete();
   }
 
+  public filterExpensesByCategory(categoryName: string) {
+    this.expenseService.getExpenseByCategory(categoryName)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.expenses = data;
+        },
+        error: (err) => {
+          this.toastr.error('Failed to filter expenses. Please try again.');
+          console.error('Failed to filter expenses', err);
+        }
+      }
+    );
+  }
+
+  public clearFilter(): void {
+    this.handleDataChange();
+  }
+
   public handleDataChange(): void {
     this.fetchExpenses();  
   }

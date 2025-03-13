@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Inject, Input, Optional, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Inject, Input, Optional, Output, SimpleChanges } from '@angular/core';
 import { firstValueFrom, forkJoin } from 'rxjs';
 import { ExpenseService } from '../../../../shared/services/api/expense.service';
 import { FormControl, FormsModule } from '@angular/forms';
@@ -26,6 +26,8 @@ import { CategoryEditModalComponent } from '../category-edit-modal/category-edit
 })
 export class ExpenseFormComponent {
   @Input() categories: any[] = []; 
+  @Output() filter = new EventEmitter<string>();
+  @Output() clearFilterEvent = new EventEmitter<void>();
 
   public loading: boolean = true;
   public expenses: any[] = [];
@@ -175,6 +177,16 @@ export class ExpenseFormComponent {
         this.toastr.error('Failed to add expense. Please try again.','Error adding expense');
       }
     );
+  }
+
+  public filterExpensesByCategories() {
+    if (this.selectedCategorieObj) {
+      this.filter.emit(this.selectedCategorieObj.name);
+    }
+  }
+
+  public clearFilter() {
+    this.clearFilterEvent.emit();
   }
 
   private setDateValue() {

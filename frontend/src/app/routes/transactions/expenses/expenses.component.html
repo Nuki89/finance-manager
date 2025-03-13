@@ -1,7 +1,11 @@
 <div class="max-w-screen-xl flex flex-col mx-auto p-4 space-y-4">
     
     <div>
-        <app-expense-form [categories]="getExpenseCategories()"></app-expense-form>
+        <app-expense-form 
+            [categories]="getExpenseCategories()"
+            (filter)="filterExpensesByCategory($event)"
+            (clearFilterEvent)="clearFilter()">
+        </app-expense-form>
     </div>
 
     <div class="space-y-2 overflow-x-auto">
