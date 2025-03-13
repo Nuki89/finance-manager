@@ -4,7 +4,7 @@ import { FormControl, FormsModule } from '@angular/forms';
 import { IncomeService } from '../../../../shared/services/api/income.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastrService } from 'ngx-toastr';
-import { forkJoin } from 'rxjs';
+import { firstValueFrom, forkJoin } from 'rxjs';
 import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
 import { DatepickerComponent } from "../../../../shared/ui/components/datepicker/datepicker.component";
 import moment from 'moment';
@@ -13,8 +13,9 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { SourceEditModalComponent } from '../source-edit-modal/source-edit-modal.component';
 import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { SourceAddModalComponent } from '../source-add-modal/source-add-modal.component';
-import { provideIcons } from '@ng-icons/core';
+import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
+import { hugeLoading03 } from '@ng-icons/huge-icons';
 import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 
 import { Income } from '../../../../shared/models/income.model';
@@ -24,10 +25,10 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 @Component({
   selector: 'app-income-form',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatepickerComponent, ActionButtonComponent],
+  imports: [CommonModule, FormsModule, DatepickerComponent, ActionButtonComponent, NgIcon],
   templateUrl: './income-form.component.html',
   styleUrls: ['./income-form.component.css'],
-  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare })]
+  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare, hugeLoading03 })]
 })
 export class IncomeFormComponent {
   @Input() sources: any[] = []; 
@@ -35,6 +36,7 @@ export class IncomeFormComponent {
   @Output() clearFilterEvent = new EventEmitter<void>();
 
   // public incomes: any[] = [];
+  public loading: boolean = true;
   public incomes: Income[] = [];
   public selectedSource: any = null; 
   public newSourceName: string = '';
@@ -203,24 +205,29 @@ export class IncomeFormComponent {
       this.date.setValue(moment().toDate());
     }
   }
+ 
+  private async loadData(): Promise<void> {
+    this.loading = true;
+    try {
+      const { incomes, sources } = await firstValueFrom(
+        forkJoin({
+          incomes: this.incomeService.getIncome(),
+          sources: this.incomeService.getIncomeSource()
+        })
+      );
 
-  private loadData() {
-    forkJoin({
-      incomes: this.incomeService.getIncome(),
-      sources: this.incomeService.getIncomeSource()
-    }).subscribe(
-      ({ incomes, sources }) => {
-        this.incomes = incomes as any[];
-        this.sources = sources as any[];
-        if (this.sources.length > 0) {
-          this.selectedSource = this.sources[0].id;
-          this.onSourceSelect();
-        }
-      },
-      (error) => {
-        console.error('Error fetching data:', error);
+      this.incomes = incomes as any[];
+      this.sources = sources as any[];
+
+      if (this.sources.length > 0) {
+        this.selectedSource = this.sources[0].id;
+        this.onSourceSelect();
       }
-    );
+    } catch (error) {
+      console.error('Error loading data:', error);
+    } finally {
+      this.loading = false;
+    }
   }
 
 }
