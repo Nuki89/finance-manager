@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, Optional, SimpleChanges, Inject } from '@angular/core';
+import { Component, Input, Optional, SimpleChanges, Inject, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormsModule } from '@angular/forms';
 import { IncomeService } from '../../../../shared/services/api/income.service';
 import { HttpClient } from '@angular/common/http';
@@ -17,6 +17,8 @@ import { provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
 import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 
+import { Income } from '../../../../shared/models/income.model';
+
 ModuleRegistry.registerModules([AllCommunityModule]);
 
 @Component({
@@ -29,16 +31,20 @@ ModuleRegistry.registerModules([AllCommunityModule]);
 })
 export class IncomeFormComponent {
   @Input() sources: any[] = []; 
-  selectedSource: any = null; 
-  newSourceName: string = '';
-  amount: number | null = null; 
-  description: string = ''; 
-  incomes: any[] = [];
-  selectedSourceObj: any | null = null;
-  selectedDate: Date | null = null;
-  initialDate: Date | null = null;
+  @Output() filter = new EventEmitter<string>();
+  @Output() clearFilterEvent = new EventEmitter<void>();
 
-  date = new FormControl();
+  // public incomes: any[] = [];
+  public incomes: Income[] = [];
+  public selectedSource: any = null; 
+  public newSourceName: string = '';
+  public amount: number | null = null; 
+  public description: string = ''; 
+  public selectedSourceObj: any | null = null;
+  public selectedDate: Date | null = null;
+  
+  private initialDate: Date | null = null;
+  private date = new FormControl();
 
   constructor(
     private incomeService: IncomeService, 
@@ -53,7 +59,6 @@ export class IncomeFormComponent {
 
   ngOnInit() {
     this.selectedDate = new Date();
-    // this.setDateValue();
     this.loadData();
   }
 
@@ -63,39 +68,11 @@ export class IncomeFormComponent {
     }
   }
 
-  private setDateValue() {
-    if (this.initialDate) {
-      this.date.setValue(moment(this.initialDate).toDate()); 
-    } else {
-      this.date.setValue(moment().toDate());
-    }
-  }
-
-  loadData() {
-    forkJoin({
-      incomes: this.incomeService.getIncome(),
-      sources: this.incomeService.getIncomeSource()
-    }).subscribe(
-      ({ incomes, sources }) => {
-        this.incomes = incomes as any[];
-        this.sources = sources as any[];
-        if (this.sources.length > 0) {
-          this.selectedSource = this.sources[0].id;
-          this.onSourceSelect();
-        }
-      },
-      (error) => {
-        console.error('Error fetching data:', error);
-      }
-    );
-  }
-
-  onDatePicked(date: Date) {
+  public onDatePicked(date: Date) {
     this.selectedDate = date;
-    // console.log("Selected Date in IncomeFormComponent:", this.selectedDate);
   }
 
-  openAddSourceModal() {
+  public openAddSourceModal() {
     const dialogRef = this.dialog.open(SourceAddModalComponent, {
       width: '400px',
       data: {
@@ -110,7 +87,7 @@ export class IncomeFormComponent {
     });
   }
 
-  openUpdateSourceModal(selectedSource: any) {
+  public openUpdateSourceModal(selectedSource: any) {
     if (!selectedSource) {
       this.toastr.error('No source selected.', 'Error');
       return;
@@ -131,13 +108,13 @@ export class IncomeFormComponent {
     });
   }
 
-  onSourceSelect() {
+  public onSourceSelect() {
     this.selectedSourceObj = this.sources.find(
       (source) => source.id === Number(this.selectedSource)  
     ) || null;
   }
 
-  handleDeleteSource(id: number) {
+  public handleDeleteSource(id: number) {
     const sourceToDelete = this.sources.find(source => source.id === id);
 
     const dialogRef = this.dialog.open(ConfirmationModuleComponent, {
@@ -170,7 +147,7 @@ export class IncomeFormComponent {
     });
   }
 
-  onAddIncome() {
+  public onAddIncome() {
     if (!this.selectedSource || !this.amount) {
       this.toastr.error('Please fill in all required fields.','Error adding income');
       return;
@@ -205,6 +182,43 @@ export class IncomeFormComponent {
       (error) => {
         console.error('Error adding income:', error);
         this.toastr.error('Failed to add income. Please try again.','Error adding income');
+      }
+    );
+  }
+
+  public filterIncomesBySource() {
+    if (this.selectedSourceObj) {
+      this.filter.emit(this.selectedSourceObj.name);
+    }
+  }
+
+  public clearFilter() {
+    this.clearFilterEvent.emit();
+  }
+
+  private setDateValue() {
+    if (this.initialDate) {
+      this.date.setValue(moment(this.initialDate).toDate()); 
+    } else {
+      this.date.setValue(moment().toDate());
+    }
+  }
+
+  private loadData() {
+    forkJoin({
+      incomes: this.incomeService.getIncome(),
+      sources: this.incomeService.getIncomeSource()
+    }).subscribe(
+      ({ incomes, sources }) => {
+        this.incomes = incomes as any[];
+        this.sources = sources as any[];
+        if (this.sources.length > 0) {
+          this.selectedSource = this.sources[0].id;
+          this.onSourceSelect();
+        }
+      },
+      (error) => {
+        console.error('Error fetching data:', error);
       }
     );
   }

@@ -20,7 +20,7 @@ import { Income } from '../../../shared/models/income.model';
   styleUrls: ['./incomes.component.css']
 })
 export class IncomesComponent {
-  public incomes: Income[] = [];
+  public allIncomes: Income[] = [];
 
   private destroy$ = new Subject<void>();
 
@@ -39,6 +39,25 @@ export class IncomesComponent {
     this.destroy$.complete();
   }
 
+  public filterIncomesBySource(sourceName: string) {
+    this.incomeService.getIncomeBySource(sourceName)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.allIncomes = data;
+        },
+        error: (err) => {
+          this.toastr.error('Failed to filter incomes. Please try again.');
+          console.error('Failed to filter incomes', err);
+        }
+      }
+    );
+  }
+
+  public clearFilter(): void {
+    this.handleDataChange();
+  }
+  
   public handleDataChange(): void {
     this.fetchIncomes();  
   }
@@ -86,7 +105,7 @@ export class IncomesComponent {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data) => {
-        this.incomes = data;        
+        this.allIncomes = data;        
       },
       error: (err) => {
         this.toastr.error('Failed to load incomes. Please try again.');
