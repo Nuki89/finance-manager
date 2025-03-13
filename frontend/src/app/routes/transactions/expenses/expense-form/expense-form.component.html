@@ -19,9 +19,10 @@
                     <div *ngIf="categories.length > 0; else noCategories" class="w-full">
                         <select
                             id="category"
-                            class="w-1/2 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                            class="p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
                             [(ngModel)]="selectedCategory"
                             name="category"
+                            [ngClass]="data?.hideFilters ? 'w-3/4' : 'w-1/2'"
                             (change)="onCategorySelect()"
                             required>
                             <option *ngFor="let category of categories" [value]="category.id">
@@ -67,25 +68,28 @@
                 
             </div>
         </div>
-
+        
         <div class="mb-6">
             <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-            <div class="flex items-center gap-2 mt-1 w-3/4">
-
+            <div class="flex items-center gap-2 mt-1" 
+                [ngClass]="data?.hideFilters ? 'w-full' : 'w-3/4'">
+        
                 <input
                     type="number"
                     id="amount"
-                    class="w-1/2 mt-1 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    class="mt-1 p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                    [ngClass]="data?.hideFilters ? 'w-full' : 'w-1/2'"
                     [(ngModel)]="amount"
                     name="amount"
                     placeholder="Enter amount"
                     required/>
+            
                 <app-datepicker 
                     (dateChange)="onDatePicked($event)" 
                     [initialDate]="selectedDate">
                 </app-datepicker>
             </div>
-        </div>                      
+        </div>
 
         <div class="flex">
             <div class="flex w-3/4 gap-2">
