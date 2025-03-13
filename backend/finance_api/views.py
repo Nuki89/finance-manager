@@ -136,6 +136,9 @@ class IncomeSourceViewSet(viewsets.ModelViewSet):
 
 
 class IncomeViewSet(viewsets.ModelViewSet):
+    """
+    Filter by source: http://localhost:8000/incomes/?income_name=example
+    """
     queryset = Income.objects.all()
     serializer_class = IncomeSerializer
     # permission_classes = [IsAuthenticated]

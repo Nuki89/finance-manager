@@ -29,6 +29,10 @@ export class IncomeService {
     return this.http.delete(`${this.incomeUrl.replace(/\/$/, '')}/${id}/`);
   }
 
+  getIncomeBySource(sourceName: string): Observable<Income[]> {
+    return this.http.get<Income[]>(`${this.incomeUrl}?income_name=${sourceName}`);
+  }  
+
   deleteIncomesBySource(incomeName: string) {
     return this.http.delete(`${this.incomeUrl}delete_by_source/?income_name=${incomeName}`);
   }
