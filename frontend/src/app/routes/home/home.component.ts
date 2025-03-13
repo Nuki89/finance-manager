@@ -97,6 +97,7 @@ export class HomeComponent {
       data: {
         selectedSource: null,
         title: 'Add New Income',
+        hideFilters: true,
       },
     });
 
@@ -115,6 +116,7 @@ export class HomeComponent {
       data: {
         selectedSource: null,
         title: 'Add New Expense',
+        hideFilters: true,
       },
     });
 
