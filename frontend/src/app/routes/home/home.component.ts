@@ -8,7 +8,7 @@ import { ExpenseService } from '../../shared/services/api/expense.service';
 import { ToggleViewService } from '../../shared/services/shared/toggle-view.service';
 import { lastValueFrom, Subject } from 'rxjs';
 import { NgIcon, provideIcons } from '@ng-icons/core';
-import { hugeLoading03 } from '@ng-icons/huge-icons';
+import { hugeLoading03, hugeSettings01 } from '@ng-icons/huge-icons';
 import { IncomeSummaryComponent } from './components/income-summary/income-summary.component';
 import { ExpenseSummaryComponent } from './components/expense-summary/expense-summary.component';
 import { ActionButtonComponent } from '../../shared/ui/components/action-button/action-button.component';
@@ -21,6 +21,7 @@ import { HistoryService } from '../../shared/services/api/history.service';
 import { SavingFormComponent } from '../transactions/savings/saving-form/saving-form.component';
 import { SavingService } from '../../shared/services/api/saving.service';
 import { BalanceSummaryComponent } from './components/balance-summary/balance-summary.component';
+import { ColorSettingsModalComponent } from './components/color-settings-modal/color-settings-modal.component';
 
 @Component({
   selector: 'app-home',
@@ -28,7 +29,7 @@ import { BalanceSummaryComponent } from './components/balance-summary/balance-su
   imports: [CommonModule, RouterModule, PieChartComponent, BarChartComponent, NgIcon, IncomeSummaryComponent, ExpenseSummaryComponent, ActionButtonComponent, SavingSummaryComponent, BalanceSummaryComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  viewProviders : [provideIcons({ hugeLoading03 })]
+  viewProviders : [provideIcons({ hugeLoading03, hugeSettings01 })]
 })
 export class HomeComponent {
   @Input() sources: any[] = []; 
@@ -39,6 +40,10 @@ export class HomeComponent {
   @ViewChild(BalanceSummaryComponent) balanceSummaryComponent!: BalanceSummaryComponent
   @ViewChild(BarChartComponent) barChart!: BarChartComponent;
   @ViewChild(PieChartComponent) pieChart!: PieChartComponent;
+
+  @ViewChild('incomePieChart') incomePieChart!: PieChartComponent;
+  @ViewChild('expensePieChart') expensePieChart!: PieChartComponent;
+
 
   public loading: boolean = true;
   public selectedView: string = 'month';
@@ -63,6 +68,20 @@ export class HomeComponent {
   private lastYearIncome: any[] = [];
   private lastYearExpense: any[] = [];
 
+  // public colorMap: { [key: string]: string } = {};
+  public incomeColorMap: { [key: string]: string } = {};
+  public expenseColorMap: { [key: string]: string } = {};
+
+  private incomeColorKey = 'incomeCategoryColors';
+  private expenseColorKey = 'expenseCategoryColors';
+
+  private availableColors = [
+    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+    '#9966FF', '#FF9F40', '#8D99AE', '#00A878',
+    '#F72585', '#06D6A0'
+  ];
+  private colorKey = 'categoryColors';
+
   constructor(
     private reportService: ReportService,
     private incomeService: IncomeService,
@@ -75,6 +94,7 @@ export class HomeComponent {
   ) {}
 
   ngOnInit() {
+    this.loadSavedColors();
     this.balanceInfo();
 
     this.toggleViewService.viewMode$
@@ -147,17 +167,74 @@ export class HomeComponent {
     });
   }
 
+  public openColorSettingsModal(type: 'income' | 'expense') {
+    const dialogRef = this.dialog.open(ColorSettingsModalComponent, {
+      width: '400px',
+      data: {
+        selectedType: type,
+        incomeSources: this.incomeSources.map(i => i.name),
+        expenseSources: this.spendingCategories.map(i => i.name),
+        incomeColorMap: this.incomeColorMap,
+        expenseColorMap: this.expenseColorMap
+      },
+    });
+  
+    dialogRef.afterClosed().subscribe((onSaveColors) => {
+      if (onSaveColors) {
+        this.incomeColorMap = onSaveColors.incomeColorMap;
+        this.expenseColorMap = onSaveColors.expenseColorMap;
+  
+        this.saveIncomeColors();
+        this.saveExpenseColors();
+  
+        this.fetchIncomeData();
+        this.fetchExpenseData();
+      }
+    });
+  }  
+
+  public updateCategoryColor(category: string, color: string, type: 'income' | 'expense') {
+    if (type === 'income') {
+        this.incomeColorMap[category] = color;
+        this.saveIncomeColors();
+
+        this.incomeChartCategory.datasets[0].backgroundColor = this.incomeSources.map(i => 
+            this.incomeColorMap[i.name] || this.getRandomColor()
+        );
+
+        if (this.incomePieChart) {
+            this.incomePieChart.updateChart();
+        }
+    }
+
+    if (type === 'expense') {
+        this.expenseColorMap[category] = color;
+        this.saveExpenseColors();
+
+        this.expenseChartCategory.datasets[0].backgroundColor = this.spendingCategories.map(i => 
+            this.expenseColorMap[i.name] || this.getRandomColor()
+        );
+
+        if (this.expensePieChart) {
+            this.expensePieChart.updateChart();
+        }
+    }
+  }
+
+  public onColorChange(category: string, event: Event, type: 'income' | 'expense') {
+    const input = event.target as HTMLInputElement;
+    if (input) {
+        this.updateCategoryColor(category, input.value, type);
+    }
+  }
+
   private initializeChartData(): { labels: string[], datasets: { data: number[], backgroundColor: string[] }[] } {
     return {
         labels: [],
         datasets: [
             {
                 data: [],
-                backgroundColor: [
-                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
-                    '#9966FF', '#FF9F40', '#8D99AE', '#00A878', 
-                    '#F72585', '#06D6A0'
-                ]
+                backgroundColor: this.availableColors
             }
         ]
     };
@@ -215,8 +292,28 @@ export class HomeComponent {
         value: item.total_amount
       }));
 
-      this.incomeChartCategory.labels = this.incomeSources.map(i => i.name);
-      this.incomeChartCategory.datasets[0].data = this.incomeSources.map(i => i.value);
+      const backgroundColors: string[] = this.incomeSources.map(i => {
+        if (!this.incomeColorMap[i.name]) {
+            if (this.availableColors.length > 0) {
+                this.incomeColorMap[i.name] = this.availableColors.shift()!;
+            } else {            
+                this.incomeColorMap[i.name] = this.getRandomColor();
+            }
+            this.saveIncomeColors();
+        }
+        return this.incomeColorMap[i.name];
+      });
+
+      this.incomeChartCategory = {
+        labels: this.incomeSources.map(i => i.name),
+        datasets: [{
+          data: this.incomeSources.map(i => i.value),
+          backgroundColor: backgroundColors
+        }]
+      };
+
+      // this.incomeChartCategory.labels = this.incomeSources.map(i => i.name);
+      // this.incomeChartCategory.datasets[0].data = this.incomeSources.map(i => i.value);
 
       if (this.pieChart) {
           this.pieChart.updateChart();
@@ -242,8 +339,28 @@ export class HomeComponent {
         value: item.total_amount
       }));
 
-      this.expenseChartCategory.labels = this.spendingCategories.map(i => i.name);
-      this.expenseChartCategory.datasets[0].data = this.spendingCategories.map(i => i.value);
+      const backgroundColors: string[] = this.spendingCategories.map(i => {
+        if (!this.expenseColorMap[i.name]) {
+            if (this.availableColors.length > 0) {
+                this.expenseColorMap[i.name] = this.availableColors.shift()!;
+            } else {            
+                this.expenseColorMap[i.name] = this.getRandomColor();
+            }
+            this.saveExpenseColors();
+        }
+        return this.expenseColorMap[i.name];
+      });
+  
+      this.expenseChartCategory = {
+        labels: this.spendingCategories.map(i => i.name),
+        datasets: [{
+          data: this.spendingCategories.map(i => i.value),
+          backgroundColor: backgroundColors
+        }]
+      };
+
+      // this.expenseChartCategory.labels = this.spendingCategories.map(i => i.name);
+      // this.expenseChartCategory.datasets[0].data = this.spendingCategories.map(i => i.value);
 
       if (this.pieChart) {
           this.pieChart.updateChart();
@@ -346,4 +463,29 @@ export class HomeComponent {
     }
   }
 
+  private loadSavedColors() {
+    const savedIncomeColors = localStorage.getItem(this.incomeColorKey);
+    if (savedIncomeColors) {
+        this.incomeColorMap = JSON.parse(savedIncomeColors);
+    }
+
+    const savedExpenseColors = localStorage.getItem(this.expenseColorKey);
+    if (savedExpenseColors) {
+        this.expenseColorMap = JSON.parse(savedExpenseColors);
+    }
+  }
+
+  private saveIncomeColors() {
+    localStorage.setItem(this.incomeColorKey, JSON.stringify(this.incomeColorMap));
+  }
+
+  private saveExpenseColors() {
+      localStorage.setItem(this.expenseColorKey, JSON.stringify(this.expenseColorMap));
+  }
+
+  
+  private getRandomColor(): string {
+    return '#' + Math.floor(Math.random()*16777215).toString(16);
+  }
+  
 }

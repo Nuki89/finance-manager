@@ -27,7 +27,10 @@
 
         <div class="card">
             <div class="card-content">
-                <h2 class="text-lg font-bold mb-4">Income Sources ({{ selectedView }})</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Income Sources ({{ selectedView }})</h2>
+                    <ng-icon class="hover:cursor-pointer" name="hugeSettings01" style="width: 20px; height: 20px;" (click)="openColorSettingsModal('income')"></ng-icon>
+                </div>
         
                 <div *ngIf="loading; else incomeChart" class="flex flex-col justify-center items-center h-52 space-y-2">
                     <ng-icon name="hugeLoading03" class="animate-spin text-gray-500" style="width: 50px; height: 50px;"></ng-icon>
@@ -36,7 +39,7 @@
         
                 <ng-template #incomeChart>
                     <div *ngIf="incomeChartCategory?.labels?.length && incomeChartCategory?.datasets?.length; else noIncomeData">
-                        <app-pie-chart [data]="incomeChartCategory"></app-pie-chart>
+                        <app-pie-chart #incomePieChart [data]="incomeChartCategory"></app-pie-chart>
                     </div>
                 </ng-template>
         
@@ -69,7 +72,10 @@
 
         <div class="card">
             <div class="card-content">
-                <h2 class="text-lg font-bold mb-4">Spending Categories ({{ selectedView }})</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold">Spending Categories ({{ selectedView }})</h2>
+                    <ng-icon class="hover:cursor-pointer" name="hugeSettings01" style="width: 20px; height: 20px;" (click)="openColorSettingsModal('expense')"></ng-icon>
+                </div>
         
                 <div *ngIf="loading; else expenseChart" class="flex flex-col justify-center items-center h-52 space-y-2">
                     <ng-icon name="hugeLoading03" class="animate-spin text-gray-500" style="width: 50px; height: 50px;"></ng-icon>
@@ -78,7 +84,7 @@
         
                 <ng-template #expenseChart>
                     <div *ngIf="expenseChartCategory?.labels?.length && expenseChartCategory?.datasets?.length; else noExpenseData">
-                        <app-pie-chart [data]="expenseChartCategory"></app-pie-chart>
+                        <app-pie-chart #expensePieChart [data]="expenseChartCategory"></app-pie-chart>
                     </div>
                 </ng-template>
         
@@ -193,5 +199,3 @@
         </div>
     </div>
 </div>
-
-    
