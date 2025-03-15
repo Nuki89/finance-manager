@@ -1,0 +1,19 @@
+services:
+  backend:
+    container_name: finance-manager-backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8088:8088"
+    volumes:
+      - ./backend:/app
+      - sqlite_data:/app/db
+    environment:
+      - MODE=prod
+      - DEBUG=0
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,backend
+    command: ["/usr/local/bin/backend.sh"]
+
+volumes:
+  sqlite_data:

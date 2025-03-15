@@ -1,0 +1,10 @@
+services:
+  backend:
+    environment:
+      - MODE=dev
+      - DEBUG=1
+      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,backend
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
