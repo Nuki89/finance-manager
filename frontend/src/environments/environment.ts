@@ -1,4 +1,5 @@
 const BASE_URL = `http://127.0.0.1:8000`;
+// const BASE_URL = process.env['BASE_URL']
 
 export const apiEndpoints = {
     production: false,
@@ -18,3 +19,8 @@ export const apiEndpoints = {
     // logoutUrl: `${BASE_URL}/api/logout/`,
     // isLoggedInUrl: `${BASE_URL}/api/is-logged-in/`
 };
+
+// export const environment = {
+//     production: false,
+//     baseUrl: process.env['BASE_URL'] || 'http://127.0.0.1:8000',
+//   };

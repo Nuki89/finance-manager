@@ -201,3 +201,6 @@ poetry.toml
 
 # LSP config files
 pyrightconfig.json
+
+# Other
+custom-angular.json
