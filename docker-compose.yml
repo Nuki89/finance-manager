@@ -15,5 +15,33 @@ services:
       - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1,backend
     command: ["/usr/local/bin/backend.sh"]
 
+  # frontend:
+  #   container_name: finance-manager-frontend
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #     args:
+  #       NODE_ENV: production
+  #   ports:
+  #     - "4288:80"
+  #   depends_on:
+  #     - backend
+  #   environment:
+  #     - NODE_ENV=production
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: development
+    container_name: frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    environment:
+      - NODE_ENV=development
+
 volumes:
   sqlite_data:
