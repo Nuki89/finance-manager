@@ -6,6 +6,11 @@ import { MatNativeDateModule, DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } f
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import moment from 'moment';
+import { provideIcons } from '@ng-icons/core';
+import { bootstrapCalendar3 } from '@ng-icons/bootstrap-icons';
+import { hugeCalendar03 } from '@ng-icons/huge-icons';
+import { CommonModule } from '@angular/common';
+import { ActionButtonComponent } from '../action-button/action-button.component';
 
 export const MY_DATE_FORMAT = {
   parse: {
@@ -24,15 +29,18 @@ export const MY_DATE_FORMAT = {
   standalone: true,
   providers: [
     { provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE] },
-    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMAT }
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMAT },
+
   ],
-  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, ReactiveFormsModule],
+  viewProviders : [provideIcons({ bootstrapCalendar3, hugeCalendar03 })],
+  imports: [MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, ReactiveFormsModule, CommonModule, ActionButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './datepicker.component.html',
   styleUrls: ['./datepicker.component.css'],
   encapsulation: ViewEncapsulation.None,
 })
 export class DatepickerComponent implements OnChanges {
+  @Input() showInput: boolean = true;
   @Input() initialDate: Date | null = null;
   @Output() dateChange = new EventEmitter<Date>();
 
@@ -47,6 +55,10 @@ export class DatepickerComponent implements OnChanges {
       this.setDateValue();
     }
   }
+
+  public openPicker(picker: any): void {
+    picker.open();
+  }  
 
   public onDateSelected(event: any) {
     const selectedDate = event.value;

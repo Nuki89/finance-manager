@@ -9,19 +9,30 @@ import { MatDialog } from '@angular/material/dialog';
 import { IncomeEditModalComponent } from './income-edit-modal/income-edit-modal.component';
 import { ConfirmationModuleComponent } from '../../../shared/ui/components/confirmation-module/confirmation-module.component';
 import { ToastrService } from 'ngx-toastr';
-
+import { provideIcons } from '@ng-icons/core';
+import { ActionButtonComponent } from '../../../shared/ui/components/action-button/action-button.component';
+import { FormControl, FormsModule } from '@angular/forms';
+import { DatepickerComponent } from '../../../shared/ui/components/datepicker/datepicker.component';
+import moment from 'moment';
+import { hugeFilter, hugeFilterRemove } from '@ng-icons/huge-icons';
 import { Income } from '../../../shared/models/income.model';
 
 @Component({
   selector: 'app-incomes',
   standalone: true,
-  imports: [CommonModule, RouterModule, IncomeFormComponent, SharedTableComponent],
+  imports: [CommonModule, RouterModule, IncomeFormComponent, SharedTableComponent, ActionButtonComponent, FormsModule, DatepickerComponent],
   templateUrl: './incomes.component.html',
-  styleUrls: ['./incomes.component.css']
+  styleUrls: ['./incomes.component.css'],
+  viewProviders : [ provideIcons({ hugeFilter, hugeFilterRemove})]
 })
 export class IncomesComponent {
   public allIncomes: Income[] = [];
-
+  public searchTerm: string = '';
+  public selectedDate: Date | null = null;
+  
+  private originalIncomes: Income[] = []; 
+  private initialDate: Date | null = null;
+  private date = new FormControl();
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -54,7 +65,44 @@ export class IncomesComponent {
     );
   }
 
+  public onDatePicked(date: Date) {
+    this.selectedDate = date;
+  
+    if (this.selectedDate) {
+      const selectedDateFormatted = moment(this.selectedDate).format('YYYY-MM-DD');
+  
+      this.allIncomes = this.originalIncomes.filter((income) => {
+        const incomeDate = moment(income.date).format('YYYY-MM-DD');
+        return incomeDate === selectedDateFormatted;
+      });
+    } else {
+      this.allIncomes = [...this.originalIncomes];
+    }
+  }
+
+  public filterIncomes() {
+    if (!this.searchTerm) {
+      this.allIncomes = [...this.originalIncomes];
+      return;
+    }
+
+    const term = this.searchTerm.toLowerCase();
+
+    this.allIncomes = this.originalIncomes.filter((income) => {
+      return (
+        income.source_data?.name?.toLowerCase().includes(term) ||
+        income.amount?.toString().toLowerCase().includes(term) ||
+        income.date?.toLowerCase().includes(term) ||
+        income.description?.toLowerCase().includes(term)
+      );
+    });
+  }
+
   public clearFilter(): void {
+    if (this.searchTerm) {
+      this.searchTerm = '';
+      this.allIncomes = [...this.originalIncomes];
+    }
     this.handleDataChange();
   }
   
@@ -105,7 +153,8 @@ export class IncomesComponent {
     .pipe(takeUntil(this.destroy$))
     .subscribe({
       next: (data) => {
-        this.allIncomes = data;        
+        this.originalIncomes = data;
+        this.allIncomes = [...data];   
       },
       error: (err) => {
         this.toastr.error('Failed to load incomes. Please try again.');
@@ -113,5 +162,5 @@ export class IncomesComponent {
       }
     });
   }
-  
+
 }

@@ -15,7 +15,7 @@ import { AllCommunityModule, ModuleRegistry } from 'ag-grid-community';
 import { SourceAddModalComponent } from '../source-add-modal/source-add-modal.component';
 import { NgIcon, provideIcons } from '@ng-icons/core';
 import { heroTrash, heroPlusSmall, heroPencilSquare } from '@ng-icons/heroicons/outline';
-import { hugeLoading03 } from '@ng-icons/huge-icons';
+import { hugeLoading03, hugeFilter, hugeFilterRemove } from '@ng-icons/huge-icons';
 import { ActionButtonComponent } from '../../../../shared/ui/components/action-button/action-button.component';
 
 import { Income } from '../../../../shared/models/income.model';
@@ -28,7 +28,7 @@ ModuleRegistry.registerModules([AllCommunityModule]);
   imports: [CommonModule, FormsModule, DatepickerComponent, ActionButtonComponent, NgIcon],
   templateUrl: './income-form.component.html',
   styleUrls: ['./income-form.component.css'],
-  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare, hugeLoading03 })]
+  viewProviders : [provideIcons({ heroTrash, heroPlusSmall, heroPencilSquare, hugeLoading03, hugeFilter, hugeFilterRemove })]
 })
 export class IncomeFormComponent {
   @Input() sources: any[] = []; 

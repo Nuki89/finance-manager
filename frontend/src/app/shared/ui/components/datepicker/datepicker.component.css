@@ -14,6 +14,13 @@
   border: 0 !important;
 }
 
+.hidden-input {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
 
 .mat-mdc-form-field-has-icon-suffix .mat-mdc-text-field-wrapper {
   width: 180px !important;
