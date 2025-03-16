@@ -114,7 +114,10 @@
                                 *ngFor="let transaction of recentTransactions">
                                 <span> {{ transaction.type | titlecase }} </span>
                                 <span class="truncate"> {{ transaction.name }} </span>
-                                <span>{{ transaction.amount | number }} €</span>
+                                <div class="flex justify-end items-center pr-4">
+                                    <span>{{ transaction.amount | number }}</span>
+                                    <span class="ml-2">€</span>
+                                </div>
                                 <span> {{ transaction.date }} </span>
                             </li>
                         </ul>

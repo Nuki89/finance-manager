@@ -80,21 +80,19 @@
 
                         <div class="flex gap-2 ml-auto mt-6">
                             <app-action-button 
+                                text="Save"
+                                type="button"
+                                buttonClass="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 shadow-lg shadow-green-500/50 dark:shadow-lg dark:shadow-green-800/80 font-medium"
                                 tooltip="Save"
-                                icon="heroCheck"
-                                size="icon"
-                                buttonClass="text-green-500 border border-green-500 bg-white 
-                                            hover:bg-green-600 hover:text-white"
                                 (click)="updateSavingCategory(selectedCategoryObj.id, selectedCategoryObj.name, selectedCategoryObj.goal_amount)"
-                            ></app-action-button>
+                            ></app-action-button>               
                                                     
                             <app-action-button 
                                 tooltip="Delete"
                                 icon="heroTrash"
                                 size="icon"
                                 type="button"
-                                buttonClass="text-red-500 border border-red-500 bg-white 
-                                            hover:bg-red-600 hover:text-white"
+                                buttonClass="text-white bg-gradient-to-r from-red-400 via-red-500 to-red-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-red-300 dark:focus:ring-red-800 shadow-lg shadow-red-500/50 dark:shadow-lg dark:shadow-red-800/80 font-medium"
                                 (click)="handleDeleteCategory(selectedCategoryObj.id)"
                             ></app-action-button>
                         </div>
