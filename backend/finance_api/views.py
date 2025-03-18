@@ -363,6 +363,22 @@ class SavingViewSet(viewsets.ModelViewSet):
     # permission_classes = [IsAuthenticated]
     permission_classes = [AllowAny]
 
+    def create(self, request, *args, **kwargs):
+        balance_record = get_or_create_balance()
+        amount = Decimal(request.data.get('amount', 0))
+        
+        if amount > balance_record.balance:
+            return Response(
+                {"detail": "Insufficient balance"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        response = super().create(request, *args, **kwargs)
+        balance_record.balance -= amount
+        balance_record.total_savings += amount
+        balance_record.save()
+
+        return response
+
     def get_view_name(self):
         if hasattr(self, 'action'):
             if self.action == 'list':

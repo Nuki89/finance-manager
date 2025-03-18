@@ -34,8 +34,6 @@ def update_balance_after_saving(sender, instance, created, **kwargs):
     if created:
         with transaction.atomic():
             balance_record = get_or_create_balance()
-            if instance.amount > balance_record.balance:
-                raise ValueError("Insufficient balance")
             balance_record.balance -= instance.amount
             balance_record.total_savings += instance.amount
             balance_record.save()
