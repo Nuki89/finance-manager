@@ -53,6 +53,9 @@ export class HomeComponent {
   public totalSaving: number = 0;
   public recentTransactions: any[] = [];
   public savings: any[] = [];
+
+  public currentBalance: string = '';
+  public lastUpdated: string = '';
   
   public spendingCategories: { name: string; value: number }[] = [];
   public incomeSources: { name: string; value: number }[] = [];
@@ -63,7 +66,6 @@ export class HomeComponent {
   private selectedSource: any = null; 
   private incomes: any[] = [];
   private selectedSourceObj: any | null = null;
-  private currentBalance: number = 0;
   private destroy$ = new Subject<void>();
   private lastYearIncome: any[] = [];
   private lastYearExpense: any[] = [];
@@ -378,7 +380,11 @@ export class HomeComponent {
       .subscribe({
         next: (data: any) => {
           this.balance = data;  
-          this.currentBalance = data.available_balance;    
+          this.currentBalance = data.available_balance.toLocaleString('de-DE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });          
+          this.lastUpdated = data.last_updated;        
         },
         error: (err) => {
           console.error('Failed to fetch balance:', err);

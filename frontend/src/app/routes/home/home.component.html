@@ -3,7 +3,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-4">
         <div class="card lg:col-span-1">
             <div class="card-content text-center">
-                <app-balance-summary></app-balance-summary>
+                <app-balance-summary [currentBalance]="currentBalance" [last_updated]="lastUpdated"></app-balance-summary>
             </div>
         </div>
         <div class="card">
