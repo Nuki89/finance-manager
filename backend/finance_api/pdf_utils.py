@@ -67,9 +67,10 @@ def generate_incomes_pdf(incomes):
 
         description = income.description if income.description.strip() else "No description"
         formatted_date = income.date.strftime('%d.%m.%Y')  
+        formatted_amount = "{:,.2f} €".format(income.amount).replace(',', 'TEMP').replace('.', ',').replace('TEMP', '.')
         p.drawString(50, y, formatted_date)
         p.drawString(170, y, str(income.source.name))
-        p.drawString(280, y, "{:,.2f} €".format(income.amount))
+        p.drawString(280, y, formatted_amount)
         p.drawString(390, y, description)
 
         p.line(50, y - 4, width - 50, y - 4)
@@ -134,14 +135,47 @@ def generate_expenses_pdf(expenses):
 
         description = expense.description if expense.description.strip() else "No description"
         formatted_date = expense.date.strftime('%d.%m.%Y')  
+        formatted_amount = "{:,.2f} €".format(expense.amount).replace(',', 'TEMP').replace('.', ',').replace('TEMP', '.')
         p.drawString(50, y, formatted_date)
         p.drawString(170, y, str(expense.category.name))
-        p.drawString(280, y, "{:,.2f} €".format(expense.amount))
+        p.drawString(280, y, formatted_amount)
         p.drawString(390, y, description)
 
         p.line(50, y - 4, width - 50, y - 4)
 
         y -= 22
+    
+    # categories = {}
+    # for expense in expenses:
+    #     if expense.category.name in categories:
+    #         categories[expense.category.name] += float(expense.amount)
+    #     else:
+    #         categories[expense.category.name] = float(expense.amount)
+
+    # data = list(categories.values())
+    # labels = list(categories.keys())
+
+    # if data:        
+    #     drawing = Drawing(400, 200)
+    #     pie = Pie()
+    #     pie.x = 0
+    #     pie.y = -50
+    #     pie.width = 200
+    #     pie.height = 200
+    #     pie.data = data
+    #     pie.labels = [f"{label} ({amount:.2f} €)" for label, amount in zip(labels, data)]
+
+    #     pie.slices.strokeWidth = 0.5
+    #     pie.slices.strokeColor = colors.black
+    #     pie.slices[0].fillColor = colors.lightblue
+    #     pie.slices[1].fillColor = colors.lightgreen
+    #     pie.slices[2].fillColor = colors.lightpink
+    #     pie.slices[3].fillColor = colors.orange
+    #     pie.slices[4].fillColor = colors.purple
+        
+    #     drawing.add(pie)
+        
+    #     drawing.drawOn(p, 100, height - 350)  
 
     p.showPage()
     p.save()
@@ -198,10 +232,10 @@ def generate_summary_pdf(entries, balance_data):
         if y < 100:
             p.showPage()
             y = height - 100
-            
-        total_balance = "{:,.2f} €".format(entry['total_balance'])
-        total_savings = "{:,.2f} €".format(entry['total_savings'])
-        available_balance = "{:,.2f} €".format(entry['total_balance'] - entry['total_savings'])
+
+        total_balance = "{:,.2f} €".format(entry['total_balance']).replace(',', 'TEMP').replace('.', ',').replace('TEMP', '.')
+        total_savings = "{:,.2f} €".format(entry['total_savings']).replace(',', 'TEMP').replace('.', ',').replace('TEMP', '.')
+        available_balance = "{:,.2f} €".format(entry['total_balance'] - entry['total_savings']).replace(',', 'TEMP').replace('.', ',').replace('TEMP', '.')
 
         # TOTAL DATA
         p.drawString(50, y, 'Total Balance: ' + total_balance)
@@ -226,16 +260,17 @@ def generate_summary_pdf(entries, balance_data):
             y = height - 100
             y = draw_headers(p, y, width, "All Entries")
 
-        balance_after = "{:,.2f} €".format(entry['balance_after'])
         formatted_date = entry['date'].strftime('%d.%m.%Y')
         entry_type = "Income" if entry['type'] == "income" else "Expense"
         category_source = entry['source'] if entry['type'] == "income" else entry['category']
         description = entry['description'] if entry['description'].strip() else "No description"
+        amount = "{:,.2f} €".format(entry['amount']).replace(',', 'TEMP').replace('.', ',').replace('TEMP', '.')
+        balance_after = "{:,.2f} €".format(entry['balance_after']).replace(',', 'TEMP').replace('.', ',').replace('TEMP', '.')
         
         p.drawString(50, y, formatted_date)
         p.drawString(120, y, entry_type)
         p.drawString(180, y, str(category_source))
-        p.drawString(250, y, "{:,.2f} €".format(entry['amount']))
+        p.drawString(250, y, amount)
         p.drawString(330, y, balance_after)
         p.drawString(400, y, description)
         p.drawString(500, y, '')
