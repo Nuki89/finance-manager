@@ -48,8 +48,8 @@ export class HomeComponent {
   public loading: boolean = true;
   public selectedView: string = 'month';
   public balance: any;
-  public totalIncome: number = 0;
-  public totalExpense: number = 0;
+  // public totalIncome: number = 0;
+  // public totalExpense: number = 0;
   public totalSaving: number = 0;
   public recentTransactions: any[] = [];
   public savings: any[] = [];
@@ -112,8 +112,6 @@ export class HomeComponent {
     if (this.availableColors.length === 0) {
       this.resetAvailableColors();
     }
-
-    this.balanceInfo();
 
     this.toggleViewService.viewMode$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -283,6 +281,7 @@ export class HomeComponent {
   private async loadAllData(): Promise<void> {
     this.loading = true;
     try {
+      await this.balanceInfo();
       await this.fetchIncomeData();
       await this.fetchExpenseData();
       await this.fetchLastYearIncome();

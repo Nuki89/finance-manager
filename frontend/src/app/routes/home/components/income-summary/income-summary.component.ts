@@ -12,12 +12,13 @@ import { ToggleViewService } from '../../../../shared/services/shared/toggle-vie
   styleUrl: './income-summary.component.css'
 })
 export class IncomeSummaryComponent {
-  loading: boolean = true;
-  totalIncome: number = 0;
-  incomeSources: { name: string; value: number }[] = [];
-  selectedView: string = 'Month';
-  viewSubscription: any;
+  public incomeSources: { name: string; value: number }[] = [];
+  public selectedView: string = 'Month';
+  public formattedIncome: string = '';
   
+  private totalIncome: number = 0;
+  private viewSubscription: any;
+  private loading: boolean = true;
 
   constructor(
     private incomeService: IncomeService, 
@@ -45,6 +46,10 @@ export class IncomeSummaryComponent {
         this.totalIncome = parseFloat(
           data.reduce((sum: any, item: { total_amount: any }) => sum + item.total_amount, 0).toFixed(2)
         );
+        this.formattedIncome = this.totalIncome.toLocaleString('de-DE', {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
         this.checkLoadingComplete();
       },
       (error) => {

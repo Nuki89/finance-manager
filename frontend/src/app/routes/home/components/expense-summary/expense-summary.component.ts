@@ -12,9 +12,10 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./expense-summary.component.css']
 })
 export class ExpenseSummaryComponent {
-  public totalExpense: number = 0;
+  public formattedExpense: string = '';
   public selectedView: string = 'month';
-
+  
+  private totalExpense: number = 0;
   private viewSubscription: any;
   private loading: boolean = true;
 
@@ -41,6 +42,10 @@ export class ExpenseSummaryComponent {
     totalExpenseFetcher.subscribe(
       (data: any) => {
         this.totalExpense = data.reduce((sum: any, item: { total_amount: any }) => sum + item.total_amount, 0);
+        this.formattedExpense = this.totalExpense.toLocaleString('de-DE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
         this.checkLoadingComplete();
       },
       (error) => {
