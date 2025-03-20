@@ -1,8 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, Input } from '@angular/core';
-import { ReportService } from '../../../../shared/services/api/report.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SharedDataService } from '../../../../shared/services/shared/shared-data.service';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-balance-summary',

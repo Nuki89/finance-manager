@@ -113,7 +113,12 @@
                                 class="grid grid-cols-4 gap-4 text-left" 
                                 *ngFor="let transaction of recentTransactions">
                                 <span> {{ transaction.type | titlecase }} </span>
-                                <span class="truncate"> {{ transaction.name }} </span>
+                                <div class="flex justify-start items-center space-x-2"> 
+                                    <div class="w-5 h-5 rounded-md border border-gray-300 shadow-sm" 
+                                    [style.backgroundColor]="incomeColorMap[transaction.name] || expenseColorMap[transaction.name]">
+                                    </div> 
+                                    <span class="truncate"> {{ transaction.name }} </span>
+                                </div>
                                 <div class="flex justify-end items-center pr-4">
                                     <span>{{ transaction.amount | number }}</span>
                                     <span class="ml-2">€</span>

@@ -83,6 +83,7 @@ export class HomeComponent {
     '#F72585', '#06D6A0'
   ];
   private colorKey = 'categoryColors';
+  private usedColors: string[] = [];
 
   constructor(
     private reportService: ReportService,
@@ -97,6 +98,21 @@ export class HomeComponent {
 
   ngOnInit() {
     this.loadSavedColors();
+
+    const savedAvailableColors = localStorage.getItem('availableColors');
+    const savedUsedColors = localStorage.getItem('usedColors');
+    if (savedAvailableColors) {
+      this.availableColors = JSON.parse(savedAvailableColors);
+    }
+    
+    if (savedUsedColors) {
+      this.usedColors = JSON.parse(savedUsedColors);
+    }
+  
+    if (this.availableColors.length === 0) {
+      this.resetAvailableColors();
+    }
+
     this.balanceInfo();
 
     this.toggleViewService.viewMode$
@@ -296,15 +312,20 @@ export class HomeComponent {
 
       const backgroundColors: string[] = this.incomeSources.map(i => {
         if (!this.incomeColorMap[i.name]) {
-            if (this.availableColors.length > 0) {
-                this.incomeColorMap[i.name] = this.availableColors.shift()!;
-            } else {            
-                this.incomeColorMap[i.name] = this.getRandomColor();
-            }
-            this.saveIncomeColors();
+          if (this.availableColors.length > 0) {            
+            this.incomeColorMap[i.name] = this.availableColors.shift()!;
+            this.usedColors.push(this.incomeColorMap[i.name]);
+            this.saveAvailableColors();
+          } else {
+            this.resetAvailableColors();
+            this.incomeColorMap[i.name] = this.availableColors.shift()!;
+            this.usedColors.push(this.incomeColorMap[i.name]);
+            this.saveAvailableColors();
+          }
+          this.saveIncomeColors();
         }
         return this.incomeColorMap[i.name];
-      });
+      });      
 
       this.incomeChartCategory = {
         labels: this.incomeSources.map(i => i.name),
@@ -343,15 +364,20 @@ export class HomeComponent {
 
       const backgroundColors: string[] = this.spendingCategories.map(i => {
         if (!this.expenseColorMap[i.name]) {
-            if (this.availableColors.length > 0) {
-                this.expenseColorMap[i.name] = this.availableColors.shift()!;
-            } else {            
-                this.expenseColorMap[i.name] = this.getRandomColor();
-            }
-            this.saveExpenseColors();
+          if (this.availableColors.length > 0) {
+            this.expenseColorMap[i.name] = this.availableColors.shift()!;
+            this.usedColors.push(this.expenseColorMap[i.name]);
+            this.saveAvailableColors();
+          } else {
+            this.resetAvailableColors();
+            this.expenseColorMap[i.name] = this.availableColors.shift()!;
+            this.usedColors.push(this.expenseColorMap[i.name]);
+            this.saveAvailableColors();
+          }
+          this.saveExpenseColors();
         }
         return this.expenseColorMap[i.name];
-      });
+      });      
   
       this.expenseChartCategory = {
         labels: this.spendingCategories.map(i => i.name),
@@ -469,6 +495,21 @@ export class HomeComponent {
     }
   }
 
+  private saveAvailableColors() {
+    localStorage.setItem('availableColors', JSON.stringify(this.availableColors));
+    localStorage.setItem('usedColors', JSON.stringify(this.usedColors));
+  }
+  
+  private resetAvailableColors() {
+    this.availableColors = [
+      '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+      '#9966FF', '#FF9F40', '#8D99AE', '#00A878',
+      '#F72585', '#06D6A0'
+    ];
+    this.usedColors = [];
+    this.saveAvailableColors();
+  }
+
   private loadSavedColors() {
     const savedIncomeColors = localStorage.getItem(this.incomeColorKey);
     if (savedIncomeColors) {
@@ -489,9 +530,16 @@ export class HomeComponent {
       localStorage.setItem(this.expenseColorKey, JSON.stringify(this.expenseColorMap));
   }
 
-  
   private getRandomColor(): string {
-    return '#' + Math.floor(Math.random()*16777215).toString(16);
-  }
+    if (this.availableColors.length === 0) {
+      this.resetAvailableColors();
+    }
   
+    const color = this.availableColors.shift()!;
+    this.usedColors.push(color);
+    this.saveAvailableColors();
+  
+    return color;
+  }
+
 }
