@@ -236,10 +236,17 @@ export class SharedTableComponent {
     const year = date.getFullYear();
     return `${day}.${month}.${year}`; 
   }
-
+  
   private currencyFormatter(params: any): string {
-    return `${params.value} €`;
-  }
+    if (params.value != null && !isNaN(Number(params.value))) {
+      let money = Number(params.value).toLocaleString('de-DE', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }); 
+      return `${money} €`;
+    }
+    return '';
+  }  
 
   private getButtonClass(type: string): string {
     const isDark = this.themeClass === 'ag-theme-alpine-dark';
