@@ -30,6 +30,10 @@ export class SavingsComponent {
   public selectedCategory: any = null;
   public selectedCategorieObj: any | null = null;
 
+  public total_saved = '';
+  public goal_amount = '';
+  public remaining_amount = '';
+
   private destroy$ = new Subject<void>();
 
   constructor(
@@ -156,6 +160,20 @@ export class SavingsComponent {
     .subscribe({
       next: (data) => {
         this.savingsCategorySummary = data as any[];
+        this.savingsCategorySummary.forEach(summary => {
+          this.goal_amount = summary.goal_amount.toLocaleString('de-DE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });  
+          this.total_saved = summary.total_saved.toLocaleString('de-DE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+          this.remaining_amount = (summary.goal_amount - summary.total_saved).toLocaleString('de-DE', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          });
+        });
       },
       error: (error) => {
         this.toastr.error('Failed to load savings. Please try again.');
