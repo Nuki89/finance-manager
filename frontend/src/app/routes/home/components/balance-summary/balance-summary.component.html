@@ -1,3 +1,8 @@
 <h2 class="text-xl font-bold">Balance Overview</h2>
-<p class="text-3xl font-semibold text-green-500">{{ currentBalance }} €</p>
+
+<p class="text-3xl font-semibold" 
+   [ngStyle]="{'color': currentBalance > 0 ? 'green' : 'red'}">
+    {{ formattedBalance }} €
+</p>
+
 <p class="text-sm text-gray-500">Last Updated: {{ last_updated | date:'d.M.yyyy' }}</p>

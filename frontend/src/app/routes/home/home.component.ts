@@ -54,7 +54,7 @@ export class HomeComponent {
   public recentTransactions: any[] = [];
   public savings: any[] = [];
 
-  public currentBalance: string = '';
+  public currentBalance: number = 0;
   public lastUpdated: string = '';
   
   public spendingCategories: { name: string; value: number }[] = [];
@@ -405,10 +405,11 @@ export class HomeComponent {
       .subscribe({
         next: (data: any) => {
           this.balance = data;  
-          this.currentBalance = data.available_balance.toLocaleString('de-DE', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          });          
+          // this.currentBalance = data.available_balance.toLocaleString('de-DE', {
+          //   minimumFractionDigits: 2,
+          //   maximumFractionDigits: 2
+          // }); 
+          this.currentBalance = data.available_balance;         
           this.lastUpdated = data.last_updated;        
         },
         error: (err) => {
