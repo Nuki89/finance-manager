@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './finance-settings.component.html',
-  styleUrl: './finance-settings.component.css'
+  styleUrls: ['./finance-settings.component.css'],
 })
 export class FinanceSettingsComponent {
 

@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './general-settings.component.html',
-  styleUrl: './general-settings.component.css'
+  styleUrls: ['./general-settings.component.css'],
 })
 export class GeneralSettingsComponent {
 

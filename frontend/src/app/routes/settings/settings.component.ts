@@ -12,10 +12,10 @@ import { FinanceSettingsComponent } from './finance-settings/finance-settings.co
   standalone: true,
   imports: [MatFormFieldModule, MatInputModule, MatButtonModule, MatTabsModule, GeneralSettingsComponent, AccountSettingsComponent, FinanceSettingsComponent],
   templateUrl: './settings.component.html',
-  styleUrl: './settings.component.css'
+  styleUrls: ['./settings.component.css']
 })
 export class SettingsComponent {
-  selectedTabIndex: number = 0;
+  public selectedTabIndex: number = 0;
 
   constructor() {}
 
@@ -26,7 +26,7 @@ export class SettingsComponent {
     }
   }
 
-  onTabChange(event: any) {
+  public onTabChange(event: any) {
     this.selectedTabIndex = event.index;
     localStorage.setItem('selectedSettingsTab', event.index.toString()); 
   }
