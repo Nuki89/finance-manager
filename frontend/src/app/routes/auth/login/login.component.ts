@@ -13,33 +13,27 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, FormsModule, NgIcon, RouterModule],
   templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css'],
   viewProviders : [provideIcons({ cryptoBtc, bootstrapEye, bootstrapEyeSlash, bootstrapExclamationDiamond })]
 })
 export class LoginComponent {
-  title = "Coiny"
-  username = '';
-  password = '';
-  isInvalid: boolean = false;
-  isRemembered: boolean = false;
-
-  showPassword: boolean = false;
+  public title = "Coiny"
+  public username = '';
+  public password = '';
+  public isInvalid: boolean = false;
+  public isRemembered: boolean = false;
+  public showPassword: boolean = false;
 
   constructor(
     private authService: AuthService,
     private toastr: ToastrService
   ) {}
 
-  togglePassword(): void {
+  public togglePassword(): void {
     this.showPassword = !this.showPassword;
   }
 
-  ngOnInit(): void {
-    // if (this.authService.isLoggedIn()) {
-    //   this.authService.redirectToHome();
-    // }
-  }
-
-  onSubmit(): void {
+  public onSubmit(): void {
     this.authService.login(this.username, this.password).subscribe(
       () => {
         this.isInvalid = false;

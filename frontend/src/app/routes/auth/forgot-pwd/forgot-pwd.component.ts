@@ -14,5 +14,5 @@ import { cryptoBtc } from '@ng-icons/cryptocurrency-icons';
   providers: [provideIcons({ cryptoBtc })]
 })
 export class ForgotPwdComponent {
-  title = "Coiny"
+  public title = "Coiny"
 }

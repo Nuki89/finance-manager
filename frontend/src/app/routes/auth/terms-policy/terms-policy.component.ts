@@ -8,8 +8,8 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './terms-policy.component.html',
-  styleUrl: './terms-policy.component.css'
+  styleUrls: ['./terms-policy.component.css'],
 })
 export class TermsPolicyComponent {
-  effective_date = "1.2.2025"
+  public effective_date = "1.2.2025"
 }
