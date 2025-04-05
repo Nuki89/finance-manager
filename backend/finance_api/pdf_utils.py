@@ -64,6 +64,12 @@ def generate_incomes_pdf(incomes):
             p.showPage()
             y = height - 80
             y = draw_income_headers(p, y, width)
+            p.setFont('Helvetica', 8)
+        
+        # if y < 100:
+        #     p.showPage()
+        #     y = height - 80
+        #     y = draw_income_headers(p, y, width)
 
         description = income.description if income.description.strip() else "No description"
         formatted_date = income.date.strftime('%d.%m.%Y')  
@@ -132,6 +138,12 @@ def generate_expenses_pdf(expenses):
             p.showPage()
             y = height - 80
             y = draw_expense_headers(p, y, width)
+            p.setFont('Helvetica', 8)
+
+        # if y < 100:
+        #     p.showPage()
+        #     y = height - 80
+        #     y = draw_expense_headers(p, y, width)
 
         description = expense.description if expense.description.strip() else "No description"
         formatted_date = expense.date.strftime('%d.%m.%Y')  
@@ -259,7 +271,8 @@ def generate_summary_pdf(entries, balance_data):
             p.showPage()
             y = height - 100
             y = draw_headers(p, y, width, "All Entries")
-
+            p.setFont('Helvetica', 8)
+        
         formatted_date = entry['date'].strftime('%d.%m.%Y')
         entry_type = "Income" if entry['type'] == "income" else "Expense"
         category_source = entry['source'] if entry['type'] == "income" else entry['category']
