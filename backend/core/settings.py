@@ -27,7 +27,6 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'unsafe-default-key')
 
 DEBUG = os.getenv("DEBUG", "0") == "1"
 
-# ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",") + ["0.0.0.0"]
 
 # Application definition
@@ -140,14 +139,6 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
 }
-
-# CORS_ALLOWED_ORIGINS = [
-#     'http://localhost:4200',
-# ]
-
-# CSRF_TRUSTED_ORIGINS = [
-#     'http://localhost:4200',
-# ]
 
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
