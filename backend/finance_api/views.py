@@ -30,6 +30,26 @@ class UserProfileViewSet(
 
     def get_object(self):
         return self.request.user
+    
+class AllUsersViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    # permission_classes = [IsAdminUser]
+    pagination_class = None
+
+    filterset_fields = ['username', 'email', 'name', 'surname']
+    search_fields = ['username', 'email', 'name', 'surname']
+    ordering_fields = ['username', 'email', 'name', 'surname']
+    ordering = ['username']
+
+    def destroy(self, request, *args, **kwargs):
+        user = self.get_object()
+        if user.is_superuser:
+            return Response(
+                {"error": "You cannot delete a superuser."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        return super().destroy(request, *args, **kwargs)
 
 
 class RegisterViewSet(viewsets.ModelViewSet):

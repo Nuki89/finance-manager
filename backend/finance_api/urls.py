@@ -14,6 +14,7 @@ class BaseRouter(routers.DefaultRouter):
     APIRootView = BaseRouterRootView
 
 router = BaseRouter()
+router.register(r'users', AllUsersViewSet, basename='user')
 router.register(r'income-sources', IncomeSourceViewSet)
 router.register(r'incomes', IncomeViewSet)
 router.register(r'expense-categories', ExpenseCategoryViewSet)

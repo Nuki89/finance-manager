@@ -13,8 +13,9 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password', 'password2', 'name', 'surname')
+        fields = ('url', 'username', 'email', 'password', 'password2', 'name', 'surname', 'is_superuser', 'is_staff')
         extra_kwargs = {
+            'url': {'view_name': 'user-detail', 'lookup_field': 'pk'},
             'email': {'required': True}
         }
 
