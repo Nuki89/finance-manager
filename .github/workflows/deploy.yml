@@ -47,7 +47,8 @@ jobs:
         uses: aquasecurity/trivy-action@0.17.0
         with:
             image-ref: 'finance-manager-backend:latest'
-            format: 'table'
+            format: 'json'
+            output: 'trivy-backend.json'
             exit-code: '1'
             ignore-unfixed: true
             list-all-pkgs: true
