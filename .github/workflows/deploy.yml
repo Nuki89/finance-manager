@@ -32,10 +32,23 @@ jobs:
             npm install
             npm audit --audit-level=high
 
+  docker-security:
+    name: Docker Image Scan (Trivy)
+    runs-on: self-hosted
+    steps:
+      - uses: aquasecurity/trivy-action@0.17.0
+      - name: Docker Image Scan (Trivy)
+        uses: aquasecurity/trivy-action@0.17.0
+        with:
+            image-ref: 'finance-manager:latest'
+            format: 'table'
+            exit-code: '1'       
+            ignore-unfixed: true
+
   deploy:
     name: Deploy
     runs-on: self-hosted
-    needs: [python-security, node-security]
+    needs: [python-security, node-security, docker-security]
     steps:
       - uses: actions/checkout@v3
       - name: Setup SSH Key
