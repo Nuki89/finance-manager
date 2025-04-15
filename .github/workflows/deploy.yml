@@ -54,7 +54,6 @@ jobs:
             list-all-pkgs: true
             severity: 'HIGH,CRITICAL'
             
-
       - name: Scan Frontend Image
         uses: aquasecurity/trivy-action@0.17.0
         with:

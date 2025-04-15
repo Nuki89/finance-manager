@@ -5,7 +5,9 @@ WORKDIR /usr/src/app
 
 COPY . /usr/src/app
 
-RUN npm install -g @angular/cli@18
+# RUN npm install -g @angular/cli@18
+RUN npm config set cache /tmp/empty-npm-cache --global && \
+    npm install -g @angular/cli@18
 RUN npm install
 
 EXPOSE 4200
