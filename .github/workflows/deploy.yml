@@ -36,14 +36,29 @@ jobs:
     name: Docker Image Scan (Trivy)
     runs-on: self-hosted
     steps:
-      - uses: aquasecurity/trivy-action@0.17.0
-      - name: Docker Image Scan (Trivy)
+      - uses: actions/checkout@v3
+
+      - name: Build Docker Images (Compose)
+        run: |
+            cd /home/user/code/_github/finance-manager
+            docker compose build
+
+      - name: Scan Backend Image
         uses: aquasecurity/trivy-action@0.17.0
         with:
-            image-ref: 'finance-manager:latest'
+            image-ref: 'finance-manager-backend:latest'
             format: 'table'
-            exit-code: '1'       
+            exit-code: '1'
             ignore-unfixed: true
+
+      - name: Scan Frontend Image
+        uses: aquasecurity/trivy-action@0.17.0
+        with:
+            image-ref: 'finance-manager-frontend:latest'
+            format: 'table'
+            exit-code: '1'
+            ignore-unfixed: true
+
 
   deploy:
     name: Deploy

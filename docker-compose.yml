@@ -1,6 +1,7 @@
 services:
   backend:
     container_name: finance-manager-backend
+    image: finance-manager-backend:latest
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -31,6 +32,7 @@ services:
 
   frontend:
     container_name: finance-manager-frontend
+    image: finance-manager-frontend:latest
     build:
       context: ./frontend
       dockerfile: Dockerfile
