@@ -9,16 +9,18 @@ jobs:
 
   python-security:
     name: Python Security Scan
+    env:
+        SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
       - run: |
             cd /home/user/code/_github/finance-manager
             source venv/bin/activate
-            cd /home/user/code/_github/finance-manager/backend
+            cd backend
             pip install --upgrade pip
             pip install safety
-            safety check -r requirements.txt
+            safety scan -r requirements.txt
     
   node-security:
     name: Node Security Scan
