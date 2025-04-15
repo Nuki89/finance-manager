@@ -13,9 +13,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          cd /home/user/code/_github/finance-manager/backend
-          pip install safety
-          safety check -r requirements.txt
+            cd /home/user/code/_github/finance-manager/backend
+            source venv/bin/activate
+            pip install --upgrade pip
+            pip install safety
+            safety check -r requirements.txt
     
   node-security:
     name: Node Security Scan
@@ -23,9 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-          cd /home/user/code/_github/finance-manager/frontend
-          npm install
-          npm audit --audit-level=high
+            cd /home/user/code/_github/finance-manager/frontend
+            npm install
+            npm audit --audit-level=high
 
   deploy:
     name: Deploy
@@ -38,11 +40,11 @@ jobs:
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
       - run: |
-          cd /home/user/code/_github/finance-manager
-          git stash
-          git pull origin master
-          git stash pop
-          docker compose down --remove-orphans
-          docker compose build --no-cache
-          docker compose up -d
-          docker system prune -f   
+            cd /home/user/code/_github/finance-manager
+            git stash
+            git pull origin master
+            git stash pop
+            docker compose down --remove-orphans
+            docker compose build --no-cache
+            docker compose up -d
+            docker system prune -f   
