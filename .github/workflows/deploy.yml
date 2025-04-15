@@ -21,7 +21,9 @@ jobs:
       - name: Deploy Locally
         run: |
             cd /home/user/code/_github/finance-manager
+            git stash
             git pull origin master
+            git stash pop
             docker compose down --remove-orphans
             docker compose build --no-cache
             docker compose up -d
