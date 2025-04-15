@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Update and upgrade OS packages
 RUN apt-get update && \
-    apt-get upgrade -y && \
+    apt-get install --only-upgrade libexpat1 liblzma5 libsqlite3-0 && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -19,6 +19,12 @@ FROM python:3.12.5-slim
 
 # Set the working directory
 WORKDIR /app
+
+# Update and upgrade OS packages
+RUN apt-get update && \
+    apt-get install --only-upgrade libexpat1 liblzma5 libsqlite3-0 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 # Copy installed dependencies from the builder stage
 COPY --from=builder /usr/local/lib/python3.12 /usr/local/lib/python3.12
