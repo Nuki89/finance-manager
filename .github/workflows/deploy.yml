@@ -6,26 +6,43 @@ on:
       - master
 
 jobs:
-  deploy:
+
+  python-security:
+    name: Python Security Scan
     runs-on: self-hosted
-
     steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+      - run: |
+          cd /home/user/code/_github/finance-manager/backend
+          pip install safety
+          safety check -r requirements.txt
+    
+  node-security:
+    name: Node Security Scan
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          cd /home/user/code/_github/finance-manager/frontend
+          npm install
+          npm audit --audit-level=high
 
+  deploy:
+    name: Deploy
+    runs-on: self-hosted
+    needs: [python-security, node-security]
+    steps:
+      - uses: actions/checkout@v3
       - name: Setup SSH Key
         uses: webfactory/ssh-agent@v0.8.0
         with:
           ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      - name: Deploy Locally
-        run: |
-            cd /home/user/code/_github/finance-manager
-            git stash
-            git pull origin master
-            git stash pop
-            docker compose down --remove-orphans
-            docker compose build --no-cache
-            docker compose up -d
-            docker system prune -f
-        
+      - run: |
+          cd /home/user/code/_github/finance-manager
+          git stash
+          git pull origin master
+          git stash pop
+          docker compose down --remove-orphans
+          docker compose build --no-cache
+          docker compose up -d
+          docker system prune -f   
