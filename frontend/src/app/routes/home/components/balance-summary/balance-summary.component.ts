@@ -6,7 +6,7 @@ import { Component, Input } from '@angular/core';
   standalone: true,
   imports: [CommonModule],
   templateUrl: './balance-summary.component.html',
-  styleUrl: './balance-summary.component.css'
+  styleUrls: ['./balance-summary.component.css']
 })
 export class BalanceSummaryComponent {
   @Input() currentBalance: number = 0;
@@ -17,7 +17,7 @@ export class BalanceSummaryComponent {
   }
 
   get formattedBalance(): string {
-    return new Intl.NumberFormat('en-US', {
+    return new Intl.NumberFormat('de-DE', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     }).format(this.currentBalance);

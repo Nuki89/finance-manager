@@ -468,13 +468,20 @@ export class HomeComponent {
       this.recentTransactions = data.map((item: any) => ({
         type: item.type,
         name: item.name,
-        amount: item.amount,
+        amount: this.formatAmount(item.amount),
         date: item.date ? this.dateFormatter({ value: item.date }) : '',
       }));
 
     } catch (error) {
       console.error('Error fetching history:', error);
     }
+  }
+
+  private formatAmount(amount: number): string {
+    return new Intl.NumberFormat('de-DE', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
   }
 
   private dateFormatter(params: any): string {
