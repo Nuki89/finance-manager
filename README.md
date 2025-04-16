@@ -1,10 +1,11 @@
 # Finance Manager
 
+> Simple finance manager for personal use.
+
+## Tech Stack
 ![Django](https://img.shields.io/badge/Backend-Django-092E20?style=for-the-badge&logo=django&logoColor=white)
 ![Angular](https://img.shields.io/badge/Frontend-Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![Docker](https://img.shields.io/badge/DevOps-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-
-Simple finance manager for personal use.
 
 ## Table of Contents
 - [Features](#features)
