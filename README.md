@@ -1,4 +1,9 @@
-# Finance manager
+# Finance Manager
+
+![Django](https://img.shields.io/badge/Backend-Django-092E20?style=for-the-badge&logo=django&logoColor=white)
+![Angular](https://img.shields.io/badge/Frontend-Angular-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![Docker](https://img.shields.io/badge/DevOps-Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+
 Simple finance manager for personal use.
 
 ## Table of Contents
@@ -92,12 +97,12 @@ sudo npm install -g @angular/cli@18
 ```
 3. Install dependencies
 Before installing dependencies, remove existing modules and then reinstall them (if needed).
-If you already had npm installed first run this command: `rm -rf node_modules`
+If you already had npm installed first run this command: `rm -rf node_modules`.
 ```bash
 npm i
 ```
 4. Check for vulnerabilities
-After that, use this command to automatically upgrade or fix vulnerabilities in npm packages
+After that, use this command to automatically upgrade or fix vulnerabilities in npm packages.
 ```bash
 npm audit fix
 ```
@@ -116,6 +121,7 @@ Once the app is running, open your browser:
 - **Backend**: [http://localhost:8000](http://localhost:8000)
 
 ## Start script
+Make the script executable and run it:
 ```bash
 chmod +x start.sh
 ./start.sh
@@ -125,7 +131,7 @@ chmod +x start.sh
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## How to Use
-1. Open the application in your browser
-2. Create an account or log in
-3. Start adding your incomes, expenses, and savings
-4. Take control of your finances with Finance Manager
+1. Open the application in your browser.
+2. Create an account.
+3. Start adding your incomes, expenses, and savings.
+4. Take control of your finances with "Coiny" Finance Manager.
