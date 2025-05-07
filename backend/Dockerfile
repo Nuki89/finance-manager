@@ -69,7 +69,10 @@ COPY . .
 RUN chown -R appuser:appgroup /app
 USER appuser
 
+# Set environment variables
 ENV PYTHONUNBUFFERED=1
+
+# Expose port 8000
 EXPOSE 8000
 
 COPY backend.sh /usr/local/bin/
