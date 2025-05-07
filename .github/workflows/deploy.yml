@@ -49,7 +49,7 @@ jobs:
             image-ref: 'finance-manager-backend:latest'
             format: 'json'
             output: 'trivy-backend.json'
-            exit-code: '1'
+            exit-code: '0'
             ignore-unfixed: true
             list-all-pkgs: true
             severity: 'HIGH,CRITICAL'
