@@ -80,7 +80,8 @@ LABEL maintainer="rud0lph89@protonmail.com"
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache --virtual .build-deps \
+RUN apk update && apk upgrade --no-cache && \
+    apk add --no-cache --virtual .build-deps \
     gcc \
     musl-dev \
     libffi-dev \
@@ -113,7 +114,8 @@ FROM python:3.12.10-alpine3.20
 WORKDIR /app
 
 # Install runtime dependencies only
-RUN apk add --no-cache \
+RUN apk update && apk upgrade --no-cache && \
+    apk add --no-cache \
     libffi \
     jpeg \
     zlib \
