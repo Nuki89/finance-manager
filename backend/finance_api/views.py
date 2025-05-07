@@ -141,10 +141,14 @@ def is_logged_in(request):
 
 
 class IncomeSourceViewSet(viewsets.ModelViewSet):
-    queryset = IncomeSource.objects.all()
     serializer_class = IncomeSourceSerializer
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return IncomeSource.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -157,12 +161,26 @@ class IncomeSourceViewSet(viewsets.ModelViewSet):
 
 class IncomeViewSet(viewsets.ModelViewSet):
     """
-    Filter by source: http://localhost:8000/incomes/?income_name=example
+    Income endpoints restricted to the authenticated user's data.
     """
-    queryset = Income.objects.all()
     serializer_class = IncomeSerializer
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        queryset = Income.objects.filter(user=user)
+
+        income_name = self.request.query_params.get('income_name')
+        if income_name:
+            try:
+                source = IncomeSource.objects.get(name=income_name)
+                queryset = queryset.filter(source=source)
+            except IncomeSource.DoesNotExist:
+                return Income.objects.none()
+        return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def get_view_name(self):
         if hasattr(self, 'action'):
@@ -170,68 +188,65 @@ class IncomeViewSet(viewsets.ModelViewSet):
                 return "List of Incomes"
             elif self.action == 'retrieve':
                 return "Detail of Income"
-        return super(IncomeViewSet, self).get_view_name()
+        return super().get_view_name()
 
-    def get_queryset(self):
-        queryset = Income.objects.all()
-        income_name = self.request.query_params.get('income_name', None)
-        if income_name is not None:
-            try:
-                source = IncomeSource.objects.get(name=income_name)
-                queryset = queryset.filter(source=source)
-            except IncomeSource.DoesNotExist:
-                queryset = Income.objects.none() 
-        return queryset
-    
     @action(detail=False, methods=['get'])
     def summary_by_source(self, request):
-        income_list = Income.objects.values('source__name').annotate(total_amount=models.Sum('amount')).order_by('source')
-        return Response(income_list)
-    
+        data = Income.objects.filter(user=request.user).values(
+            'source__name').annotate(total_amount=Sum('amount')).order_by('source__name')
+        return Response(data)
+
     @action(detail=False, methods=['get'])
     def monthly_summary(self, request):
-        monthly_data = Income.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
-        return Response(monthly_data)
-    
-    @action(detail=False, methods=['get'])
-    def monthly_source_summary(self, request):
-        monthly_source_data = Income.objects.annotate(
-            month=TruncMonth('date')).values('month', 'source__name').annotate(
-            total_amount=Sum('amount')).order_by('month', 'source__name')
-        return Response(monthly_source_data)
-    
-    @action(detail=False, methods=['get'])
-    def last_month_summary(self, request):
-        datemonth = datetime.now().month
-        last_month_data = Income.objects.filter(date__month=datemonth).annotate(
+        data = Income.objects.filter(user=request.user).annotate(
             month=TruncMonth('date')).values('month').annotate(
             total_amount=Sum('amount')).order_by('month')
-        return Response(last_month_data)
+        return Response(data)
+
+    @action(detail=False, methods=['get'])
+    def monthly_source_summary(self, request):
+        data = Income.objects.filter(user=request.user).annotate(
+            month=TruncMonth('date')).values('month', 'source__name').annotate(
+            total_amount=Sum('amount')).order_by('month', 'source__name')
+        return Response(data)
+
+    @action(detail=False, methods=['get'])
+    def last_month_summary(self, request):
+        now = datetime.now()
+        data = Income.objects.filter(
+            user=request.user,
+            date__year=now.year,
+            date__month=now.month
+        ).annotate(month=TruncMonth('date')).values('month').annotate(
+            total_amount=Sum('amount')).order_by('month')
+        return Response(data)
 
     @action(detail=False, methods=['get'])
     def last_month_source_summary(self, request):
-        datemonth = datetime.now().month
-        last_month_data = Income.objects.filter(date__month=datemonth).annotate(
-            month=TruncMonth('date')).values('month', 'source__name').annotate(
+        now = datetime.now()
+        data = Income.objects.filter(
+            user=request.user,
+            date__year=now.year,
+            date__month=now.month
+        ).annotate(month=TruncMonth('date')).values('month', 'source__name').annotate(
             total_amount=Sum('amount')).order_by('month', 'source__name')
-        return Response(last_month_data)
-    
+        return Response(data)
+
     @action(detail=False, methods=['get'])
     def last_year_summary(self, request):
-        last_year = datetime.now().year
-        last_year_data = Income.objects.filter(date__year=last_year).annotate(
+        this_year = datetime.now().year
+        data = Income.objects.filter(user=request.user, date__year=this_year).annotate(
             month=TruncMonth('date')).values('month').annotate(
             total_amount=Sum('amount')).order_by('month')
-        return Response(last_year_data)
+        return Response(data)
 
     @action(detail=False, methods=['get'])
     def last_year_source_summary(self, request):
-        last_year = datetime.now().year
-        last_year_data = Income.objects.filter(date__year=last_year).values('source__name').annotate(
-            total_amount=Sum('amount')
-        ).order_by('source__name')
-        return Response(last_year_data)
-    
+        this_year = datetime.now().year
+        data = Income.objects.filter(user=request.user, date__year=this_year).values(
+            'source__name').annotate(total_amount=Sum('amount')).order_by('source__name')
+        return Response(data)
+
     @action(detail=False, methods=['delete'])
     def delete_by_source(self, request):
         """
@@ -239,18 +254,19 @@ class IncomeViewSet(viewsets.ModelViewSet):
         """
         income_name = request.query_params.get('income_name')
         source = get_object_or_404(IncomeSource, name=income_name)
+        queryset = Income.objects.filter(user=request.user, source=source)
 
-        if Income.objects.filter(source=source).exists():
-            deleted_count, _ = Income.objects.filter(source=source).delete()
+        if queryset.exists():
+            deleted_count, _ = queryset.delete()
             return Response(
                 {'message': f'{deleted_count} incomes from {income_name} have been deleted'},
                 status=status.HTTP_200_OK
             )
-        else:
-            return Response(
-                {'message': f'No incomes found for {income_name}'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        return Response(
+            {'message': f'No incomes found for {income_name}'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
     queryset = ExpenseCategory.objects.all()

@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from .utils import *
 
@@ -15,16 +16,19 @@ class User(AbstractUser):
 
 
 class IncomeSource(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
 
     class Meta:
         db_table = 'income_sources'
+        unique_together = ('user', 'name')
 
     def __str__(self):
         return self.name
 
 
 class Income(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     source = models.ForeignKey(IncomeSource, on_delete=models.RESTRICT)
     date = models.DateField(default=get_current_date)

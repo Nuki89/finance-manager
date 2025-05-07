@@ -15,8 +15,8 @@ class BaseRouter(routers.DefaultRouter):
 
 router = BaseRouter()
 router.register(r'users', AllUsersViewSet, basename='user')
-router.register(r'income-sources', IncomeSourceViewSet)
-router.register(r'incomes', IncomeViewSet)
+router.register(r'income-sources', IncomeSourceViewSet, basename='income-source')
+router.register(r'incomes', IncomeViewSet, basename='income')
 router.register(r'expense-categories', ExpenseCategoryViewSet)
 router.register(r'expenses', ExpenseViewSet)
 router.register(r'saving-categories', SavingCategoryViewSet)

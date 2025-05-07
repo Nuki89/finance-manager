@@ -33,6 +33,8 @@ class RegisterSerializer(serializers.ModelSerializer):
 class IncomeSourceSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
 
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = IncomeSource
         fields = '__all__'
@@ -40,6 +42,8 @@ class IncomeSourceSerializer(serializers.HyperlinkedModelSerializer):
 
 class IncomeSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
+
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())  
 
     source = serializers.PrimaryKeyRelatedField(queryset=IncomeSource.objects.all())
     source_data = IncomeSourceSerializer(source='source', read_only=True)
