@@ -129,6 +129,8 @@ class SavingSerializer(serializers.HyperlinkedModelSerializer):
 class BalanceSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
 
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = Balance
         fields = '__all__'

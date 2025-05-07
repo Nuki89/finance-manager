@@ -420,135 +420,6 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             )
 
 
-# class SavingCategoryViewSet(viewsets.ModelViewSet):
-#     queryset = SavingCategory.objects.all()
-#     serializer_class = SavingCategorySerializer
-#     # permission_classes = [IsAuthenticated]
-#     permission_classes = [AllowAny]
-
-#     def destroy(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         if instance.saving_set.exists():
-#             raise ValidationError({
-#                 "detail": "Cannot delete this category because it has associated savings. Please delete all related savings first."
-#             })
-#         return super().destroy(request, *args, **kwargs)
-
-
-# class SavingViewSet(viewsets.ModelViewSet):
-#     queryset = Saving.objects.all()
-#     serializer_class = SavingSerializer
-#     # permission_classes = [IsAuthenticated]
-#     permission_classes = [AllowAny]
-
-#     def create(self, request, *args, **kwargs):
-#         balance_record = get_or_create_balance()
-#         amount = Decimal(request.data.get('amount', 0))
-        
-#         if amount > balance_record.balance:
-#             return Response(
-#                 {"detail": "Insufficient balance"},
-#                 status=status.HTTP_400_BAD_REQUEST
-#             )
-#         response = super().create(request, *args, **kwargs)
-#         balance_record.balance -= amount
-#         balance_record.total_savings += amount
-#         balance_record.save()
-
-#         return response
-
-#     def get_view_name(self):
-#         if hasattr(self, 'action'):
-#             if self.action == 'list':
-#                 return "List of Savings"
-#             elif self.action == 'retrieve':
-#                 return "Detail of Saving"
-#         return super(SavingViewSet, self).get_view_name()
-    
-#     @action(detail=False, methods=['get'])
-#     def summary_by_category(self, request):
-#         categories = SavingCategory.objects.all()
-#         saving_summary = []
-
-#         for category in categories:
-#             total_saved = Saving.objects.filter(category=category).aggregate(total=Sum('amount'))['total'] or 0
-#             goal_amount = category.goal_amount or 0
-#             remaining_amount = goal_amount - total_saved if category.goal_amount else None
-
-#             data = {
-#                 'category_name': category.name,
-#                 'goal_amount': goal_amount,
-#                 'total_saved': total_saved,
-#                 'remaining_amount': remaining_amount
-#             }
-#             saving_summary.append(data)
-#         return Response(saving_summary)
-
-#     @action(detail=False, methods=['get'])
-#     def monthly_summary(self, request):
-#         monthly_data = Saving.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
-#         return Response(monthly_data)
-    
-#     @action(detail=False, methods=['get'])
-#     def monthly_category_summary(self, request):
-#         monthly_category_data = Saving.objects.annotate(
-#             month=TruncMonth('date')).values('month', 'category__name').annotate(
-#             total_amount=Sum('amount')).order_by('month', 'category__name')
-#         return Response(monthly_category_data)
-
-#     @action(detail=False, methods=['get'])
-#     def last_month_summary(self, request):
-#         datemonth = datetime.now().month
-#         last_month_data = Saving.objects.filter(date__month=datemonth).annotate(
-#             month=TruncMonth('date')).values('month').annotate(
-#             total_amount=Sum('amount')).order_by('month')
-#         return Response(last_month_data)
-
-#     @action(detail=False, methods=['get'])
-#     def last_month_category_summary(self, request):
-#         datemonth = datetime.now().month
-#         last_month_data = Saving.objects.filter(date__month=datemonth).annotate(
-#             month=TruncMonth('date')).values('month', 'category__name').annotate(
-#             total_amount=Sum('amount')).order_by('month', 'category__name')
-#         return Response(last_month_data)
-    
-#     @action(detail=False, methods=['get'])
-#     def last_year_summary(self, request):
-#         last_year = datetime.now().year
-#         last_year_data = Saving.objects.filter(date__year=last_year).annotate(
-#             month=TruncMonth('date')).values('month').annotate(
-#             total_amount=Sum('amount')).order_by('month')
-#         return Response(last_year_data)
-
-#     @action(detail=False, methods=['get'])
-#     def last_year_category_summary(self, request):
-#         last_year = datetime.now().year
-#         last_year_data = Saving.objects.filter(date__year=last_year).values('category__name').annotate(
-#             total_amount=Sum('amount')
-#         ).order_by('category__name')
-#         return Response(last_year_data)
-    
-#     @action(detail=False, methods=['delete'])
-#     def delete_by_category(self, request):
-#         """
-#         /savings/delete_by_category?category_name=category_name
-#         """
-#         category_name = request.query_params.get('category_name')
-#         category = get_object_or_404(SavingCategory, name=category_name)
-
-#         if Saving.objects.filter(category=category).exists():
-#             deleted_count, _ = Saving.objects.filter(category=category).delete()
-#             return Response(
-#                 {'message': f'{deleted_count} savings from {category_name} have been deleted'},
-#                 status=status.HTTP_200_OK
-#             )
-#         else:
-#             return Response(
-#                 {'message': f'No savings found for {category_name}'},
-#                 status=status.HTTP_404_NOT_FOUND
-#             )
-
-
 class SavingCategoryViewSet(viewsets.ModelViewSet):
     serializer_class = SavingCategorySerializer
     permission_classes = [IsAuthenticated]
@@ -698,83 +569,80 @@ class SavingViewSet(viewsets.ModelViewSet):
 
 
 class ExportingViewSet(viewsets.ViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['get'])
     def download_income_summary_pdf(self, request):
-        incomes = Income.objects.all()
+        incomes = Income.objects.filter(user=request.user)
         return generate_incomes_pdf(incomes)
-    
+
     @action(detail=False, methods=['get'])
     def download_expense_summary_pdf(self, request):
-        expenses = Expense.objects.all()
+        expenses = Expense.objects.filter(user=request.user)
         return generate_expenses_pdf(expenses)
 
     @action(detail=False, methods=['get'])
     def download_summary_pdf(self, request):
-        incomes = Income.objects.all()
-        expenses = Expense.objects.all()
-        balances = Balance.objects.all()
+        incomes = Income.objects.filter(user=request.user)
+        expenses = Expense.objects.filter(user=request.user)
+        balances = Balance.objects.filter(user=request.user)
+
         entries = [
-            {'date': income.date, 'type': 'income', 'source': income.source.name, 'balance_after': income.balance_after, 'amount': income.amount, 'description': income.description}
-            for income in incomes
+            {
+                'date': income.date,
+                'type': 'income',
+                'source': income.source.name,
+                'balance_after': income.balance_after,
+                'amount': income.amount,
+                'description': income.description
+            } for income in incomes
         ] + [
-            {'date': expense.date, 'type': 'expense', 'category': expense.category.name, 'balance_after': expense.balance_after, 'amount': expense.amount, 'description': expense.description}
-            for expense in expenses
-        ] 
+            {
+                'date': expense.date,
+                'type': 'expense',
+                'category': expense.category.name,
+                'balance_after': expense.balance_after,
+                'amount': expense.amount,
+                'description': expense.description
+            } for expense in expenses
+        ]
+
         balance_data = [
-            {'total_balance': balance.balance, 'total_savings': balance.total_savings, 'last_updated': balance.last_updated} 
-            for balance in balances
+            {
+                'total_balance': balance.balance,
+                'total_savings': balance.total_savings,
+                'last_updated': balance.last_updated
+            } for balance in balances
         ]
 
         return generate_summary_pdf(entries, balance_data)
-
 
     def list(self, request):
         return Response({
             'message': 'Welcome to the Finance API exporting dashboard!',
         })
-    
+
 
 class DashboardView(viewsets.ViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
         return Response({
-            'message': 'Welcome to the Finance API dashboard!',
-            # 'endpoints': {
-            #     'income-sources': '/income-sources/',
-            #     'incomes': '/incomes/',
-            #     'expense-categories': '/expense-categories/',
-            #     'expenses': '/expenses/',
-            #     'incomes-summary-by-source': '/incomes/summary_by_source/',
-            #     'incomes-monthly-summary': '/incomes/monthly_summary/',
-            #     'incomes-monthly-source-summary': '/incomes/monthly_source_summary/',
-            #     'expenses-summary-by-category': '/expenses/summary_by_category/',
-            #     'expenses-monthly-summary': '/expenses/monthly_summary/',
-            #     'expenses-monthly-category-summary': '/expenses/monthly_category_summary/',
-            #     'export-incomes-pdf': '/dashboard/export_incomes_pdf/',
-            # }
+            'message': f'Welcome {request.user.username} to your Finance API dashboard!',
         })
 
 
 class HistoryViewSet(viewsets.ViewSet):
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     @action(detail=False, methods=['get'])
     def filterLast5(self, request):
-        """
-        Get the last 5 incomes and expenses
-        """
-        incomes = Income.objects.all().order_by('-date')[:5]
-        expenses = Expense.objects.all().order_by('-date')[:5]
+        incomes = Income.objects.filter(user=request.user).order_by('-date')[:5]
+        expenses = Expense.objects.filter(user=request.user).order_by('-date')[:5]
         combined = list(incomes) + list(expenses)
 
         combined = sorted(combined, key=lambda x: x.date, reverse=True)[:5]
-        
+
         data = [
             {
                 'type': 'income' if isinstance(obj, Income) else 'expense',
@@ -785,26 +653,24 @@ class HistoryViewSet(viewsets.ViewSet):
         ]
 
         return Response(data)
- 
 
     def list(self, request):
         return Response({
-            'message': 'Welcome to the Finance API history dashboard!',
+            'message': f'Welcome to {request.user.username}\'s Finance API history dashboard!',
         })
     
 
 class BalanceViewSet(viewsets.ViewSet):
-    queryset = Balance.objects.all()
     serializer_class = BalanceSerializer
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
-        balance_record = get_or_create_balance()
+        user = request.user
+        balance_record = get_or_create_balance(user=user)
 
-        total_income = Decimal(Income.objects.aggregate(total=Sum('amount'))['total'] or 0.0)
-        total_expense = Decimal(Expense.objects.aggregate(total=Sum('amount'))['total'] or 0.0)
-        total_savings = Decimal(Saving.objects.aggregate(total=Sum('amount'))['total'] or 0.0)
+        total_income = Decimal(Income.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0.0)
+        total_expense = Decimal(Expense.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0.0)
+        total_savings = Decimal(Saving.objects.filter(user=user).aggregate(total=Sum('amount'))['total'] or 0.0)
 
         balance_record.balance = total_income - total_expense
         balance_record.total_savings = total_savings

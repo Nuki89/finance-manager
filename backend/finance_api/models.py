@@ -97,6 +97,7 @@ class Saving(models.Model):
 
 
 class Balance(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='balance')
     balance = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     total_savings = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     last_updated = models.DateTimeField(auto_now=True)
