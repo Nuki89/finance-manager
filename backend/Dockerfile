@@ -52,9 +52,8 @@ RUN apk add --no-cache \
     sqlite-libs
 
 # Copy installed dependencies from the builder
-COPY --from=builder /usr/lib/python3.12 /usr/lib/python3.12
 COPY --from=builder /usr/local/lib/python3.12 /usr/local/lib/python3.12
-COPY --from=builder /usr/lib /usr/lib
+COPY --from=builder /usr/lib/python3.12 /usr/lib/python3.12
 
 # Copy project files
 COPY . .
