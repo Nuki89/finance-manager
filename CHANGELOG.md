@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] - 16-04-2025
+## [1.0.0] - 07-05-2025
 ### Added
 - Initial release of Finance Manager
 - Add, edit, and delete incomes and expenses
