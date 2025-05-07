@@ -70,17 +70,20 @@ class Expense(models.Model):
     
 
 class SavingCategory(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=50, unique=True)
     goal_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     class Meta:
         db_table = 'saving_categories'
+        unique_together = ('user', 'name')
 
     def __str__(self):
         return self.name
     
 
 class Saving(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     category = models.ForeignKey(SavingCategory, on_delete=models.RESTRICT)
     date = models.DateField(default=get_current_date)

@@ -420,11 +420,144 @@ class ExpenseViewSet(viewsets.ModelViewSet):
             )
 
 
+# class SavingCategoryViewSet(viewsets.ModelViewSet):
+#     queryset = SavingCategory.objects.all()
+#     serializer_class = SavingCategorySerializer
+#     # permission_classes = [IsAuthenticated]
+#     permission_classes = [AllowAny]
+
+#     def destroy(self, request, *args, **kwargs):
+#         instance = self.get_object()
+#         if instance.saving_set.exists():
+#             raise ValidationError({
+#                 "detail": "Cannot delete this category because it has associated savings. Please delete all related savings first."
+#             })
+#         return super().destroy(request, *args, **kwargs)
+
+
+# class SavingViewSet(viewsets.ModelViewSet):
+#     queryset = Saving.objects.all()
+#     serializer_class = SavingSerializer
+#     # permission_classes = [IsAuthenticated]
+#     permission_classes = [AllowAny]
+
+#     def create(self, request, *args, **kwargs):
+#         balance_record = get_or_create_balance()
+#         amount = Decimal(request.data.get('amount', 0))
+        
+#         if amount > balance_record.balance:
+#             return Response(
+#                 {"detail": "Insufficient balance"},
+#                 status=status.HTTP_400_BAD_REQUEST
+#             )
+#         response = super().create(request, *args, **kwargs)
+#         balance_record.balance -= amount
+#         balance_record.total_savings += amount
+#         balance_record.save()
+
+#         return response
+
+#     def get_view_name(self):
+#         if hasattr(self, 'action'):
+#             if self.action == 'list':
+#                 return "List of Savings"
+#             elif self.action == 'retrieve':
+#                 return "Detail of Saving"
+#         return super(SavingViewSet, self).get_view_name()
+    
+#     @action(detail=False, methods=['get'])
+#     def summary_by_category(self, request):
+#         categories = SavingCategory.objects.all()
+#         saving_summary = []
+
+#         for category in categories:
+#             total_saved = Saving.objects.filter(category=category).aggregate(total=Sum('amount'))['total'] or 0
+#             goal_amount = category.goal_amount or 0
+#             remaining_amount = goal_amount - total_saved if category.goal_amount else None
+
+#             data = {
+#                 'category_name': category.name,
+#                 'goal_amount': goal_amount,
+#                 'total_saved': total_saved,
+#                 'remaining_amount': remaining_amount
+#             }
+#             saving_summary.append(data)
+#         return Response(saving_summary)
+
+#     @action(detail=False, methods=['get'])
+#     def monthly_summary(self, request):
+#         monthly_data = Saving.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
+#         return Response(monthly_data)
+    
+#     @action(detail=False, methods=['get'])
+#     def monthly_category_summary(self, request):
+#         monthly_category_data = Saving.objects.annotate(
+#             month=TruncMonth('date')).values('month', 'category__name').annotate(
+#             total_amount=Sum('amount')).order_by('month', 'category__name')
+#         return Response(monthly_category_data)
+
+#     @action(detail=False, methods=['get'])
+#     def last_month_summary(self, request):
+#         datemonth = datetime.now().month
+#         last_month_data = Saving.objects.filter(date__month=datemonth).annotate(
+#             month=TruncMonth('date')).values('month').annotate(
+#             total_amount=Sum('amount')).order_by('month')
+#         return Response(last_month_data)
+
+#     @action(detail=False, methods=['get'])
+#     def last_month_category_summary(self, request):
+#         datemonth = datetime.now().month
+#         last_month_data = Saving.objects.filter(date__month=datemonth).annotate(
+#             month=TruncMonth('date')).values('month', 'category__name').annotate(
+#             total_amount=Sum('amount')).order_by('month', 'category__name')
+#         return Response(last_month_data)
+    
+#     @action(detail=False, methods=['get'])
+#     def last_year_summary(self, request):
+#         last_year = datetime.now().year
+#         last_year_data = Saving.objects.filter(date__year=last_year).annotate(
+#             month=TruncMonth('date')).values('month').annotate(
+#             total_amount=Sum('amount')).order_by('month')
+#         return Response(last_year_data)
+
+#     @action(detail=False, methods=['get'])
+#     def last_year_category_summary(self, request):
+#         last_year = datetime.now().year
+#         last_year_data = Saving.objects.filter(date__year=last_year).values('category__name').annotate(
+#             total_amount=Sum('amount')
+#         ).order_by('category__name')
+#         return Response(last_year_data)
+    
+#     @action(detail=False, methods=['delete'])
+#     def delete_by_category(self, request):
+#         """
+#         /savings/delete_by_category?category_name=category_name
+#         """
+#         category_name = request.query_params.get('category_name')
+#         category = get_object_or_404(SavingCategory, name=category_name)
+
+#         if Saving.objects.filter(category=category).exists():
+#             deleted_count, _ = Saving.objects.filter(category=category).delete()
+#             return Response(
+#                 {'message': f'{deleted_count} savings from {category_name} have been deleted'},
+#                 status=status.HTTP_200_OK
+#             )
+#         else:
+#             return Response(
+#                 {'message': f'No savings found for {category_name}'},
+#                 status=status.HTTP_404_NOT_FOUND
+#             )
+
+
 class SavingCategoryViewSet(viewsets.ModelViewSet):
-    queryset = SavingCategory.objects.all()
     serializer_class = SavingCategorySerializer
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return SavingCategory.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -436,21 +569,27 @@ class SavingCategoryViewSet(viewsets.ModelViewSet):
 
 
 class SavingViewSet(viewsets.ModelViewSet):
-    queryset = Saving.objects.all()
     serializer_class = SavingSerializer
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Saving.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
         balance_record = get_or_create_balance()
         amount = Decimal(request.data.get('amount', 0))
-        
+
         if amount > balance_record.balance:
             return Response(
                 {"detail": "Insufficient balance"},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
         response = super().create(request, *args, **kwargs)
+
         balance_record.balance -= amount
         balance_record.total_savings += amount
         balance_record.save()
@@ -463,90 +602,100 @@ class SavingViewSet(viewsets.ModelViewSet):
                 return "List of Savings"
             elif self.action == 'retrieve':
                 return "Detail of Saving"
-        return super(SavingViewSet, self).get_view_name()
-    
+        return super().get_view_name()
+
     @action(detail=False, methods=['get'])
     def summary_by_category(self, request):
-        categories = SavingCategory.objects.all()
+        user = request.user
+        categories = SavingCategory.objects.filter(user=user)
         saving_summary = []
 
         for category in categories:
-            total_saved = Saving.objects.filter(category=category).aggregate(total=Sum('amount'))['total'] or 0
+            total_saved = Saving.objects.filter(user=user, category=category).aggregate(total=Sum('amount'))['total'] or 0
             goal_amount = category.goal_amount or 0
             remaining_amount = goal_amount - total_saved if category.goal_amount else None
 
-            data = {
+            saving_summary.append({
                 'category_name': category.name,
                 'goal_amount': goal_amount,
                 'total_saved': total_saved,
                 'remaining_amount': remaining_amount
-            }
-            saving_summary.append(data)
+            })
+
         return Response(saving_summary)
 
     @action(detail=False, methods=['get'])
     def monthly_summary(self, request):
-        monthly_data = Saving.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
+        user = request.user
+        monthly_data = Saving.objects.filter(user=user).annotate(
+            month=TruncMonth('date')).values('month').annotate(
+            total_amount=Sum('amount')).order_by('month')
         return Response(monthly_data)
-    
+
     @action(detail=False, methods=['get'])
     def monthly_category_summary(self, request):
-        monthly_category_data = Saving.objects.annotate(
+        user = request.user
+        data = Saving.objects.filter(user=user).annotate(
             month=TruncMonth('date')).values('month', 'category__name').annotate(
             total_amount=Sum('amount')).order_by('month', 'category__name')
-        return Response(monthly_category_data)
+        return Response(data)
 
     @action(detail=False, methods=['get'])
     def last_month_summary(self, request):
+        user = request.user
         datemonth = datetime.now().month
-        last_month_data = Saving.objects.filter(date__month=datemonth).annotate(
+        last_month_data = Saving.objects.filter(user=user, date__month=datemonth).annotate(
             month=TruncMonth('date')).values('month').annotate(
             total_amount=Sum('amount')).order_by('month')
         return Response(last_month_data)
 
     @action(detail=False, methods=['get'])
     def last_month_category_summary(self, request):
+        user = request.user
         datemonth = datetime.now().month
-        last_month_data = Saving.objects.filter(date__month=datemonth).annotate(
+        data = Saving.objects.filter(user=user, date__month=datemonth).annotate(
             month=TruncMonth('date')).values('month', 'category__name').annotate(
             total_amount=Sum('amount')).order_by('month', 'category__name')
-        return Response(last_month_data)
-    
+        return Response(data)
+
     @action(detail=False, methods=['get'])
     def last_year_summary(self, request):
-        last_year = datetime.now().year
-        last_year_data = Saving.objects.filter(date__year=last_year).annotate(
+        user = request.user
+        this_year = datetime.now().year
+        data = Saving.objects.filter(user=user, date__year=this_year).annotate(
             month=TruncMonth('date')).values('month').annotate(
             total_amount=Sum('amount')).order_by('month')
-        return Response(last_year_data)
+        return Response(data)
 
     @action(detail=False, methods=['get'])
     def last_year_category_summary(self, request):
-        last_year = datetime.now().year
-        last_year_data = Saving.objects.filter(date__year=last_year).values('category__name').annotate(
-            total_amount=Sum('amount')
-        ).order_by('category__name')
-        return Response(last_year_data)
-    
+        user = request.user
+        this_year = datetime.now().year
+        data = Saving.objects.filter(user=user, date__year=this_year).values(
+            'category__name').annotate(total_amount=Sum('amount')).order_by('category__name')
+        return Response(data)
+
     @action(detail=False, methods=['delete'])
     def delete_by_category(self, request):
         """
         /savings/delete_by_category?category_name=category_name
         """
+        user = request.user
         category_name = request.query_params.get('category_name')
-        category = get_object_or_404(SavingCategory, name=category_name)
+        category = get_object_or_404(SavingCategory, name=category_name, user=user)
 
-        if Saving.objects.filter(category=category).exists():
-            deleted_count, _ = Saving.objects.filter(category=category).delete()
+        savings = Saving.objects.filter(user=user, category=category)
+        if savings.exists():
+            deleted_count, _ = savings.delete()
             return Response(
                 {'message': f'{deleted_count} savings from {category_name} have been deleted'},
                 status=status.HTTP_200_OK
             )
-        else:
-            return Response(
-                {'message': f'No savings found for {category_name}'},
-                status=status.HTTP_404_NOT_FOUND
-            )
+        return Response(
+            {'message': f'No savings found for {category_name}'},
+            status=status.HTTP_404_NOT_FOUND
+        )
+
 
 class ExportingViewSet(viewsets.ViewSet):
     # permission_classes = [IsAuthenticated]
