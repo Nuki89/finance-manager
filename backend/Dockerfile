@@ -126,4 +126,4 @@ COPY backend.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/backend.sh
 
 # Start the app using the startup script
-CMD ["/usr/local/bin/backend.sh"]
+CMD ["/usr/local/bin/backend.sh"] 
