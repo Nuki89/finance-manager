@@ -269,10 +269,14 @@ class IncomeViewSet(viewsets.ModelViewSet):
 
 
 class ExpenseCategoryViewSet(viewsets.ModelViewSet):
-    queryset = ExpenseCategory.objects.all()
     serializer_class = ExpenseCategorySerializer
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return ExpenseCategory.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -281,13 +285,11 @@ class ExpenseCategoryViewSet(viewsets.ModelViewSet):
                 "detail": "Cannot delete this category because it has associated expenses. Please delete all related expenses first."
             })
         return super().destroy(request, *args, **kwargs)
-    
+
 
 class ExpenseViewSet(viewsets.ModelViewSet):
-    queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
-    # permission_classes = [IsAuthenticated]
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def get_view_name(self):
         if hasattr(self, 'action'):
@@ -295,78 +297,118 @@ class ExpenseViewSet(viewsets.ModelViewSet):
                 return "List of Expenses"
             elif self.action == 'retrieve':
                 return "Detail of Expense"
-        return super(ExpenseViewSet, self).get_view_name()
+        return super().get_view_name()
 
     def get_queryset(self):
-        queryset = Expense.objects.all()
-        category_name = self.request.query_params.get('category_name', None)
-        if category_name is not None:
-            try:
-                category = ExpenseCategory.objects.get(name=category_name)
-                queryset = queryset.filter(category=category)
-            except ExpenseCategory.DoesNotExist:
-                queryset = Expense.objects.none() 
+        user = self.request.user
+        queryset = Expense.objects.filter(user=user)
+        category_name = self.request.query_params.get('category_name')
+        if category_name:
+            queryset = queryset.filter(category__name=category_name)
         return queryset
-    
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
     @action(detail=False, methods=['get'])
     def summary_by_category(self, request):
-        expense_list = Expense.objects.values('category__name').annotate(total_amount=models.Sum('amount')).order_by('category')
+        user = request.user
+        expense_list = (
+            Expense.objects.filter(user=user)
+            .values('category__name')
+            .annotate(total_amount=Sum('amount'))
+            .order_by('category__name')
+        )
         return Response(expense_list)
 
     @action(detail=False, methods=['get'])
     def monthly_summary(self, request):
-        monthly_data = Expense.objects.annotate(month=TruncMonth('date')).values('month').annotate(total_amount=models.Sum('amount')).order_by('month')
+        user = request.user
+        monthly_data = (
+            Expense.objects.filter(user=user)
+            .annotate(month=TruncMonth('date'))
+            .values('month')
+            .annotate(total_amount=Sum('amount'))
+            .order_by('month')
+        )
         return Response(monthly_data)
-    
+
     @action(detail=False, methods=['get'])
     def monthly_category_summary(self, request):
-        monthly_category_data = Expense.objects.annotate(
-            month=TruncMonth('date')).values('month', 'category__name').annotate(
-            total_amount=Sum('amount')).order_by('month', 'category__name')
+        user = request.user
+        monthly_category_data = (
+            Expense.objects.filter(user=user)
+            .annotate(month=TruncMonth('date'))
+            .values('month', 'category__name')
+            .annotate(total_amount=Sum('amount'))
+            .order_by('month', 'category__name')
+        )
         return Response(monthly_category_data)
 
     @action(detail=False, methods=['get'])
     def last_month_summary(self, request):
-        datemonth = datetime.now().month
-        last_month_data = Expense.objects.filter(date__month=datemonth).annotate(
-            month=TruncMonth('date')).values('month').annotate(
-            total_amount=Sum('amount')).order_by('month')
+        user = request.user
+        this_month = datetime.now().month
+        last_month_data = (
+            Expense.objects.filter(user=user, date__month=this_month)
+            .annotate(month=TruncMonth('date'))
+            .values('month')
+            .annotate(total_amount=Sum('amount'))
+            .order_by('month')
+        )
         return Response(last_month_data)
 
     @action(detail=False, methods=['get'])
     def last_month_category_summary(self, request):
-        datemonth = datetime.now().month
-        last_month_data = Expense.objects.filter(date__month=datemonth).annotate(
-            month=TruncMonth('date')).values('month', 'category__name').annotate(
-            total_amount=Sum('amount')).order_by('month', 'category__name')
+        user = request.user
+        this_month = datetime.now().month
+        last_month_data = (
+            Expense.objects.filter(user=user, date__month=this_month)
+            .annotate(month=TruncMonth('date'))
+            .values('month', 'category__name')
+            .annotate(total_amount=Sum('amount'))
+            .order_by('month', 'category__name')
+        )
         return Response(last_month_data)
-    
+
     @action(detail=False, methods=['get'])
     def last_year_summary(self, request):
-        last_year = datetime.now().year
-        last_year_data = Expense.objects.filter(date__year=last_year).annotate(
-            month=TruncMonth('date')).values('month').annotate(
-            total_amount=Sum('amount')).order_by('month')
+        user = request.user
+        this_year = datetime.now().year
+        last_year_data = (
+            Expense.objects.filter(user=user, date__year=this_year)
+            .annotate(month=TruncMonth('date'))
+            .values('month')
+            .annotate(total_amount=Sum('amount'))
+            .order_by('month')
+        )
         return Response(last_year_data)
 
     @action(detail=False, methods=['get'])
     def last_year_category_summary(self, request):
-        last_year = datetime.now().year
-        last_year_data = Expense.objects.filter(date__year=last_year).values('category__name').annotate(
-            total_amount=Sum('amount')
-        ).order_by('category__name')
+        user = request.user
+        this_year = datetime.now().year
+        last_year_data = (
+            Expense.objects.filter(user=user, date__year=this_year)
+            .values('category__name')
+            .annotate(total_amount=Sum('amount'))
+            .order_by('category__name')
+        )
         return Response(last_year_data)
-    
+
     @action(detail=False, methods=['delete'])
     def delete_by_category(self, request):
         """
-        /expenses/delete_by_category?category_name=category_name
+        DELETE /expenses/delete_by_category?category_name=...
+        Deletes expenses by category, only for the current user.
         """
         category_name = request.query_params.get('category_name')
-        category = get_object_or_404(ExpenseCategory, name=category_name)
+        user = request.user
+        category = get_object_or_404(ExpenseCategory, name=category_name, user=user)
 
-        if Expense.objects.filter(category=category).exists():
-            deleted_count, _ = Expense.objects.filter(category=category).delete()
+        expenses = Expense.objects.filter(user=user, category=category)
+        if expenses.exists():
+            deleted_count, _ = expenses.delete()
             return Response(
                 {'message': f'{deleted_count} expenses from {category_name} have been deleted'},
                 status=status.HTTP_200_OK

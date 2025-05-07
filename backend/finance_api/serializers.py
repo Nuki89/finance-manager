@@ -58,6 +58,8 @@ class IncomeSerializer(serializers.HyperlinkedModelSerializer):
 class ExpenseCategorySerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
 
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
+
     class Meta:
         model = ExpenseCategory
         fields = '__all__'
@@ -65,6 +67,8 @@ class ExpenseCategorySerializer(serializers.HyperlinkedModelSerializer):
 
 class ExpenseSerializer(serializers.HyperlinkedModelSerializer):
     id = serializers.IntegerField(read_only=True)
+
+    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
 
     category = serializers.PrimaryKeyRelatedField(queryset=ExpenseCategory.objects.all())
     category_data = ExpenseCategorySerializer(source='category', read_only=True)
