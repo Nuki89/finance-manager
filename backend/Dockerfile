@@ -5,7 +5,8 @@ FROM python:3.12-alpine AS builder
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache \
+RUN apk update && apk upgrade --no-cache && \
+    apk add --no-cache \
     gcc \
     musl-dev \
     libffi-dev \
@@ -35,7 +36,8 @@ FROM python:3.12-alpine
 WORKDIR /app
 
 # Install runtime dependencies
-RUN apk add --no-cache \
+RUN apk update && apk upgrade --no-cache && \
+    apk add --no-cache \
     libffi \
     jpeg \
     zlib \
