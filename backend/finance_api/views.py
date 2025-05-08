@@ -450,7 +450,7 @@ class SavingViewSet(viewsets.ModelViewSet):
         serializer.save(user=self.request.user)
 
     def create(self, request, *args, **kwargs):
-        balance_record = get_or_create_balance()
+        balance_record = get_or_create_balance(user=request.user)
         amount = Decimal(request.data.get('amount', 0))
 
         if amount > balance_record.balance:
