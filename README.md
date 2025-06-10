@@ -133,6 +133,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## How to Use
 1. Open the application in your browser.
-2. Create an account.
+2. Create an account and log in.
 3. Start adding your incomes, expenses, and savings.
 4. Take control of your finances with "Coiny" Finance Manager.
