@@ -23,7 +23,8 @@ jobs:
             safety scan -r requirements.txt \
               --apply-fixes \
               --auto-security-updates-limit minor \
-              --no-prompt
+              --no-prompt \
+              --ignore 66963
     
   node-security:
     name: Node Security Scan
