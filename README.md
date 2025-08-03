@@ -96,13 +96,13 @@ cd frontend
 sudo apt install npm
 sudo npm install -g @angular/cli@18
 ```
-3. Install dependencies
-Before installing dependencies, remove existing modules and then reinstall them (if needed).
+3. Install dependencies  
+Remove existing modules and then reinstall them (if needed).
 If you already had npm installed first run this command: `rm -rf node_modules`.
 ```bash
 npm i
 ```
-4. Check for vulnerabilities
+4. Check for vulnerabilities  
 After that, use this command to automatically upgrade or fix vulnerabilities in npm packages.
 ```bash
 npm audit fix
