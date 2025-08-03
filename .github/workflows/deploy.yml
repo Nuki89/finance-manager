@@ -26,10 +26,17 @@ jobs:
             --apply-fixes \
             --auto-security-updates-limit minor \
             --yes \
-            --no-prompt \
-            --output screen \
-            --ignore 66963
-    
+            --no-prompt \            
+            --output json \
+            --output-file .safety-report.txt \
+            --ignore 66963  # Known issue with simplejwt, no fix yet
+      - name: Upload Safety Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: safety-scan
+          path: /home/user/code/_github/finance-manager/backend/.safety-report.txt
+
   node-security:
     name: Node Security Scan
     runs-on: self-hosted
