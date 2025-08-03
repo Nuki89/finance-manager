@@ -23,6 +23,7 @@ jobs:
             safety scan -r requirements.txt \
               --apply-fixes \
               --auto-security-updates-limit minor \
+              --yes \
               --no-prompt \
               --ignore 66963
     
