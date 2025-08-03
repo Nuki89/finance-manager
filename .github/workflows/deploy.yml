@@ -22,7 +22,7 @@ jobs:
             pip install safety
             safety scan -r requirements.txt \
               --apply-fixes \
-              -afl minor \
+              --auto-security-updates-limit minor \
               --no-prompt
     
   node-security:
