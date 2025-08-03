@@ -27,6 +27,7 @@ jobs:
             --auto-security-updates-limit minor \
             --yes \
             --no-prompt \
+            --output screen \
             --ignore 66963
     
   node-security:
