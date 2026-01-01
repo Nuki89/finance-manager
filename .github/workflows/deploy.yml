@@ -15,8 +15,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       # - run: echo "Skipping Python security scan" && exit 0
-      - run: |
-          cd /home/user/code/_github/finance-manager
+      - run: |        
+          cd $GITHUB_WORKSPACE/backend
           source venv/bin/activate
           cd backend
           pip install --upgrade pip
@@ -58,7 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - run: |
-            cd /home/user/code/_github/finance-manager/frontend
+            cd $GITHUB_WORKSPACE/frontend
             npm install
             npm audit --audit-level=high || true
 
@@ -70,7 +70,7 @@ jobs:
 
       - name: Build Docker Images (Compose)
         run: |
-            cd /home/user/code/_github/finance-manager
+            cd $GITHUB_WORKSPACE
             docker compose build
 
       - name: Scan Backend Image
