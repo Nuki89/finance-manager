@@ -31,19 +31,31 @@ jobs:
   #           --ignore 66963 \ 
   #           || true # Known issue with simplejwt, no fix yet
     
+  # python-security:
+  #   name: Python Security Scan
+  #   runs-on: self-hosted
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - run: |        
+  #         cd $GITHUB_WORKSPACE/backend
+  #         python3 -m venv venv
+  #         source venv/bin/activate
+  #         pip install --upgrade pip
+  #         pip install -r requirements.txt
+  #         pip install pip-audit
+  #         pip-audit -r requirements.txt || true
+
   python-security:
     name: Python Security Scan
     runs-on: self-hosted
+    container: python:3.12
     steps:
       - uses: actions/checkout@v3
       - run: |        
-          cd $GITHUB_WORKSPACE/backend
-          python3 -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
+          cd backend
           pip install -r requirements.txt
-          pip install pip-audit
-          pip-audit -r requirements.txt || true
+          pip install safety
+          safety scan -r requirements.txt --output screen --ignore 66963 || true
 
       #       - run: |
       #     cd /home/user/code/_github/finance-manager
