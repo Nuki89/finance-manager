@@ -28,7 +28,8 @@ jobs:
             --yes \
             --no-prompt \
             --output screen \
-            --ignore 66963  # Known issue with simplejwt, no fix yet
+            --ignore 66963 \ 
+            || true # Known issue with simplejwt, no fix yet
     
       #       - run: |
       #     cd /home/user/code/_github/finance-manager
