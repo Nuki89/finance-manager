@@ -17,6 +17,7 @@ jobs:
       # - run: echo "Skipping Python security scan" && exit 0
       - run: |        
           cd $GITHUB_WORKSPACE/backend
+          python3 -m venv venv
           source venv/bin/activate
           cd backend
           pip install --upgrade pip
