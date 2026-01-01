@@ -36,7 +36,14 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v3
-      - run: echo "Skipping Python security scan - needs python3.12-dev on runner"
+      - run: |        
+          cd $GITHUB_WORKSPACE/backend
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pip-audit
+          pip-audit -r requirements.txt || true
 
       #       - run: |
       #     cd /home/user/code/_github/finance-manager
