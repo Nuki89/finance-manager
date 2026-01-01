@@ -55,7 +55,17 @@ jobs:
           cd backend
           pip install -r requirements.txt
           pip install safety
-          safety scan -r requirements.txt --output screen --ignore 66963 || true
+          safety scan -r requirements.txt \
+            --output json \
+            --output-file safety-report.json \
+            --ignore 66963 \
+            || true
+      - name: Upload Safety Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: safety-scan
+          path: backend/safety-report.json
 
       #       - run: |
       #     cd /home/user/code/_github/finance-manager
