@@ -31,6 +31,16 @@ jobs:
           name: safety-scan
           path: safety-scan-report.json
       
+  # node-security:
+  #   name: Node Security Scan
+  #   runs-on: self-hosted
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - run: |
+  #           cd $GITHUB_WORKSPACE/frontend
+  #           npm install
+  #           npm audit --audit-level=high || true
+
   node-security:
     name: Node Security Scan
     runs-on: self-hosted
@@ -45,7 +55,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: npm-audit
-          path: npm-audit.json
+          path: frontend/npm-audit.json
 
   docker-security:
     name: Docker Image Scan (Trivy)
