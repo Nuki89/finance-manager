@@ -6,25 +6,6 @@ on:
       - master
 
 jobs:
-    
-  python-security-check:
-    name: Python Security Check
-    runs-on: self-hosted
-    container: python:3.12
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run Safety Check
-        run: |        
-          pip install -r backend/requirements.txt
-          pip install safety
-          safety check -r backend/requirements.txt --json > safety-report.json 2>&1 || true
-          cat safety-report.json || echo "No report generated"
-      - name: Upload Safety Report
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: safety-check
-          path: safety-report.json
 
   python-security-scan:
     name: Python Security Scan
@@ -101,7 +82,7 @@ jobs:
   deploy:
     name: Deploy
     runs-on: self-hosted
-    needs: [python-security-check, python-security-scan, node-security, docker-security]
+    needs: [python-security-scan, node-security, docker-security]
     steps:
       - uses: actions/checkout@v3
       - name: Setup SSH Key
