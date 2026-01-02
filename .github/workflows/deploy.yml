@@ -6,7 +6,6 @@ on:
       - master
 
 jobs:
-
   python-security-scan:
     name: Python Security Scan
     runs-on: self-hosted
