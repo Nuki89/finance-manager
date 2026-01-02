@@ -60,13 +60,18 @@ jobs:
             --output-file safety-report.json \
             --ignore 66963 \
             || true
+          echo "=== Checking files ==="
+          pwd
+          ls -la
+          ls -la backend/ || true
+          find . -name "*.json" 2>/dev/null || true
       - name: Upload Safety Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: safety-scan
           path: safety-report.json
-          
+
   # python-security:
   #   name: Python Security Scan
   #   runs-on: self-hosted
