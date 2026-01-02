@@ -30,6 +30,8 @@ jobs:
     name: Python Security Scan
     runs-on: self-hosted
     container: python:3.12
+    env:
+      SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
     steps:
       - uses: actions/checkout@v3
       - name: Run Safety Scan
