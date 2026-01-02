@@ -30,16 +30,6 @@ jobs:
         with:
           name: safety-scan
           path: safety-scan-report.json
-      
-  # node-security:
-  #   name: Node Security Scan
-  #   runs-on: self-hosted
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - run: |
-  #           cd $GITHUB_WORKSPACE/frontend
-  #           npm install
-  #           npm audit --audit-level=high || true
 
   node-security:
     name: Node Security Scan
