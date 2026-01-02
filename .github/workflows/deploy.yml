@@ -40,9 +40,8 @@ jobs:
           pip install safety
           safety scan -r backend/requirements.txt \
             --detailed-output \
-            --json \
-            --save-json safety-scan-report.json \
-            < /dev/null \
+            --output json \
+            > safety-scan-report.json 2>&1 \
             || true
       - name: Upload Safety Report
         if: always()
