@@ -39,7 +39,13 @@ jobs:
       - run: |
             cd $GITHUB_WORKSPACE/frontend
             npm install
-            npm audit --audit-level=high || true
+            npm audit --json > npm-audit.json 2>&1 || true
+      - name: Upload NPM Audit Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: npm-audit
+          path: npm-audit.json
 
   docker-security:
     name: Docker Image Scan (Trivy)
