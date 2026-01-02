@@ -51,13 +51,13 @@ jobs:
     container: python:3.12
     steps:
       - uses: actions/checkout@v3
-      - run: |        
-          cd backend
-          pip install -r requirements.txt
+      - name: Run Safety Scan
+        run: |        
+          pip install -r backend/requirements.txt
           pip install safety
-          safety scan -r requirements.txt \
+          safety scan -r backend/requirements.txt \
             --output json \
-            --output-file $GITHUB_WORKSPACE/safety-report.json \
+            --output-file safety-report.json \
             --ignore 66963 \
             || true
       - name: Upload Safety Report
@@ -65,7 +65,29 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: safety-scan
-          path: safety-report.json  
+          path: safety-report.json
+          
+  # python-security:
+  #   name: Python Security Scan
+  #   runs-on: self-hosted
+  #   container: python:3.12
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - run: |        
+  #         cd backend
+  #         pip install -r requirements.txt
+  #         pip install safety
+  #         safety scan -r requirements.txt \
+  #           --output json \
+  #           --output-file $GITHUB_WORKSPACE/safety-report.json \
+  #           --ignore 66963 \
+  #           || true
+  #     - name: Upload Safety Report
+  #       if: always()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: safety-scan
+  #         path: safety-report.json  
       
   node-security:
     name: Node Security Scan
