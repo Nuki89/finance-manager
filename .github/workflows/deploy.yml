@@ -6,52 +6,14 @@ on:
       - master
 
 jobs:
-
-  # python-security:
-  #   name: Python Security Scan
-  #   env:
-  #       SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
-  #   runs-on: self-hosted
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     # - run: echo "Skipping Python security scan" && exit 0
-  #     - run: |        
-  #         cd $GITHUB_WORKSPACE/backend
-  #         python3 -m venv venv
-  #         source venv/bin/activate
-  #         pip install --upgrade pip
-  #         pip install --force-reinstall -r requirements.txt
-  #         pip install safety || true
-  #         safety scan -r requirements.txt \
-  #           --apply-fixes \
-  #           --auto-security-updates-limit minor \
-  #           --yes \
-  #           --no-prompt \
-  #           --output screen \
-  #           --ignore 66963 \ 
-  #           || true # Known issue with simplejwt, no fix yet
     
-  # python-security:
-  #   name: Python Security Scan
-  #   runs-on: self-hosted
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - run: |        
-  #         cd $GITHUB_WORKSPACE/backend
-  #         python3 -m venv venv
-  #         source venv/bin/activate
-  #         pip install --upgrade pip
-  #         pip install -r requirements.txt
-  #         pip install pip-audit
-  #         pip-audit -r requirements.txt || true
-
-  python-security:
-    name: Python Security Scan
+  python-security-check:
+    name: Python Security Check
     runs-on: self-hosted
     container: python:3.12
     steps:
       - uses: actions/checkout@v3
-      - name: Run Safety Scan
+      - name: Run Safety Check
         run: |        
           pip install -r backend/requirements.txt
           pip install safety
@@ -61,30 +23,31 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: safety-scan
+          name: safety-check
           path: safety-report.json
 
-  # python-security:
-  #   name: Python Security Scan
-  #   runs-on: self-hosted
-  #   container: python:3.12
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - run: |        
-  #         cd backend
-  #         pip install -r requirements.txt
-  #         pip install safety
-  #         safety scan -r requirements.txt \
-  #           --output json \
-  #           --output-file $GITHUB_WORKSPACE/safety-report.json \
-  #           --ignore 66963 \
-  #           || true
-  #     - name: Upload Safety Report
-  #       if: always()
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: safety-scan
-  #         path: safety-report.json  
+  python-security-scan:
+    name: Python Security Scan
+    runs-on: self-hosted
+    container: python:3.12
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Safety Scan
+        run: |        
+          pip install -r backend/requirements.txt
+          pip install safety
+          safety scan -r backend/requirements.txt \
+            --detailed-output \
+            --json \
+            --save-json safety-scan-report.json \
+            < /dev/null \
+            || true
+      - name: Upload Safety Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: safety-scan
+          path: safety-scan-report.json
       
   node-security:
     name: Node Security Scan
@@ -134,11 +97,10 @@ jobs:
             name: trivy-backend-report
             path: trivy-backend.json
 
-
   deploy:
     name: Deploy
     runs-on: self-hosted
-    needs: [python-security, node-security, docker-security]
+    needs: [python-security-check, python-security-scan, node-security, docker-security]
     steps:
       - uses: actions/checkout@v3
       - name: Setup SSH Key
