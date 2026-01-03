@@ -33,7 +33,11 @@ jobs:
   node-security:
     name: Node Security Scan
     runs-on: self-hosted
+    needs: [python-security-scan]
     steps:
+      # If permission issues occur, uncomment the following lines
+      # - name: Fix permissions before checkout
+      #   run: sudo chown -R nuki:nuki /home/user/code/actions-runner/_work/ || true
       - uses: actions/checkout@v3
       - run: |
             cd $GITHUB_WORKSPACE/frontend
