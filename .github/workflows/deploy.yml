@@ -62,7 +62,7 @@ jobs:
             docker compose build
 
       - name: Scan Backend Image
-        uses: aquasecurity/trivy-action@0.17.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
             image-ref: 'finance-manager-backend:latest'
             format: 'json'
@@ -73,7 +73,7 @@ jobs:
             severity: 'HIGH,CRITICAL'
             
       - name: Scan Frontend Image
-        uses: aquasecurity/trivy-action@0.17.0
+        uses: aquasecurity/trivy-action@0.35.0
         with:
             image-ref: 'finance-manager-frontend:latest'
             format: 'table'
